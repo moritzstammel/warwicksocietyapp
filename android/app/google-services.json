@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "132684119931",
+    "project_id": "warwick-society-app",
+    "storage_bucket": "warwick-society-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132684119931:android:94b6f081a8be34f9ed87de",
+        "android_client_info": {
+          "package_name": "com.socs.warwicksocietyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "132684119931-l0fj578ga2cm4h2c7lqj26efj3utpqnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7-UllX23JJ8mY8NbdULJ8L-TpeoAhfdA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "132684119931-l0fj578ga2cm4h2c7lqj26efj3utpqnh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
