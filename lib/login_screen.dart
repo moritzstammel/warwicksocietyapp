@@ -20,10 +20,10 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     return await _auth.sendSignInLinkToEmail(
         email: _userEmail,
         actionCodeSettings: ActionCodeSettings(
-          url: "https://warwicksocietyapp.page.link/",
+          url: "https://warwicksocietyapp.page.link/H3Ed",
           handleCodeInApp: true,
           androidPackageName:"com.socs.warwicksocietyapp",
-          androidMinimumVersion: "1",
+          androidMinimumVersion: "12",
         )
     ).then((value){
       print("email sent");
@@ -31,23 +31,20 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   }
   @override
   void initState() {
-    // TODO: implement initState
+    handleDynamicLinks();
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    try{
-      FirebaseDynamicLinks.instance.onLink;
-
-      final PendingDynamicLinkData? data = await FirebaseDynamicLinks.instance.getInitialLink();
-      final Uri? deepLink = data?.link;
-
-      if (deepLink != null) {
-        print(deepLink.userInfo);
-      }
-    }catch(e){
-      print(e);
+    if (state == AppLifecycleState.resumed) {
+      // Handle dynamic link events when the app is resumed
+      FirebaseDynamicLinks.instance.getInitialLink().then((PendingDynamicLinkData? data) {
+        final Uri? deepLink = data?.link;
+        if (deepLink != null) {
+          handleLink(deepLink, _emailController.text);
+        }
+      });
     }
   }
 
@@ -65,6 +62,27 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
       print("link is null");
     }
   }
+  void handleDynamicLinks() async {
+    ///To bring INTO FOREGROUND FROM DYNAMIC LINK.
+    FirebaseDynamicLinks.instance.onLink.listen(
+          (PendingDynamicLinkData dynamicLinkData) async {
+        await _handleDeepLink(dynamicLinkData);
+      },
+    );
+
+    final PendingDynamicLinkData? data = await FirebaseDynamicLinks.instance.getInitialLink();
+    _handleDeepLink(data!);
+  }
+
+  // bool _deeplink = true;
+  _handleDeepLink(PendingDynamicLinkData data) async {
+
+    final Uri? deeplink = data.link;
+    if (deeplink != null) {
+      print('Handling Deep Link | deepLink: $deeplink');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
