@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
             return MainScreen();
           }
           else{
-            return MainScreen();
+            return LoginScreen();
           }
 
         },
