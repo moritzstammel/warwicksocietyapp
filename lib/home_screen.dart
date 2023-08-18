@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -9,6 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   List<String> _highlights = ['Freshers Events', 'WDSS Newsletter', 'Piano News', 'Chem News'];
   bool _isMoreInfoPopupVisible = false;
+  bool _disposed = false;
 
   void _changeHighlights() {
     setState(() {
@@ -18,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showMoreInfo() {
     print(_highlights[_currentIndex]);
+
   }
 
   @override
@@ -27,9 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _startHighlightsLoop();
   }
 
+
+
   // Function to start changing highlights in a loop
   void _startHighlightsLoop() {
+    if (!super.mounted) return;
     Future.delayed(Duration(seconds: 5), () {
+      if (!super.mounted) return;
       _changeHighlights();
       _startHighlightsLoop();
     });
