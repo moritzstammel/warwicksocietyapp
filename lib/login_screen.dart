@@ -111,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
       "followed_societies":[],
       "events_signed_up":[],
       "events_attended":[],
-      "points": 0
+      "points": 0,
+      "highlights":[]
+
     });
   }
 }
