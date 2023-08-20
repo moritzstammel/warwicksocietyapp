@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:warwicksocietyapp/login_screen.dart';
+import 'package:warwicksocietyapp/select_email_screen.dart';
+import 'package:warwicksocietyapp/sign_up_screen.dart';
 import 'package:warwicksocietyapp/verification_screen.dart';
 import 'firebase_options.dart';
 import 'main_screen.dart';
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Login Screen',
       home: StreamBuilder(
-        stream:FirebaseAuth.instance.authStateChanges(),
+        stream:FirebaseAuth.instance.userChanges(),
         builder: (BuildContext context,snapshot)
         {
           if(snapshot.connectionState==ConnectionState.waiting){
@@ -47,7 +49,7 @@ class MyApp extends StatelessWidget {
 
           }
           else{
-            return LoginScreen();
+            return SelectEmailScreen();
           }
 
         },

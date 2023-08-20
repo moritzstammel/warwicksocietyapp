@@ -7,8 +7,19 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
+// The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
+const {logger} = require("firebase-functions");
 const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+
+// The Firebase Admin SDK to access Firestore.
+const {initializeApp} = require("firebase-admin/app");
+const {getFirestore} = require("firebase-admin/firestore");
+
+initializeApp();
+
+const 
+
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
