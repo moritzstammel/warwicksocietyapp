@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:warwicksocietyapp/login_screen.dart';
 import 'package:warwicksocietyapp/select_email_screen.dart';
 import 'package:warwicksocietyapp/sign_up_screen.dart';
+import 'package:warwicksocietyapp/society_selection_screen.dart';
 import 'package:warwicksocietyapp/verification_screen.dart';
 import 'firebase_options.dart';
+import 'home/home_screen.dart';
 import 'main_screen.dart';
 
 
@@ -40,8 +42,8 @@ class MyApp extends StatelessWidget {
             return const CircularProgressIndicator();
           }
           else if(snapshot.hasData){
-            FirebaseAuth.instance.currentUser?.reload();
-            print( FirebaseAuth.instance.currentUser?.emailVerified);
+
+
             if (snapshot.data!.emailVerified){
               return MainScreen();
             }

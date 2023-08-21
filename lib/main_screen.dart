@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/explore_screen.dart';
-import 'package:warwicksocietyapp/home_screen.dart';
+import 'package:warwicksocietyapp/home/home_screen.dart';
 import 'package:warwicksocietyapp/login_screen.dart';
 import 'package:warwicksocietyapp/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';

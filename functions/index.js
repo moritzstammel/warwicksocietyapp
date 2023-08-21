@@ -8,17 +8,35 @@
  */
 
 // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
-const {logger} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/v2/https");
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
 
-// The Firebase Admin SDK to access Firestore.
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+const firestore = admin.firestore();
 
-initializeApp();
+exports.updateSpotlightsOnSocietyUpdate = functions.firestore
+  .document('/universities/university-of-warwick/societies/{societyId}')
+  .onUpdate(async (change, context) => {
+    const updatedSocietyData = change.after.data();
+    const newSocietyName = updatedSocietyData.name;
+    const societyRef = change.after.ref;
 
-const 
+    const spotlightsCollection = firestore.collection('/universities/university-of-warwick/spotlights');
+
+    const snapshot = await spotlightsCollection
+      .where('society_ref', '==', societyRef)
+      .get();
+
+    const batch = firestore.batch();
+
+    snapshot.forEach((doc) => {
+      const spotlightRef = doc.ref;
+      batch.update(spotlightRef, { name: newSocietyName });
+    });
+
+    return batch.commit();
+  });
+
 
 
 // Create and deploy your first functions
