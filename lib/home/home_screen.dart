@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/home/spotlight_builder.dart';
+import 'package:warwicksocietyapp/home/top_app_bar.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Column(
         children: [
+          TopAppBar(),
+          Divider(),
           SpotlightBox(),
           Expanded(
             child: ListView(

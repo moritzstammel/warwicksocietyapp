@@ -5,6 +5,8 @@ import 'package:warwicksocietyapp/login_screen.dart';
 import 'package:warwicksocietyapp/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 
+import 'home/top_app_bar.dart';
+
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -19,22 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            padding: EdgeInsets.only(top: 40, left: 16, right: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Points: 100', style: TextStyle(fontSize: 18, color: Colors.black)),
-                IconButton(
-                  icon: Icon(Icons.chat, color: Colors.black),
-                  onPressed: () {
-                    // Add your action for the notification icon here
-                  },
-                ),
-              ],
-            ),
-          ),
-          Divider(),
+
           Expanded(
             child: PageView(
               controller: _pageController,

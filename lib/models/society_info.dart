@@ -8,6 +8,8 @@ class SocietyInfo {
 
   SocietyInfo({required this.name, required this.logoUrl,required this.ref});
 
-
+  factory SocietyInfo.fromJson(Map<String, dynamic> json) {
+    return SocietyInfo(name: json["name"], logoUrl: json["logo_url"], ref: json["ref"]);
+  }
 
 }

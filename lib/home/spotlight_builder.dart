@@ -22,6 +22,9 @@ class _SpotlightBoxState extends State<SpotlightBox> {
 
   
   List<SocietyInfo> societies = [SocietyInfo(name: "Warwick Piano Society", logoUrl: "test", ref: FirebaseFirestore.instance.doc(("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")))];
+  List<Spotlight> spotlightData = [];
+  bool spotlightsFetched = false;
+
 
   Future<List<QueryDocumentSnapshot>> _fetchSpotlights() async {
     List<QueryDocumentSnapshot> spotlights = [];
@@ -45,17 +48,23 @@ class _SpotlightBoxState extends State<SpotlightBox> {
 
   @override
   Widget build(BuildContext context) {
+    if(spotlightsFetched){
+      return SpotlightWidget(spotlights: spotlightData);
+    }
     return FutureBuilder(
       future: _fetchSpotlights(),
       builder: (context,AsyncSnapshot<List<QueryDocumentSnapshot>>snapshot) {
           
           if (snapshot.connectionState == ConnectionState.done) {
 
-            List<Spotlight> spotlights = snapshot.data!.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>)).toList();
-            print(spotlights.map((spotlight) => spotlight.title));
+            spotlightData = snapshot.data!.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>)).toList();
+            print(spotlightData.map((spotlight) => spotlight.title));
+            spotlightsFetched = true;
+            return SpotlightWidget(spotlights: spotlightData);
 
-            return SpotlightWidget(spotlights: spotlights);
-
+          }
+          if(spotlightData.isNotEmpty){
+            return SpotlightWidget(spotlights: spotlightData);
           }
           else{
             return CircularProgressIndicator();
