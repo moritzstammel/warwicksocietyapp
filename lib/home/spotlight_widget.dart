@@ -52,8 +52,18 @@ class _SpotlightWidgetState extends State<SpotlightWidget> {
         _changeHighlights();
       },
       child: Container(
-        color: Colors.blue[900],
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+
+        margin: EdgeInsets.only(left: 20.0,right: 20.0),
+        padding: EdgeInsets.all(5.0),
+        height: 150,
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          image: DecorationImage(
+            image:AssetImage("assets/spotlights_background_image.jpg"),
+                fit: BoxFit.cover
+          )
+        ),
         child: Column(
           children: [
             Row(

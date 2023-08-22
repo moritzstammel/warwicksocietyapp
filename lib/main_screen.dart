@@ -4,6 +4,7 @@ import 'package:warwicksocietyapp/home/home_screen.dart';
 import 'package:warwicksocietyapp/login_screen.dart';
 import 'package:warwicksocietyapp/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
+import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
 
 import 'home/top_app_bar.dart';
 
@@ -32,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
               },
               children: [
                 HomeScreen(),
-                ExploreScreen(),
+                SpotlightOverviewScreen(),
                 RewardsScreen(),
                 ProfileScreen(),
                 // Add more EventListPages here
