@@ -99,12 +99,14 @@ class SpotlightOverviewScreen extends StatelessWidget {
           Container(
             width: double.infinity, // Fill the entire width of the screen
             child: SpotlightSocietyViewCard(
-              spotlight: Spotlight(
-                title: 'Piano \nNewsletter',
+              spotlights: [
+                Spotlight(
+                title: 'Piano\nNewsletter',
                 text: 'Spotlight text goes here.',
                 societyRef: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED"),
                 image: AssetImage("assets/spotlights_background_image.jpg"),
               ),
+              ],
               editable: true,
             ),
           ),

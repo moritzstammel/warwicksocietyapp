@@ -146,14 +146,14 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                   return Container(
                     width: double.infinity,
                     child: SpotlightSocietyViewCard(
-                      spotlight: Spotlight(
+                      spotlights: [Spotlight(
                         title: title == "" ? "Example \nAnnouncement" : title,
                         text: "",
                         societyRef: FirebaseFirestore.instance.doc("universities/university-of-warwick"),
                         image: _selectedImagePath != null
                             ? Image.file(File(_selectedImagePath!),).image
                             : AssetImage("assets/spotlights_background_image.jpg"),
-                      ),
+                      )],
                       editable: false,
                     ),
                   );
