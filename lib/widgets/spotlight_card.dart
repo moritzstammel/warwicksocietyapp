@@ -3,17 +3,17 @@ import 'dart:async';
 
 import '../models/spotlight.dart';
 
-class SpotlightSocietyViewCard extends StatefulWidget {
+class SpotlightCard extends StatefulWidget {
   final List<Spotlight> spotlights;
   final bool editable;
 
-  const SpotlightSocietyViewCard({required this.spotlights, required this.editable});
+  const SpotlightCard({required this.spotlights, required this.editable});
 
   @override
-  State<SpotlightSocietyViewCard> createState() => _SpotlightSocietyViewCardState();
+  State<SpotlightCard> createState() => _SpotlightCardState();
 }
 
-class _SpotlightSocietyViewCardState extends State<SpotlightSocietyViewCard> {
+class _SpotlightCardState extends State<SpotlightCard> {
   int _currentIndex = 0;
   late Timer _timer;
 

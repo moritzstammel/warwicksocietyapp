@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import 'package:warwicksocietyapp/spotlight_creation/spotlight_society_view_card.dart';
+import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
 import '../models/spotlight.dart';
 
@@ -145,7 +145,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                 builder: (context, title, child) {
                   return Container(
                     width: double.infinity,
-                    child: SpotlightSocietyViewCard(
+                    child: SpotlightCard(
                       spotlights: [Spotlight(
                         title: title == "" ? "Example \nAnnouncement" : title,
                         text: "",

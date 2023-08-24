@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_creation_screen.dart';
-import 'package:warwicksocietyapp/spotlight_creation/spotlight_society_view_card.dart';
+import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
 import '../models/spotlight.dart';
 class SpotlightOverviewScreen extends StatelessWidget {
@@ -98,7 +98,7 @@ class SpotlightOverviewScreen extends StatelessWidget {
         for (int i = 0; i < 2; i++)
           Container(
             width: double.infinity, // Fill the entire width of the screen
-            child: SpotlightSocietyViewCard(
+            child: SpotlightCard(
               spotlights: [
                 Spotlight(
                 title: 'Piano\nNewsletter',
