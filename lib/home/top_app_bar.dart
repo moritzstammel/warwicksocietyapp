@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:warwicksocietyapp/models/user.dart';
+import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 class TopAppBar extends StatelessWidget {
   final FirestoreUser user;

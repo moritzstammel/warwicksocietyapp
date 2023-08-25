@@ -3,9 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/home/custom_search_bar.dart';
+import 'package:warwicksocietyapp/home/recommended_section.dart';
 import 'package:warwicksocietyapp/home/spotlight_builder.dart';
 import 'package:warwicksocietyapp/home/top_app_bar.dart';
-import '../models/user.dart';
+import 'package:warwicksocietyapp/home/your_events_section.dart';
+import '../models/firestore_user.dart';
 import '../models/society_info.dart';
 import '../models/spotlight.dart';
 import '../models/event.dart';
@@ -38,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
 
-          final user = FirestoreUser.fromJson(snapshot.data!.docs[0].data() as Map<String, dynamic>);
+          final user = FirestoreUser.fromJson(snapshot.data!.docs[0].data() as Map<String, dynamic>,snapshot.data!.docs[0].id);
 
           print(user.followedSocieties[0].name);
           return Column(
@@ -59,43 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'YOUR EVENTS',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            EventCard(
-                              event: testEvent1(),
-                            ),
-                            EventCard(
-                              event: testEvent2(),
-                            ),
+                            YourEventsSection(user: user,),
                             SizedBox(height: 20),
-                            Text(
-                              'RECOMMENDED FOR YOU',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            EventCard(
-                              event: testEvent3(),
-                              showRegistered: false,
-                            ),
-                            EventCard(
-                              event: testEvent4(),
-                              showRegistered: false,
-                            ),
-                            EventCard(
-                              event: testEvent5(),
-                              showRegistered: false,
-                            ),
+                            RecommendedSection(user: user,)
                           ],
                         ),
                       ),
@@ -112,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Event testEvent1(){
     return Event(
+      id: "test",
       title: 'Mario Movie Night',
       description: 'Description for Event 1',
       location: 'Copper Rooms',
@@ -129,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   Event testEvent2(){
     return Event(
+      id: "test",
       title: 'Piano Concert',
       description: 'some real music',
       location: 'Panorama Rooms',
@@ -138,57 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
       societyInfo: SocietyInfo(
           name: 'Warwick Piano Society',
           logoUrl: 'https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
-          ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
-      ),
-      images: [],
-      registeredUsers: [],
-    );
-  }
-  Event testEvent3(){
-    return Event(
-      title: 'Chem Cafe',
-      description: 'Description for Event 1',
-      location: 'R.021',
-      startTime: DateTime.now().add(Duration(days:1,hours: 1)),
-      endTime: DateTime.now().add(Duration(days:1,hours: 2)),
-      points: 0,
-      societyInfo: SocietyInfo(
-          name: 'Warwick Student Cinema',
-          logoUrl: 'https://www.warwicksu.com/asset/Organisation/4097/Asset%2033.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
-          ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
-      ),
-      images: [],
-      registeredUsers: [],
-    );
-  }
-  Event testEvent4(){
-    return Event(
-      title: 'CV Workshop',
-      description: 'Description for Event 1',
-      location: 'S.021',
-      startTime: DateTime.now().add(Duration(days:3,hours: 5)),
-      endTime: DateTime.now().add(Duration(days:3,hours: 7)),
-      points: 200,
-      societyInfo: SocietyInfo(
-          name: 'Warwick Student Cinema',
-          logoUrl: 'https://www.warwicksu.com/asset/Organisation/59901/logo_2.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
-          ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
-      ),
-      images: [],
-      registeredUsers: [],
-    );
-  }
-  Event testEvent5(){
-    return Event(
-      title: 'Ekimetrics Talk',
-      description: 'Description for Event 1',
-      location: 'FAB3.14',
-      startTime: DateTime.now().add(Duration(days:5,hours: 5)),
-      endTime: DateTime.now().add(Duration(days:5,hours: 7)),
-      points: 0,
-      societyInfo: SocietyInfo(
-          name: 'Warwick Student Cinema',
-          logoUrl: 'https://www.warwicksu.com/asset/Organisation/59230/icon_gr.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
           ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
       ),
       images: [],

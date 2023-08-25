@@ -1,4 +1,5 @@
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
+import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 import '../models/event.dart';
 
@@ -8,8 +9,9 @@ import 'package:flutter/material.dart';
 class EventCard extends StatelessWidget {
   final Event event;
   final bool showRegistered;
+  final FirestoreUser user;
 
-  const EventCard({required this.event, this.showRegistered = true});
+  const EventCard({required this.event, this.showRegistered = true, required this.user});
 
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
@@ -46,7 +48,7 @@ class EventCard extends StatelessWidget {
       onTap: (){
         Navigator.push(
         context,
-        _customPageRouteBuilder(EventDetailsScreen(event: event)),
+        _customPageRouteBuilder(EventDetailsScreen(event: event,user: user,)),
         );
       },
       child: Container(

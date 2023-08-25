@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/spotlight.dart';
-import 'package:warwicksocietyapp/models/user.dart';
+import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/society_selection_screen.dart';
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
