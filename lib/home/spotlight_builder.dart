@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/spotlight.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
-import 'package:warwicksocietyapp/society_selection_screen.dart';
+import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
 import '../models/society_info.dart';
@@ -20,56 +20,35 @@ class SpotlightBuilder extends StatefulWidget {
 
 class _SpotlightBuilderState extends State<SpotlightBuilder> {
 
-
-  List<Spotlight> spotlightData = [];
-  bool spotlightsFetched = false;
+  late Stream<QuerySnapshot> spotlightStream;
 
 
-  Future<List<QueryDocumentSnapshot>> _fetchSpotlights() async {
-    List<QueryDocumentSnapshot> spotlights = [];
-    final CollectionReference spotlightsCollection =
-    FirebaseFirestore.instance.collection('universities')
-        .doc('university-of-warwick')
-        .collection('spotlights');
-    // Collect all society references
+  @override
+  void initState() {
+    super.initState();
     List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
-
-    print(societyRefs);
-    // Fetch spotlights where society_ref is in the list of societyRefs
-    QuerySnapshot snapshot = await spotlightsCollection
+    spotlightStream = FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("spotlights")
         .where('society.ref', whereIn: societyRefs)
-        .get();
+        .snapshots();
 
-    spotlights.addAll(snapshot.docs);
-
-    return spotlights;
   }
+
 
 
   @override
   Widget build(BuildContext context) {
-    if(spotlightsFetched){
-      return SpotlightCard(spotlights: spotlightData, editable: false,);
-    }
-    return FutureBuilder(
-      future: _fetchSpotlights(),
-      builder: (context,AsyncSnapshot<List<QueryDocumentSnapshot>>snapshot) {
-          
-          if (snapshot.connectionState == ConnectionState.done) {
 
-            spotlightData = snapshot.data!.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>)).toList();
-            print(spotlightData.map((spotlight) => spotlight.title));
-            spotlightsFetched = true;
-            return SpotlightCard(spotlights: spotlightData, editable: false,);
+    return StreamBuilder<QuerySnapshot>(
+      stream: spotlightStream,
+      builder: (context,snapshot) {
+          if (snapshot.hasError || !snapshot.hasData) return CircularProgressIndicator();
 
-          }
-          if(spotlightData.isNotEmpty){
-            return SpotlightCard(spotlights: spotlightData, editable: false,);
-          }
-          else{
-            return CircularProgressIndicator();
-          }
-          
+          final spotlightData = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>)).toList();
+          return SpotlightCard(spotlights: spotlightData, editable: false,);
+
           
           },
       

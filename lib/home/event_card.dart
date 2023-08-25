@@ -10,6 +10,8 @@ class EventCard extends StatelessWidget {
   final Event event;
   final bool showRegistered;
   final FirestoreUser user;
+  final bool isLive = false;
+
 
   const EventCard({required this.event, this.showRegistered = true, required this.user});
 
@@ -45,10 +47,10 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.push(
-        context,
-        _customPageRouteBuilder(EventDetailsScreen(event: event,user: user,)),
+          context,
+          _customPageRouteBuilder(EventDetailsScreen(event: event, user: user)),
         );
       },
       child: Container(
@@ -58,8 +60,18 @@ class EventCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center, // Vertically center the entire row
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            if (isLive) // Check if isLive is true
+              Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Color(0xFF00DD00),
+                  borderRadius: BorderRadius.all(Radius.circular(100)),
+                  ),
+
+              ),
             Container(
               width: 100,
               height: 100,

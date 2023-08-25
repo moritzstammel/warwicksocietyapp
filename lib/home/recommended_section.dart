@@ -17,20 +17,28 @@ class RecommendedSection extends StatefulWidget {
 }
 
 class _RecommendedSectionState extends State<RecommendedSection> {
+  late Stream<QuerySnapshot> eventStream;
 
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+
     List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
+    eventStream = FirebaseFirestore.instance.collection("universities")
+        .doc("university-of-warwick")
+        .collection("events")
+        .where("society.ref", whereIn: societyRefs)
+        .snapshots();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
     DocumentReference userRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${widget.user.id}");
-    print("kkk");
-    print(societyRefs);
+
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection("universities")
-          .doc("university-of-warwick")
-          .collection("events")
-          .where("society.ref", whereIn: societyRefs)
-          .snapshots(),
+      stream: eventStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           print(snapshot.error);

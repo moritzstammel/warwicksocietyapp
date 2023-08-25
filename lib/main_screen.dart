@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
-import 'package:warwicksocietyapp/login_screen.dart';
+import 'package:warwicksocietyapp/authentication/login_screen.dart';
 import 'package:warwicksocietyapp/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
@@ -18,28 +18,21 @@ class _MainScreenState extends State<MainScreen> {
   PageController _pageController = PageController(initialPage: 0);
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: IndexedStack(
+        index: _currentIndex,
         children: [
-
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              children: [
-                HomeScreen(),
-                SpotlightOverviewScreen(),
-                RewardsScreen(),
-                ProfileScreen(),
-                // Add more EventListPages here
-              ],
-            ),
-          ),
+          HomeScreen(),
+          SpotlightOverviewScreen(),
+          RewardsScreen(),
+          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -49,11 +42,6 @@ class _MainScreenState extends State<MainScreen> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
-            _pageController.animateToPage(
-              index,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
           });
         },
         items: [
@@ -77,28 +65,6 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 }
 
-class EventListPage extends StatelessWidget {
-  final String eventName;
 
-  EventListPage(this.eventName);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        ListTile(
-          title: Text(eventName, style: TextStyle(color: Colors.black)),
-          // Add action for the event list item here
-        ),
-      ],
-    );
-  }
-}
