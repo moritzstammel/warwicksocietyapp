@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:warwicksocietyapp/home/spotlight_widget.dart';
 import 'package:warwicksocietyapp/models/spotlight.dart';
 import 'package:warwicksocietyapp/models/user.dart';
 import 'package:warwicksocietyapp/society_selection_screen.dart';
