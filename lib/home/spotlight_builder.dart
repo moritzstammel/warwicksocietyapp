@@ -49,7 +49,7 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
   @override
   Widget build(BuildContext context) {
     if(spotlightsFetched){
-      return SpotlightWidget(spotlights: spotlightData);
+      return SpotlightCard(spotlights: spotlightData, editable: false,);
     }
     return FutureBuilder(
       future: _fetchSpotlights(),
