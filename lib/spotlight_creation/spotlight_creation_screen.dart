@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
+import '../models/society_info.dart';
 import '../models/spotlight.dart';
 
 class SpotlightCreationScreen extends StatefulWidget {
@@ -149,7 +150,11 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                       spotlights: [Spotlight(
                         title: title == "" ? "Example \nAnnouncement" : title,
                         text: "",
-                        societyRef: FirebaseFirestore.instance.doc("universities/university-of-warwick"),
+                        society: SocietyInfo(
+                            name: "Warwick Piano Society",
+                            logoUrl: "test.de",
+                            ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
+                        ),
                         image: _selectedImagePath != null
                             ? Image.file(File(_selectedImagePath!),).image
                             : AssetImage("assets/spotlights_background_image.jpg"),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_creation_screen.dart';
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
+import '../models/society_info.dart';
 import '../models/spotlight.dart';
 class SpotlightOverviewScreen extends StatelessWidget {
   void navigateToSpotlightCreation(BuildContext context) {
@@ -103,7 +104,11 @@ class SpotlightOverviewScreen extends StatelessWidget {
                 Spotlight(
                 title: 'Piano\nNewsletter',
                 text: 'Spotlight text goes here.',
-                societyRef: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED"),
+                society: SocietyInfo(
+                    name: "Warwick Piano Society",
+                    logoUrl: "test.de",
+                    ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
+                ),
                 image: AssetImage("assets/spotlights_background_image.jpg"),
               ),
               ],

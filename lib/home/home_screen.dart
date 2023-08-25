@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/home/custom_search_bar.dart';
 import 'package:warwicksocietyapp/home/spotlight_builder.dart';
 import 'package:warwicksocietyapp/home/top_app_bar.dart';
-
+import '../models/user.dart';
 import '../models/society_info.dart';
 import '../models/spotlight.dart';
 import '../models/event.dart';
@@ -22,69 +22,90 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          TopAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Add the search bar
-                  CustomSearchBar(),
-                  spotlightTestData(),
-                  SizedBox(height: 20), // Space between sections
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'YOUR EVENTS',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.bold,
-                          ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("users").where("email",isEqualTo: FirebaseAuth.instance.currentUser!.email!).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+
+          final user = FirestoreUser.fromJson(snapshot.data!.docs[0].data() as Map<String, dynamic>);
+
+          print(user.followedSocieties[0].name);
+          return Column(
+            children: [
+              TopAppBar(user: user),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Add the search bar
+                      CustomSearchBar(),
+                      SpotlightBuilder(user: user),
+                      SizedBox(height: 20), // Space between sections
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'YOUR EVENTS',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            EventCard(
+                              event: testEvent1(),
+                            ),
+                            EventCard(
+                              event: testEvent2(),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              'RECOMMENDED FOR YOU',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            EventCard(
+                              event: testEvent3(),
+                              showRegistered: false,
+                            ),
+                            EventCard(
+                              event: testEvent4(),
+                              showRegistered: false,
+                            ),
+                            EventCard(
+                              event: testEvent5(),
+                              showRegistered: false,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 10),
-                        EventCard(
-                          event: testEvent1(),
-                        ),
-                        EventCard(
-                          event: testEvent2(),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          'RECOMMENDED FOR YOU',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        EventCard(
-                          event: testEvent3(),
-                          showRegistered: false,
-                        ),
-                        EventCard(
-                          event: testEvent4(),
-                          showRegistered: false,
-                        ),
-                        EventCard(
-                          event: testEvent5(),
-                          showRegistered: false,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        }
       ),
     );
   }
@@ -178,27 +199,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   Widget spotlightTestData(){
-    return Container(
-      width: double.infinity,
-      child: SpotlightCard(
-        spotlights: [
-          Spotlight(
-            title: 'Piano\nNewsletter',
-            text: 'Spotlight text goes here.',
-            societyRef: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED"),
-            image: AssetImage("assets/spotlights_background_image.jpg"),
-          ),
-          Spotlight(
-            title: 'Warwick Uni\nReport',
-            text: 'Spotlight text goes here.',
-            societyRef: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED"),
-            image: AssetImage("assets/dresden.jpg"),
-          ),
+    return StreamBuilder<Object>(
+      stream: null,
+      builder: (context, snapshot) {
+        return Container(
+          width: double.infinity,
+          child: SpotlightCard(
+            spotlights: [
+              Spotlight(
+                title: 'Piano\nNewsletter',
+                text: 'Spotlight text goes here.',
+                image: AssetImage("assets/spotlights_background_image.jpg"),
+                society: SocietyInfo(
+                  name: "Warwick Piano Society",
+                  logoUrl: "test.de",
+                  ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
+                ),
+              ),
+              Spotlight(
+                title: 'Warwick Uni\nReport',
+                text: 'Spotlight text goes here.',
+                society: SocietyInfo(
+                    name: "Warwick Piano Society",
+                    logoUrl: "test.de",
+                    ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
+                ),
+                image: AssetImage("assets/dresden.jpg"),
+              ),
 
 
-        ],
-        editable: false,
-      ),
+            ],
+            editable: false,
+          ),
+        );
+      }
     );
   }
 

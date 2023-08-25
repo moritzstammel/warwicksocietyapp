@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import '../models/society_info.dart';
 import '../models/spotlight.dart';
 
 class SpotlightCard extends StatefulWidget {
@@ -20,6 +22,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
   @override
   void initState() {
     super.initState();
+    if(widget.spotlights.length < 2) return;
     _timer = Timer.periodic(Duration(seconds: 10), (timer) {
       setState(() {
         _currentIndex = (_currentIndex + 1) % widget.spotlights.length;
@@ -29,111 +32,127 @@ class _SpotlightCardState extends State<SpotlightCard> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    if(widget.spotlights.length > 1) _timer.cancel();
+    
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = (_currentIndex + 1) % widget.spotlights.length;
-        });
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        padding: EdgeInsets.only(right: 15,top: 15,left: 15),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          image: DecorationImage(
-            image: widget.spotlights[_currentIndex].image,
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5),
-              BlendMode.darken,
-            ),
-          ),
-        ),
-        height: 150,
-        child: Stack(
-          children: [
-            if (widget.editable) Positioned(
-              top: 5,
-              right: 5,
-              child: GestureDetector(
-                onTap: () {
-                  // Handle edit button press
-                },
-                child: Icon(
-                  Icons.edit,
-                  color: Colors.white,
-                  size: 16,
-                ),
+    if (widget.spotlights.isEmpty){
+      widget.spotlights.add(Spotlight(title: "Freshers\nEvents", text: "cool Text",  society: SocietyInfo(
+          name: "Warwick Piano Society",
+          logoUrl: "test.de",
+          ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
+      ), image: NetworkImage("https://warwick.ac.uk/about/campus/oculus-3-2.jpg")));
+    }
+    
+    
+    
+    return Container(
+      width: double.infinity,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            if(widget.spotlights.length>1) {
+              _currentIndex = (_currentIndex + 1) % widget.spotlights.length;
+            }
+          });
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: EdgeInsets.only(right: 15,top: 15,left: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            image: DecorationImage(
+              image: widget.spotlights[_currentIndex].image,
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.5),
+                BlendMode.darken,
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.spotlights[_currentIndex].title,
-                  style: TextStyle(
+          ),
+          height: 150,
+          child: Stack(
+            children: [
+              if (widget.editable) Positioned(
+                top: 5,
+                right: 5,
+                child: GestureDetector(
+                  onTap: () {
+                    // Handle edit button press
+                  },
+                  child: Icon(
+                    Icons.edit,
                     color: Colors.white,
-                    fontSize: 24,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.bold,
+                    size: 16,
                   ),
                 ),
-                Spacer(),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle more info button press
-                    },
-                    child: Text(
-                      'More Info',
-                      style: TextStyle(color: Colors.black,fontFamily: 'Inter'),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.spotlights[_currentIndex].title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.bold,
                     ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      onPrimary: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                  ),
+                  Spacer(),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle more info button press
+                      },
+                      child: Text(
+                        'More Info',
+                        style: TextStyle(color: Colors.black,fontFamily: 'Inter'),
                       ),
-                      minimumSize: Size(100, 33),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        minimumSize: Size(100, 33),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            // Paging Indicator Dots (Hide if only one spotlight)
-            if (widget.spotlights.length > 1)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      widget.spotlights.length,
-                          (index) => Container(
-                        margin: EdgeInsets.symmetric(horizontal: 4),
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentIndex == index
-                              ? Colors.white
-                              : Colors.white.withOpacity(0.5),
+              // Paging Indicator Dots (Hide if only one spotlight)
+              if (widget.spotlights.length > 1)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        widget.spotlights.length,
+                            (index) => Container(
+                          margin: EdgeInsets.symmetric(horizontal: 4),
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentIndex == index
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
