@@ -133,7 +133,6 @@ class _SelectEmailScreenState extends State<SelectEmailScreen> {
           // Add additional padding to create space between button and keyboard
           padding: EdgeInsets.only(bottom: 10,left: 20,right: 20),
           child: Container(
-            width: 100,
             child: ElevatedButton(
               onPressed: () async {
                 _validateEmail();

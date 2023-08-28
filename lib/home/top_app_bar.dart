@@ -1,11 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/chats/chat_overview_screen.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 class TopAppBar extends StatelessWidget {
   final FirestoreUser user;
 
   const TopAppBar({Key? key, required this.user}) : super(key: key);
+
+  PageRouteBuilder _customPageRouteBuilder(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0); // Starting offset of the incoming screen
+        const end = Offset.zero; // Ending offset of the incoming screen
+        const curve = Curves.easeInOut; // Transition curve
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +53,10 @@ class TopAppBar extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.chat, color: Colors.black),
                 onPressed: () {
-                  // Add your action for the notification icon here
+                  Navigator.push(
+                    context,
+                    _customPageRouteBuilder(ChatOverviewScreen(user: user,)),
+                  );
                 },
               ),
             ],
