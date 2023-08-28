@@ -53,9 +53,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         hoverColor: Colors.grey,
-        indicatorColor: Colors.grey,
-        primarySwatch: customGrey
-
+        indicatorColor: Colors.grey, colorScheme: ColorScheme.fromSwatch(primarySwatch: customGrey)
       ),
       home: StreamBuilder(
         stream:FirebaseAuth.instance.userChanges(),

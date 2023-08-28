@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/chat.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
+import 'chat_opened_screen.dart';
+
 class ChatCard extends StatelessWidget {
   final FirestoreUser user;
   final Chat chat;
@@ -47,61 +49,70 @@ class ChatCard extends StatelessWidget {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(
-                image: NetworkImage(chat.societyInfo.logoUrl),
-                fit: BoxFit.cover,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatOpenedScreen(chatId: chat.id, user: user),
+          ),
+        );
+      },
+      child: Container(
+        height: 80,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Row(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: NetworkImage(chat.societyInfo.logoUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  chat.eventInfo.title,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 18,
-                    color: Colors.black,
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    chat.eventInfo.title,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    color: Color(0xFF777777),
+                  SizedBox(height: 4),
+                  Text(
+                    "${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}",
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      color: Color(0xFF777777),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(width: 8),
-          Text(
-            formatTime(chat.timeOflastMessage),
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 12,
-              color: Colors.black,
+            SizedBox(width: 8),
+            Text(
+              formatTime(chat.timeOflastMessage),
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 12,
+                color: Colors.black,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'event_info.dart';
 import 'message.dart';
 
 class Chat {
+  final String id;
   final EventInfo eventInfo;
   final List<Message> messages;
   final List<UserInfo> users;
@@ -11,10 +12,10 @@ class Chat {
   final DateTime timeOflastMessage;
 
 
-  Chat({required this.eventInfo,required this.messages,required this.users,required this.societyInfo,
+  Chat({required this.id, required this.eventInfo,required this.messages,required this.users,required this.societyInfo,
       required this.timeOflastMessage});
 
-  factory Chat.fromJson(Map<String, dynamic> json) {
+  factory Chat.fromJson(Map<String, dynamic> json, String id) {
 
     List<Message> messageList = (json["messages"] as List)
         .map((messageJson) => Message.fromJson(messageJson))
@@ -27,6 +28,7 @@ class Chat {
 
 
     return Chat(
+        id: id,
         eventInfo: EventInfo.fromJson(json["event"]),
         messages: messageList,
         users: userList,

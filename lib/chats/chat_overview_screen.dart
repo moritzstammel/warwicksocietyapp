@@ -67,8 +67,9 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
             itemCount: chatDocs.length,
             itemBuilder: (context, index) {
               var chatData = chatDocs[index].data() as Map<String, dynamic>;
+              var id = chatDocs[index].id;
               // Create a Chat instance using factory method
-              var chat = Chat.fromJson(chatData);
+              var chat = Chat.fromJson(chatData,id);
 
               // Create a ChatCard widget with chat data
               return ChatCard(
