@@ -114,7 +114,7 @@ class ChatCard extends StatelessWidget {
             ),
             SizedBox(width: 8),
             Text(
-              chat.timeOflastMessage == null ? "" : formatTime(chat.timeOflastMessage!),
+              chat.timeOfLastMessage == null ? "" : formatTime(chat.timeOfLastMessage!),
               style: TextStyle(
                 fontFamily: 'Inter',
                 fontSize: 12,

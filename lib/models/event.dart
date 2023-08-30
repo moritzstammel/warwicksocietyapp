@@ -12,7 +12,7 @@ class Event {
   final int points;
   final SocietyInfo societyInfo;
   final List<String> images;
-  final List<DocumentReference> registeredUsers;
+  final Map<String,bool> registeredUsers;
 
   Event(
       {required this.id,required this.title, required this.description, required this.location, required this.startTime, required this.endTime,
@@ -30,7 +30,8 @@ class Event {
         points: json["points"],
         societyInfo: SocietyInfo.fromJson(json["society"]),
         images: json["images"].cast<String>(),
-        registeredUsers: json["registered_users"].cast<DocumentReference>());
+        registeredUsers: Map<String, bool>.from( json["registered_users"])
+    );
   }
 
   Map<String, dynamic> toJson() {

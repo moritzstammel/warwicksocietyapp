@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   final String email;
@@ -35,20 +36,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
     }
   }
-  void _closeScreen(){
-    Navigator.pop(context);
+  void _navigateToSocietySelection(DocumentReference userRef){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SocietySelectionScreen(userRef: userRef),
+    ));
   }
 
-  Future<void> _createFirebaseUser(String email)async {
+  Future<DocumentReference> _createFirebaseUser(String email)async {
     final CollectionReference userRef = FirebaseFirestore.instance.collection(
         '/universities/university-of-warwick/users');
-    await userRef.add({
+
+    String username = email.split('@')[0];
+
+    return await userRef.add({
       "email": email,
       "followed_societies": [],
-      "events_signed_up": [],
-      "events_attended": [],
       "points": 0,
-      "highlights": []
+      "username" :username,
+      "image_url" : "https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/default_profile_image.png?alt=media"
     });
   }
 
@@ -104,12 +110,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       password: password,
                     );
 
-                    await _createFirebaseUser(email);
+                    DocumentReference userRef = await _createFirebaseUser(email);
 
                     final user = _auth.currentUser;
                     await user!.sendEmailVerification();
 
-                    _closeScreen();
+                    _navigateToSocietySelection(userRef);
                 }
                 catch (e) {
                   print("Error signing up: $e");

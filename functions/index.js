@@ -93,7 +93,50 @@ exports.updateSpotlightsOnSocietyUpdate = functions.firestore
   });
 
 
+exports.updateChatUserIdsOnEventUpdate = functions.firestore
+  .document('/universities/university-of-warwick/events/{eventId}')
+  .onUpdate(async (change, context) => {
+    const updatedEventData = change.after.data();
+    const previousEventData = change.before.data();
 
+    const eventId = context.params.eventId;
+
+    const registeredUsers = updatedEventData.registered_users;
+    const previousRegisteredUsers = previousEventData.registered_users;
+
+    const userDiff = getMapDifference(registeredUsers, previousRegisteredUsers);
+
+    if (Object.keys(userDiff).length === 0) {
+      return null; // No change in registered users
+    }
+
+    const chatDocRef = firestore.doc(`/universities/university-of-warwick/chats/${eventId}`);
+
+    const chatDocSnapshot = await chatDocRef.get();
+    if (!chatDocSnapshot.exists) {
+      return null; // Chat document doesn't exist
+    }
+
+    const chatDocData = chatDocSnapshot.data();
+    const existingUserIds = chatDocData.user_ids || {};
+
+    const newUserIds = { ...existingUserIds, ...userDiff };
+
+    return chatDocRef.update({ user_ids: newUserIds });
+  });
+
+// Function to calculate the difference between two maps
+function getMapDifference(newMap, oldMap) {
+  const difference = {};
+
+  for (const key in newMap) {
+    if (!oldMap.hasOwnProperty(key) || oldMap[key] !== newMap[key]) {
+      difference[key] = newMap[key];
+    }
+  }
+
+  return difference;
+}
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started

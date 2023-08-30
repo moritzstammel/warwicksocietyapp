@@ -1,116 +1,157 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:warwicksocietyapp/models/society_info.dart';
 
-class Society {
-  final String name;
-  final String logoUrl;
-  bool isSelected;
-
-  Society({required this.name, required this.logoUrl, this.isSelected = false});
-}
+import '../models/society.dart';
 
 class SocietySelectionScreen extends StatefulWidget {
+  final DocumentReference userRef;
+  SocietySelectionScreen({required this.userRef});
+
   @override
   _SocietySelectionScreenState createState() => _SocietySelectionScreenState();
 }
 
 class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
-  List<Society> societies = [];
-  List<Society> selectedSocieties = []; // To store selected societies
+  List<Society> selectedSocieties = [];
+  List<Society> allSocieties = [];
 
   @override
   void initState() {
     super.initState();
-    _loadSocieties();
+    fetchSocieties();
   }
 
-  Future<void> _loadSocieties() async {
+  Future<void> fetchSocieties() async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('universities')
         .doc('university-of-warwick')
         .collection('societies')
         .get();
 
-    List<Society> loadedSocieties = snapshot.docs.map((doc) {
-      return Society(
-        name: doc['name'],
-        logoUrl: doc['logo'],
-      );
-    }).toList();
-
     setState(() {
-      societies = loadedSocieties;
+      allSocieties =
+          snapshot.docs.map((doc) => Society.fromJson(doc.data() as Map<String, dynamic>, doc.id)).toList();
     });
   }
 
-  void _toggleSocietySelection(int index) {
+  void toggleSociety(Society society) {
     setState(() {
-      societies[index].isSelected = !societies[index].isSelected;
-      if (societies[index].isSelected) {
-        selectedSocieties.add(societies[index]);
+      if (selectedSocieties.contains(society)) {
+        selectedSocieties.remove(society);
       } else {
-        selectedSocieties.remove(societies[index]);
+        selectedSocieties.add(society);
       }
     });
-  }
-
-  void _printSelectedSocieties() {
-    for (Society society in selectedSocieties) {
-      print(society.name);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Society Selection"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
+      backgroundColor: Colors.white,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextField(
-            decoration: InputDecoration(
-              labelText: "Search Society",
-              prefixIcon: Icon(Icons.search),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Select the Societies you are interested in',
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: 'Inter',
+                color: Colors.black,
+              ),
             ),
-            onChanged: (value) {
-              // Implement search logic here
-            },
           ),
-          SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: societies.length,
+              itemCount: allSocieties.length,
               itemBuilder: (context, index) {
-                Society society = societies[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    onTap: () {
-                      _toggleSocietySelection(index);
-                    },
-                    leading: Image.network(
-                      society.logoUrl,
-                      fit: BoxFit.fitHeight,
+                Society society = allSocieties[index];
+                bool isSelected = selectedSocieties.contains(society);
+
+                return GestureDetector(
+                  onTap: () {
+                    toggleSociety(society);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isSelected ? Colors.black : Colors.transparent,
+                        width: 2,
+                      ),
                     ),
-                    title: Text(society.name),
-                    trailing: society.isSelected
-                        ? Icon(Icons.check_box)
-                        : Icon(Icons.check_box_outline_blank),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            shape: BoxShape.rectangle,
+                            image: DecorationImage(
+                              image: NetworkImage(society.logoUrl),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          society.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Inter',
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              _printSelectedSocieties();
-            },
-            child: Text("Continue"),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                _followSocieties();
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                minimumSize: Size(350, 50),
+                maximumSize: Size(350, 50),
+              ),
+              child: Text(
+                'Continue',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'Inter',
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+  Future<void> _followSocieties() async{
+    List<SocietyInfo> followedSocieties = selectedSocieties.map((society) => society.toSocietyInfo()).toList();
+
+    widget.userRef.update({
+      "followed_societies" : followedSocieties.map((e) => e.toJson()).toList()
+    });
   }
 }

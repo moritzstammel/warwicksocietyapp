@@ -25,7 +25,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   void checkRegistrationStatus() {
     setState(() {
       userIsRegistered =
-          widget.event.registeredUsers.map((e) => e.id).contains(widget.user.id);
+          widget.event.registeredUsers.containsKey(widget.user.id) &&  widget.event.registeredUsers[widget.user.id]==true;
     });
   }
 
@@ -53,27 +53,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                if (userIsRegistered) {
-                  // Perform sign out action
-                  FirebaseFirestore.instance
-                      .doc("universities/university-of-warwick/events/${widget.event.id}")
-                      .update({
-                    'registered_users': FieldValue.arrayRemove([
-                      FirebaseFirestore.instance
-                          .doc("universities/university-of-warwick/users/${widget.user.id}")
-                    ]),
-                  });
-                } else {
-                  // Perform sign up action
-                  FirebaseFirestore.instance
-                      .doc("universities/university-of-warwick/events/${widget.event.id}")
-                      .update({
-                    'registered_users': FieldValue.arrayUnion([
-                      FirebaseFirestore.instance
-                          .doc("universities/university-of-warwick/users/${widget.user.id}")
-                    ]),
-                  });
-                }
+
+                FirebaseFirestore.instance
+                    .doc("universities/university-of-warwick/events/${widget.event.id}")
+                    .update({
+                  'registered_users.${widget.user.id}': !userIsRegistered
+                });
+
                 toggleRegistration();
               },
               style: ElevatedButton.styleFrom(

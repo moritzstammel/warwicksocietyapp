@@ -23,6 +23,7 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
     chatStream = FirebaseFirestore.instance.collection("universities")
         .doc("university-of-warwick")
         .collection("chats")
+        .where("user_ids.${widget.user.id}",isEqualTo: true)
 
         .snapshots();
   }
@@ -49,6 +50,7 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
         stream: chatStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            print(snapshot.error);
             return Center(
               child: Text("Error: ${snapshot.error}"),
             );
@@ -60,16 +62,23 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
             );
           }
 
-          List<QueryDocumentSnapshot> chatDocs = snapshot.data!.docs;
+          List<Chat> chats = snapshot.data!.docs.map((doc) => Chat.fromJson(doc.data() as Map<String,dynamic>,doc.id)).toList();
+
+          chats.sort((a, b) {
+            if (a.timeOfLastMessage == null) {
+              return 1; // Move items with null timeOfLastMessage to the end
+            } else if (b.timeOfLastMessage == null) {
+              return -1;
+            } else {
+              return b.timeOfLastMessage!.compareTo(a.timeOfLastMessage!);
+            }
+          });
 
           return ListView.builder(
             physics: BouncingScrollPhysics(),
-            itemCount: chatDocs.length,
+            itemCount: chats.length,
             itemBuilder: (context, index) {
-              var chatData = chatDocs[index].data() as Map<String, dynamic>;
-              var id = chatDocs[index].id;
-              // Create a Chat instance using factory method
-              var chat = Chat.fromJson(chatData,id);
+              var chat = chats[index];
 
               // Create a ChatCard widget with chat data
               return ChatCard(

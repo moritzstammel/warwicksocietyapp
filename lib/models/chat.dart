@@ -9,11 +9,11 @@ class Chat {
   final List<Message> messages;
   final List<UserInfo> users;
   final SocietyInfo societyInfo;
-  final DateTime? timeOflastMessage;
+  final DateTime? timeOfLastMessage;
 
 
   Chat({required this.id, required this.eventInfo,required this.messages,required this.users,required this.societyInfo,
-      required this.timeOflastMessage});
+      required this.timeOfLastMessage});
 
   factory Chat.fromJson(Map<String, dynamic> json, String id) {
 
@@ -33,7 +33,7 @@ class Chat {
         messages: messageList,
         users: userList,
         societyInfo: SocietyInfo.fromJson(json["society"]),
-        timeOflastMessage: (json["time_of_last_message"] != null) ? json["time_of_last_message"].toDate() : null);
+        timeOfLastMessage: (json["time_of_last_message"] != null) ? json["time_of_last_message"].toDate() : null);
   }
 
 

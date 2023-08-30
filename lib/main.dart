@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
 
 
 
-  final MaterialColor customGrey = MaterialColor(
+  final MaterialColor customGrey = const MaterialColor(
     0xFF424242, // Replace with your desired hex color code
     <int, Color>{
       50: Color(0xFFE0E0E0),
@@ -73,6 +73,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.data!.emailVerified){
               return MainScreen();
             }
+
             return VerificationScreen();
 
           }

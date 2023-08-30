@@ -1,5 +1,4 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
@@ -19,4 +18,6 @@ class Spotlight {
       society: SocietyInfo.fromJson(json["society"]),
     );
   }
+
+
 }

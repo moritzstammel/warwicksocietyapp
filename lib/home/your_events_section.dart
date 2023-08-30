@@ -28,7 +28,7 @@ class _YourEventsSectionState extends State<YourEventsSection> {
         .collection("universities")
         .doc("university-of-warwick")
         .collection("events")
-        .where('registered_users',arrayContains:userRef)
+        .where('registered_users.${userRef.id}',isEqualTo: true)
         .snapshots();
 
 
@@ -84,63 +84,5 @@ class _YourEventsSectionState extends State<YourEventsSection> {
     );
   }
 
-
-
-
-
-  Event testEvent3(){
-    return Event(
-      id: "test",
-      title: 'Chem Cafe',
-      description: 'Description for Event 1',
-      location: 'R.021',
-      startTime: DateTime.now().add(Duration(days:1,hours: 1)),
-      endTime: DateTime.now().add(Duration(days:1,hours: 2)),
-      points: 0,
-      societyInfo: SocietyInfo(
-          name: 'Warwick Student Cinema',
-          logoUrl: 'https://www.warwicksu.com/asset/Organisation/4097/Asset%2033.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
-          ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
-      ),
-      images: [],
-      registeredUsers: [],
-    );
-  }
-  Event testEvent4(){
-    return Event(
-      id: "test",
-      title: 'CV Workshop',
-      description: 'Description for Event 1',
-      location: 'S.021',
-      startTime: DateTime.now().add(Duration(days:3,hours: 5)),
-      endTime: DateTime.now().add(Duration(days:3,hours: 7)),
-      points: 200,
-      societyInfo: SocietyInfo(
-          name: 'Warwick Student Cinema',
-          logoUrl: 'https://www.warwicksu.com/asset/Organisation/59901/logo_2.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
-          ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
-      ),
-      images: [],
-      registeredUsers: [],
-    );
-  }
-  Event testEvent5(){
-    return Event(
-      id: "test",
-      title: 'Ekimetrics Talk',
-      description: 'Description for Event 1',
-      location: 'FAB3.14',
-      startTime: DateTime.now().add(Duration(days:5,hours: 5)),
-      endTime: DateTime.now().add(Duration(days:5,hours: 7)),
-      points: 0,
-      societyInfo: SocietyInfo(
-          name: 'Warwick Student Cinema',
-          logoUrl: 'https://www.warwicksu.com/asset/Organisation/59230/icon_gr.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill',
-          ref: FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/Mty9woh57s7t4a9lWWij")
-      ),
-      images: [],
-      registeredUsers: [],
-    );
-  }
 
 }
