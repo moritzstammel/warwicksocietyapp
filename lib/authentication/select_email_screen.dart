@@ -14,7 +14,9 @@ class _SelectEmailScreenState extends State<SelectEmailScreen> {
 
   void _validateEmail() {
     String email = _emailController.text.trim().toLowerCase();
-    if (email.endsWith("warwick.ac.uk") && email.contains("@")) {
+    if (
+    //email.endsWith("warwick.ac.uk")&&
+    email.contains("@")) {
       setState(() {
         _isValid = true;
       });

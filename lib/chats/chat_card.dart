@@ -13,6 +13,16 @@ class ChatCard extends StatelessWidget {
   ChatCard({required this.user,required this.chat});
 
 
+
+  String formatContent(String content) {
+    const lengthLimit = 50;
+    if (content.length > lengthLimit) {
+      return '${content.substring(0, lengthLimit).trim()}...';
+    } else {
+      return content;
+    }
+  }
+
   String formatTime(DateTime time) {
     DateTime now = DateTime.now();
     Duration difference = now.difference(time);
@@ -92,7 +102,7 @@ class ChatCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    "${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}",
+                    formatContent("${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}"),
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 14,

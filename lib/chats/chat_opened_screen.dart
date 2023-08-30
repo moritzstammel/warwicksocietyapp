@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:warwicksocietyapp/models/chat.dart';
-import 'package:warwicksocietyapp/models/firestore_user.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/chat.dart';
+import '../models/firestore_user.dart';
 import '../models/message.dart';
 
 class ChatOpenedScreen extends StatefulWidget {
@@ -19,15 +18,59 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
   final TextEditingController _messageController = TextEditingController();
   late Stream<DocumentSnapshot> chatStream;
 
+  static const Map<int, String> _weekdayShortMap = {
+    1: 'Mon',
+    2: 'Tue',
+    3: 'Wed',
+    4: 'Thu',
+    5: 'Fri',
+    6: 'Sat',
+    7: 'Sun',
+  };
+
   @override
   void initState() {
     super.initState();
 
-    chatStream = FirebaseFirestore.instance.collection("universities")
+    chatStream = FirebaseFirestore.instance
+        .collection("universities")
         .doc("university-of-warwick")
         .collection("chats")
         .doc(widget.chatId)
         .snapshots();
+  }
+
+  int daysBetween(DateTime from, DateTime to) {
+    from = DateTime(from.year, from.month, from.day);
+    to = DateTime(to.year, to.month, to.day);
+    return (to.difference(from).inHours / 24).round();
+  }
+
+  String formatTime(DateTime dateTime) {
+    DateTime now = DateTime.now();
+    int difference = daysBetween(dateTime, now);
+
+
+    // Same day but different times
+    String hour = dateTime.hour.toString().padLeft(2, '0');
+    String minute = dateTime.minute.toString().padLeft(2, '0');
+    //String period = dateTime.hour < 12 ? 'AM' : 'PM';
+    String time = '$hour:$minute';
+
+    if (difference==0)  return time;
+    if (difference <= 1) return 'yesterday, $time';
+    if (difference <= 6) return '${difference} days ago, $time';
+    if (difference <= 28) {
+      int weeks = (difference / 7).ceil();
+      return '$weeks week${weeks > 1 ? 's' : ''} ago, $time';}
+    if (difference <= 365) {
+      int differenceInMonths = (difference / 12).round();
+      return '$differenceInMonths month${differenceInMonths > 1 ? 's' : ''} ago, $time';}
+
+    int differenceInYears = (difference / 365).round();
+    return '$differenceInYears year${differenceInYears > 1 ? 's' : ''} ago, $time';
+
+
   }
 
   @override
@@ -46,7 +89,8 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
             child: CircularProgressIndicator(),
           );
         }
-        final chat = Chat.fromJson(snapshot.data!.data() as Map<String,dynamic>, widget.chatId);
+        final chat = Chat.fromJson(
+            snapshot.data!.data() as Map<String, dynamic>, widget.chatId);
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -112,34 +156,62 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
                   itemCount: chat.messages.length,
                   itemBuilder: (context, index) {
                     Message message = chat.messages[index];
-                    bool isUserMessage = message.author.ref.id == widget.user.id;
+                    bool isUserMessage =
+                        message.author.ref.id == widget.user.id;
 
-                    return Row(
-                      mainAxisAlignment:
-                      isUserMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                    return Column(
+                      crossAxisAlignment: isUserMessage
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
                       children: [
-                        if (!isUserMessage)
-                          CircleAvatar(
-                            radius: 18,
-                            backgroundImage: NetworkImage(message.author.imageUrl),
-                            backgroundColor: Colors.white,
-                          ),
+
                         Container(
-                        constraints: BoxConstraints( maxWidth: 250),
-                          margin: EdgeInsets.symmetric(
-                              vertical: 8, horizontal: isUserMessage ? 16 : 8),
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isUserMessage ? Colors.black : Color(0xFFF7F7F7),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                          margin : EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
-                            message.content,
+                            formatTime(message.createdAt),
                             style: TextStyle(
                               fontFamily: 'Inter',
-                              fontSize: 16,
-                              color: isUserMessage ? Colors.white : Colors.black,
+                              fontSize: 12,
+                              color:
+                              isUserMessage ? Colors.black : Colors.black,
                             ),
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Container(
+                          margin: EdgeInsets.all(8),
+                          padding: EdgeInsets.all(8),
+                          constraints: BoxConstraints(
+                            maxWidth: 250,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isUserMessage
+                                ? Colors.black
+                                : Color(0xFFF7F7F7),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: isUserMessage
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
+                            children: [
+                              if (!isUserMessage)
+                                CircleAvatar(
+                                  radius: 18,
+                                  backgroundImage:
+                                  NetworkImage(message.author.imageUrl),
+                                  backgroundColor: Colors.white,
+                                ),
+                              Text(
+                                message.content,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 16,
+                                  color:
+                                  isUserMessage ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -163,30 +235,35 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
                       icon: Icon(Icons.send),
                       onPressed: () async {
                         final content = _messageController.text;
-                        if (content.trim() == "") return;
+                        if (content.trim().isEmpty) return;
 
                         Timestamp now = Timestamp.now();
 
-                        final chatRef = FirebaseFirestore.instance.collection('universities')
+                        final chatRef = FirebaseFirestore.instance
+                            .collection('universities')
                             .doc('university-of-warwick')
                             .collection('chats')
                             .doc(chat.id);
 
-                        await chatRef.update(
+                        await chatRef.update({
+                          'messages': FieldValue.arrayUnion([
                             {
-                              'messages': FieldValue.arrayUnion([{
-                                'author' : {
-                                  'name' : widget.user.username,
-                                  'image_url' : widget.user.imageUrl,
-                                  'ref': FirebaseFirestore.instance.doc("/universities/university-of-warwick/users/${widget.user.id}")},
-                                'content' : content,
-                                'is_deleted' : false,
-                                'created_at' : now
-                              }]),
-                              'last_time_message_sent' : now
+                              'author': {
+                                'name': widget.user.username,
+                                'image_url': widget.user.imageUrl,
+                                'ref': FirebaseFirestore.instance
+                                    .doc(
+                                    "/universities/university-of-warwick/users/${widget.user.id}")
+                              },
+                              'content': content,
+                              'is_deleted': false,
+                              'created_at': now
+                            }
+                          ]),
+                          'time_of_last_message': now
                         });
 
-
+                        _messageController.clear();
                       },
                     ),
                   ],
@@ -195,7 +272,15 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
             ],
           ),
         );
-      }
+      },
     );
+  }
+}
+
+String formatContent(String content) {
+  if (content.length > 60) {
+    return '${content.substring(0, 60)}...';
+  } else {
+    return content;
   }
 }

@@ -42,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _createFirebaseUser(String email)async {
     final CollectionReference userRef = FirebaseFirestore.instance.collection(
         '/universities/university-of-warwick/users');
-    await userRef.doc(email).set({
+    await userRef.add({
       "email": email,
       "followed_societies": [],
       "events_signed_up": [],
