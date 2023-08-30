@@ -38,8 +38,7 @@ class _YourEventsSectionState extends State<YourEventsSection> {
   Widget build(BuildContext context) {
 
     List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
-    print("kkk");
-    print(societyRefs);
+
     return StreamBuilder<QuerySnapshot>(
         stream: eventStream,
         builder: (context, snapshot) {
@@ -57,7 +56,6 @@ class _YourEventsSectionState extends State<YourEventsSection> {
 
 
           final events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
-          print(events);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

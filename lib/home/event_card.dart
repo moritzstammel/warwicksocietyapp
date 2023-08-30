@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class EventCard extends StatelessWidget {
   final Event event;
   final bool showRegistered;
-  final FirestoreUser user;
+  final FirestoreUser? user;
   final bool isLive = false;
 
 
@@ -50,7 +50,7 @@ class EventCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          _customPageRouteBuilder(EventDetailsScreen(event: event, user: user)),
+          _customPageRouteBuilder(EventDetailsScreen(event: event, user: user!)),
         );
       },
       child: Container(

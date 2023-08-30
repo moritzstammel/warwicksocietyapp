@@ -20,9 +20,6 @@ class Event {
 
 
   factory Event.fromJson(Map<String, dynamic> json,String id) {
-
-
-
     return Event(
         id:id,
         title: json["title"],
@@ -34,5 +31,19 @@ class Event {
         societyInfo: SocietyInfo.fromJson(json["society"]),
         images: json["images"].cast<String>(),
         registeredUsers: json["registered_users"].cast<DocumentReference>());
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "description": description,
+      "location": location,
+      "start_time": startTime,
+      "end_time": endTime,
+      "points": points,
+      "society": societyInfo.toJson(),
+      "images": images,
+      "registered_users": registeredUsers,
+    };
   }
 }

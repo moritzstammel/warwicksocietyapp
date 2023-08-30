@@ -6,6 +6,7 @@ import 'package:warwicksocietyapp/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
 
+import 'event_creation/events_overview_screen.dart';
 import 'home/top_app_bar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -31,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           HomeScreen(),
           SpotlightOverviewScreen(),
-          RewardsScreen(),
+          EventOverviewScreen(),
           ProfileScreen(),
         ],
       ),

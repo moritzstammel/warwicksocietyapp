@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
 import 'package:warwicksocietyapp/authentication/select_email_screen.dart';
 import 'package:warwicksocietyapp/authentication/sign_up_screen.dart';
 import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
+import 'package:warwicksocietyapp/models/society_info.dart';
 import 'package:warwicksocietyapp/verification_screen.dart';
 import 'firebase_options.dart';
 import 'home/home_screen.dart';
@@ -20,7 +23,7 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
+  SocietyAuthentication.instance.societyInfo = SocietyInfo(name: 'ChemSoc', logoUrl: 'https://www.warwicksu.com/asset/Organisation/4097/Asset%2033.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill', ref: FirebaseFirestore.instance.doc('/universities/university-of-warwick/societies/6ZsW3rpJgdV9eC0BsCR6'));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(MyApp()));
 }
@@ -29,6 +32,8 @@ Future main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
+  
+
 
 
   final MaterialColor customGrey = MaterialColor(

@@ -23,7 +23,7 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
     chatStream = FirebaseFirestore.instance.collection("universities")
         .doc("university-of-warwick")
         .collection("chats")
-        .where("user_ids.test",isEqualTo: true)
+
         .snapshots();
   }
 

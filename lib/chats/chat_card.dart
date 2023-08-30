@@ -102,7 +102,7 @@ class ChatCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    formatContent("${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}"),
+                    chat.messages.isNotEmpty ? formatContent("${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}"): "Be the first to write a message",
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 14,
@@ -114,7 +114,7 @@ class ChatCard extends StatelessWidget {
             ),
             SizedBox(width: 8),
             Text(
-              formatTime(chat.timeOflastMessage),
+              chat.timeOflastMessage == null ? "" : formatTime(chat.timeOflastMessage!),
               style: TextStyle(
                 fontFamily: 'Inter',
                 fontSize: 12,
