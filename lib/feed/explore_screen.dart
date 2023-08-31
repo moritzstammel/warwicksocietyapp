@@ -7,13 +7,20 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-
-  bool isSelected = true;
+  final PageController _pageController = PageController();
+  bool onFirstFeed = true;
 
   void toggleFollowing() {
     setState(() {
-      isSelected = !isSelected;
+      onFirstFeed = !onFirstFeed;
     });
+
+    _pageController.animateToPage(
+    onFirstFeed ? 0 : 1,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+
   }
 
   @override
@@ -21,45 +28,30 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          PageView.builder(
-          scrollDirection: Axis.vertical,
-            itemBuilder: (context,index){
-              return Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage('https://www.warwick-castle.com/media/lhoddsjw/courtyard.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-
-                    Container(
-                      height: 300, // Adjust the height of the gradient as needed
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(1), // Adjust the opacity as needed
-                          ],
-                        ),
-                      ),
-                    ),
-
-
-                    // Add more widgets below for displaying content
-                  ],
-                ),
-              );
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index){
+              setState(() {
+                onFirstFeed = index.isEven;
+              });
             },
+            scrollDirection: Axis.horizontal,
+            children: [
+              PageView.builder(
+                  scrollDirection: Axis.vertical,
+                    itemBuilder: (context,index){
+                      return FeedContainer("https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/uni.jpeg?alt=media");
+                    },
+                  ),
+              PageView.builder(
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context,index){
+                  return FeedContainer("https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/feed2.jpeg?alt=media");
+                },
+              )
 
-
-
-                ),
+            ]
+          ),
           FeedSelectionBar(),
 
 
@@ -70,9 +62,40 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
     );
   }
-
+  Widget FeedContainer(String imageUrl){
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(imageUrl),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            height: 300, // Adjust the height of the gradient as needed
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(1), // Adjust the opacity as needed
+                ],
+              ),
+            ),
+          ),
+          // Add more widgets below for displaying content
+        ],
+      ),
+    );
+  }
 
   Widget FeedSelectionBar(){
+    int durationInMilliseconds = 170;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -88,8 +111,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
           child:Stack(
               children: [
                 AnimatedPositioned(
-                  duration: Duration(milliseconds: 100),
-                  left: !isSelected ? 125 : 2,
+                  duration: Duration(milliseconds: durationInMilliseconds),
+                  left: !onFirstFeed ? 125 : 2,
                   top: 2,
 
                   child: Container(
@@ -112,7 +135,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       onTap: toggleFollowing,
                       child: AnimatedContainer(
 
-                        duration: Duration(milliseconds: 100),
+                        duration: Duration(milliseconds: durationInMilliseconds),
 
                         width: 123,
                         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -127,7 +150,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
                               fontFamily: 'Inter',
-                              color: isSelected ? Colors.white : Colors.black,
+                              color: onFirstFeed ? Colors.white : Colors.black,
                             ),
                           ),
                         ),
@@ -144,7 +167,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(100)),
 
                         ),
-                        duration: Duration(milliseconds: 100),
+                        duration: Duration(milliseconds: durationInMilliseconds),
                         child: Center(
                           child: Text(
                             'All Societies',
@@ -152,7 +175,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
                               fontFamily: 'Inter',
-                              color: !isSelected ? Colors.white : Colors.black,
+                              color: !onFirstFeed ? Colors.white : Colors.black,
                             ),
                           ),
                         ),
