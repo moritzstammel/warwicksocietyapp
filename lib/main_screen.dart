@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warwicksocietyapp/explore_screen.dart';
+import 'package:warwicksocietyapp/feed/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
 import 'package:warwicksocietyapp/profile_screen.dart';
@@ -15,7 +15,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   PageController _pageController = PageController(initialPage: 0);
 
   @override
@@ -31,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: [
           HomeScreen(),
-          SpotlightOverviewScreen(),
+          ExploreScreen(),
           EventOverviewScreen(),
           ProfileScreen(),
         ],

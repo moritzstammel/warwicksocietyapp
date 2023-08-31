@@ -52,13 +52,23 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
 
-                FirebaseFirestore.instance
-                    .doc("universities/university-of-warwick/events/${widget.event.id}")
-                    .update({
+                DocumentReference eventRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/events/${widget.event.id}");
+                DocumentReference chatRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/chats/${widget.event.id}");
+
+                Map<String,dynamic> updatedEventUsers = {
                   'registered_users.${widget.user.id}': !userIsRegistered
-                });
+                };
+                Map<String,dynamic> updatedChatUsers = {
+                  'user_ids.${widget.user.id}': !userIsRegistered
+                };
+
+                final batch = FirebaseFirestore.instance.batch();
+                batch.update(eventRef, updatedEventUsers);
+                batch.update(chatRef, updatedChatUsers);
+                await batch.commit();
+
 
                 toggleRegistration();
               },

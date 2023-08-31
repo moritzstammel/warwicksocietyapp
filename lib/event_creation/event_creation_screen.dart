@@ -252,7 +252,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
       "points": 0,
       "society": SocietyAuthentication.instance.societyInfo!.toJson(),
       "images": [],
-      "registered_users": [],
+      "registered_users": {},
     };
 
 
@@ -276,7 +276,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
       "start_time": startTime,
       "end_time": endTime,
       "user_ids": {},
-      "users" : []
+      "users" : {}
     };
 
 
