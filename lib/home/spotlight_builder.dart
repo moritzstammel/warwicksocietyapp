@@ -8,11 +8,12 @@ import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
+import '../authentication/FirestoreAuthentication.dart';
 import '../models/society_info.dart';
 
 class SpotlightBuilder extends StatefulWidget {
-  const SpotlightBuilder({Key? key, required this.user}) : super(key: key);
-  final FirestoreUser user;
+  SpotlightBuilder({Key? key}) : super(key: key);
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
 
   @override
   State<SpotlightBuilder> createState() => _SpotlightBuilderState();

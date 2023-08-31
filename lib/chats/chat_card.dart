@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/chat.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
+import '../authentication/FirestoreAuthentication.dart';
 import 'chat_opened_screen.dart';
 
 class ChatCard extends StatelessWidget {
-  final FirestoreUser user;
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
   final Chat chat;
 
-  ChatCard({required this.user,required this.chat});
+  ChatCard({required this.chat});
 
 
 
@@ -66,7 +67,7 @@ class ChatCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatOpenedScreen(chatId: chat.id, user: user),
+            builder: (context) => ChatOpenedScreen(chatId: chat.id),
           ),
         );
       },

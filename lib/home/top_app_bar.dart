@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_overview_screen.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 class TopAppBar extends StatelessWidget {
-  final FirestoreUser user;
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
 
-  const TopAppBar({Key? key, required this.user}) : super(key: key);
+  TopAppBar({Key? key}) : super(key: key);
 
   PageRouteBuilder _customPageRouteBuilder(Widget page) {
     return PageRouteBuilder(
@@ -55,7 +56,7 @@ class TopAppBar extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    _customPageRouteBuilder(ChatOverviewScreen(user: user,)),
+                    _customPageRouteBuilder(ChatOverviewScreen()),
                   );
                 },
               ),

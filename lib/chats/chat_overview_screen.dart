@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../authentication/FirestoreAuthentication.dart';
 import '../models/firestore_user.dart';
 import 'chat_card.dart';
 import '../models/chat.dart'; // Import the Chat class
 
 class ChatOverviewScreen extends StatefulWidget {
-  final FirestoreUser user;
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
 
-  ChatOverviewScreen({required this.user});
+  ChatOverviewScreen();
 
   @override
   _ChatOverviewScreenState createState() => _ChatOverviewScreenState();
@@ -82,7 +83,6 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
 
               // Create a ChatCard widget with chat data
               return ChatCard(
-                user: widget.user,
                 chat: chat, // Pass the chat instance to ChatCard
               );
             },

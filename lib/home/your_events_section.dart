@@ -3,13 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
+import '../authentication/FirestoreAuthentication.dart';
 import '../models/event.dart';
 import '../models/society_info.dart';
 import 'event_card.dart';
 
 class YourEventsSection extends StatefulWidget {
-  final FirestoreUser user;
-  const YourEventsSection({Key? key, required this.user}) : super(key: key);
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+  YourEventsSection({Key? key}) : super(key: key);
 
 
   @override

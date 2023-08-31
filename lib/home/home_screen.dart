@@ -23,28 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: StreamBuilder<QuerySnapshot>(
-        stream: userStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-
-          final user = FirestoreUser.fromJson(snapshot.data!.docs[0].data() as Map<String, dynamic>,snapshot.data!.docs[0].id);
-
-          print(user.followedSocieties[0].name);
-          return Column(
+      body:
+          Column(
             children: [
-              TopAppBar(user: user),
+              TopAppBar(),
               Expanded(
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
@@ -53,16 +35,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       // Add the search bar
                       CustomSearchBar(),
-                      SpotlightBuilder(user: user),
+                      SpotlightBuilder(),
                       SizedBox(height: 20), // Space between sections
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            YourEventsSection(user: user,),
+                            YourEventsSection(),
                             SizedBox(height: 20),
-                            RecommendedSection(user: user,)
+                            RecommendedSection()
                           ],
                         ),
                       ),
@@ -71,16 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ],
-          );
-        }
-      ),
+          )
+
+
     );
   }
 
-  @override
-  void initState() {
-    userStream = FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("users").where("email",isEqualTo: FirebaseAuth.instance.currentUser!.email!).snapshots();
-  }
 }
 
 

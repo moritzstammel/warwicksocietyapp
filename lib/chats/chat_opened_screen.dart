@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
 import '../models/firestore_user.dart';
 import '../models/message.dart';
 
 class ChatOpenedScreen extends StatefulWidget {
   final String chatId;
-  final FirestoreUser user;
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
 
-  ChatOpenedScreen({required this.chatId, required this.user});
+  ChatOpenedScreen({required this.chatId});
 
   @override
   _ChatOpenedScreenState createState() => _ChatOpenedScreenState();
