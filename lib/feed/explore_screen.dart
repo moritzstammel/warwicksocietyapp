@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/feed/following_feed.dart';
+import 'package:warwicksocietyapp/feed/testholder.dart';
 
 
 class ExploreScreen extends StatefulWidget {
@@ -8,7 +11,9 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   final PageController _pageController = PageController();
+
   bool onFirstFeed = true;
+
 
   void toggleFollowing() {
     setState(() {
@@ -21,32 +26,39 @@ class _ExploreScreenState extends State<ExploreScreen> {
       curve: Curves.easeInOut,
     );
 
+
   }
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Stack(
         children: [
           PageView(
+
             controller: _pageController,
             onPageChanged: (index){
               setState(() {
                 onFirstFeed = index.isEven;
               });
             },
+
             scrollDirection: Axis.horizontal,
             children: [
-              PageView.builder(
-                  scrollDirection: Axis.vertical,
-                    itemBuilder: (context,index){
-                      return FeedContainer("https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/uni.jpeg?alt=media");
-                    },
-                  ),
+
+
+              FollowingFeed(),
               PageView.builder(
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context,index){
-                  return FeedContainer("https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/feed2.jpeg?alt=media");
+                  return FeedContainer("https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/feed2.jpeg?alt=media","test");
                 },
               )
 
@@ -62,35 +74,49 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
     );
   }
-  Widget FeedContainer(String imageUrl){
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
+  Widget FeedContainer(String imageUrl,String title){
+    return Stack(
+      children: [Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(imageUrl),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            height: 300, // Adjust the height of the gradient as needed
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(1), // Adjust the opacity as needed
-                ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+
+            Container(
+              height: 300, // Adjust the height of the gradient as needed
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(1), // Adjust the opacity as needed
+                  ],
+                ),
+
+
               ),
             ),
-          ),
-          // Add more widgets below for displaying content
-        ],
+
+            // Add more widgets below for displaying content
+          ],
+        ),
       ),
-    );
+        Center(child: Container(
+          height: 200,
+          width: 200,
+          color: Colors.white,
+          child: Text(title),
+        ),)
+
+
+      ]);
   }
 
   Widget FeedSelectionBar(){
@@ -111,7 +137,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
           child:Stack(
               children: [
                 AnimatedPositioned(
+
                   duration: Duration(milliseconds: durationInMilliseconds),
+                  curve: Curves.easeOut,
                   left: !onFirstFeed ? 125 : 2,
                   top: 2,
 
