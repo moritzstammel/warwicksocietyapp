@@ -47,4 +47,6 @@ class Event {
       "registered_users": registeredUsers,
     };
   }
+
+
 }

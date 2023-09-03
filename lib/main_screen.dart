@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/feed/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
@@ -8,6 +9,7 @@ import 'package:warwicksocietyapp/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
 
+import 'SocietyProfileScreen.dart';
 import 'authentication/FirestoreAuthentication.dart';
 import 'event_creation/events_overview_screen.dart';
 import 'home/top_app_bar.dart';
@@ -19,7 +21,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   PageController _pageController = PageController(initialPage: 0);
   late Stream<QuerySnapshot> userStream;
 
@@ -39,9 +41,16 @@ class _MainScreenState extends State<MainScreen> {
     _pageController.dispose();
     super.dispose();
   }
+  void refresh(){
+    print("notified");
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bool _isSociety = SocietyAuthentication.instance.isSociety;
+
+
     return StreamBuilder<QuerySnapshot>(
       stream: userStream,
       builder: (context, snapshot) {
@@ -64,10 +73,9 @@ class _MainScreenState extends State<MainScreen> {
           body: IndexedStack(
             index: _currentIndex,
             children: [
-              HomeScreen(),
-              ExploreScreen(),
-              EventOverviewScreen(),
-              ProfileScreen(),
+              _isSociety ? EventOverviewScreen() : HomeScreen(),
+              _isSociety ? SpotlightOverviewScreen() : ExploreScreen(),
+              _isSociety ? SocietyProfileScreen(notifyMainScreen: refresh,) : ProfileScreen(notifyMainScreen: refresh,),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
@@ -87,10 +95,6 @@ class _MainScreenState extends State<MainScreen> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.event),
                 label: 'Events',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.card_giftcard),
-                label: 'Rewards',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),

@@ -23,7 +23,6 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  SocietyAuthentication.instance.societyInfo = SocietyInfo(name: 'ChemSoc', logoUrl: 'https://www.warwicksu.com/asset/Organisation/4097/Asset%2033.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill', ref: FirebaseFirestore.instance.doc('/universities/university-of-warwick/societies/6ZsW3rpJgdV9eC0BsCR6'));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(MyApp()));
 }

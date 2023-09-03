@@ -10,4 +10,6 @@ class SocietyAuthentication {
   static SocietyAuthentication get instance => _instance;
 
   bool get isSociety => societyInfo != null;
+
+  void logOut() => (societyInfo = null);
 }

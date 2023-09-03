@@ -9,4 +9,9 @@ class TestHolder {
 
     return TestHolder(title: json["title"], imageUrl: json["image_url"], order: json["order"]);
   }
+
+  @override
+  String toString() {
+    return title;
+  }
 }

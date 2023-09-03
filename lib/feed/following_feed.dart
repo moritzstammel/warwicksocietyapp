@@ -21,7 +21,11 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
   int currentPage = 0;
 
   Future<void> fetchNewEvents() async{
+    print(events);
+    if (currentPage +1  < events.length) return;
+
     print("Reloading current length :${events.length}");
+
     CollectionReference eventsCollection =
     FirebaseFirestore.instance
         .collection('universities/university-of-warwick/testevents');
@@ -29,45 +33,47 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
     QuerySnapshot result = (lastDocument == null) ?
     await eventsCollection
         .limit(loading)
-        .orderBy("title") // Adjust the limit based on the current page
+        .orderBy("title")
+        // Adjust the limit based on the current page
         .get()
         :
     await eventsCollection
-        .limit(loading)
+
+      .limit(loading)
         .orderBy("title")
         .startAfterDocument(lastDocument!)
         .get();
-    setState(() {
-      lastDocument = result.docs.last;
-      events.addAll(result.docs.map((doc) => TestHolder.fromJson(doc.data() as Map<String,dynamic>)));
-    });
 
+    lastDocument = result.docs.last;
+    events.addAll(result.docs.map((doc) => TestHolder.fromJson(doc.data() as Map<String,dynamic>)));
 
-  }
+    print(events);
 
-  @override
-  void initState() {
-    super.initState();
-    fetchNewEvents();
 
 
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-          controller: _followingController,
-          scrollDirection: Axis.vertical,
+    return FutureBuilder(
+            future: fetchNewEvents(),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if (events.isEmpty) return CircularProgressIndicator();
+              return PageView.builder(
+                controller: _followingController,
+                scrollDirection: Axis.vertical,
 
-          itemBuilder: (context, index) {
-            currentPage = index;
-            final event = events[index];
-            if(events.length == index + 1){
-              fetchNewEvents();}
-            return FeedContainer(event.imageUrl,event.title);
-      },
+                itemBuilder: (context, index) {
+                  currentPage = index;
+                  final event = events[index];
+                  if(events.length == index + 1){
+                    fetchNewEvents();}
+                  return FeedContainer(event.imageUrl,event.title);
+                },
+              );
+
+            },
+
     );
   }
 
