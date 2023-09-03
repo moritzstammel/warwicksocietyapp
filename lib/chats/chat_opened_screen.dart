@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:warwicksocietyapp/home/event_details_screen.dart';
+import 'package:warwicksocietyapp/models/event.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
 import '../models/firestore_user.dart';
@@ -40,6 +42,11 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
         .doc(widget.chatId)
         .snapshots();
   }
+
+  void navigateToEventsDetails(Event event){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => EventDetailsScreen(event: event)));
+  }
+
 
   int daysBetween(DateTime from, DateTime to) {
     from = DateTime(from.year, from.month, from.day);
@@ -144,8 +151,11 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> {
             actions: [
               IconButton(
                 icon: Icon(Icons.info_outline, color: Colors.black),
-                onPressed: () {
-                  // Implement info action
+                onPressed: () async {
+                  DocumentReference eventsRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/events/${chat.id}");
+                  final eventData = await eventsRef.get();
+                  Event event = Event.fromJson(eventData.data() as Map<String,dynamic>, eventData.id);
+                  navigateToEventsDetails(event);
                 },
               ),
             ],

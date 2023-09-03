@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import '../models/event.dart';
 import '../models/firestore_user.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   final Event event;
-  final FirestoreUser user;
 
-  EventDetailsScreen({required this.event, required this.user});
+
+  EventDetailsScreen({required this.event});
 
   @override
   _EventDetailsScreenState createState() => _EventDetailsScreenState();
@@ -15,7 +16,7 @@ class EventDetailsScreen extends StatefulWidget {
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
   bool userIsRegistered = false;
-
+  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
     2: 'Tue',
@@ -34,7 +35,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   void checkRegistrationStatus() {
     setState(() {
-      userIsRegistered = widget.event.registeredUsers.containsKey(widget.user.id) && widget.event.registeredUsers[widget.user.id] == true;
+      userIsRegistered = widget.event.registeredUsers.containsKey(user.id) && widget.event.registeredUsers[user.id] == true;
     });
   }
 
@@ -140,10 +141,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             DocumentReference chatRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/chats/${widget.event.id}");
 
                             Map<String,dynamic> updatedEventUsers = {
-                              'registered_users.${widget.user.id}': !userIsRegistered
+                              'registered_users.${user.id}': !userIsRegistered
                             };
                             Map<String,dynamic> updatedChatUsers = {
-                              'user_ids.${widget.user.id}': !userIsRegistered
+                              'user_ids.${user.id}': !userIsRegistered
                             };
 
                             final batch = FirebaseFirestore.instance.batch();

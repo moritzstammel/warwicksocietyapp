@@ -77,7 +77,6 @@ class _RecommendedSectionState extends State<RecommendedSection> {
             EventCard(
               event: event,
               showRegistered: false,
-              user: widget.user,
             ),
           ],
 

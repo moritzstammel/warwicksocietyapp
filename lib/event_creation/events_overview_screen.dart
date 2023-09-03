@@ -86,7 +86,7 @@ class _EventOverviewScreenState extends State<EventOverviewScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: EventCard(
                     event: event,
-                    showRegistered: false, user: null,
+                    showRegistered: false,
                   ),
                 ),
             ],

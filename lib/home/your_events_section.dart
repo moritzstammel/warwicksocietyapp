@@ -76,7 +76,6 @@ class _YourEventsSectionState extends State<YourEventsSection> {
                 EventCard(
                   event: event,
                   showRegistered: true,
-                  user: widget.user,
                 ),
             ],
 
