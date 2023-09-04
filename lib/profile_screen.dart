@@ -126,6 +126,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Example: Navigator.push(context, MaterialPageRoute(builder: (context) => ManageAccountScreen()));
             },
           ),
+          ListTile(
+            title: Text("Log in as Data Science Soc"),
+            onTap: () {
+              SocietyAuthentication.instance.societyInfo = SocietyInfo(name: 'Warwick Data Science Society', logoUrl: 'https://www.warwicksu.com/asset/Organisation/59230/icon_gr.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill', ref: FirebaseFirestore.instance.doc('/universities/university-of-warwick/societies/T1ZQgaCSkpk5jCfrjad9'));
+              widget.notifyMainScreen();
+
+
+              // Navigate to the manage account page
+              // Example: Navigator.push(context, MaterialPageRoute(builder: (context) => ManageAccountScreen()));
+            },
+          ),
         ],
       ),
     );
