@@ -79,33 +79,50 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
-            selectedItemColor: Colors.black,
+            selectedItemColor: (_currentIndex == 1 ) ? Colors.white : Colors.black,
             unselectedItemColor: Colors.grey,
+            backgroundColor:(_currentIndex == 1 ) ? Colors.black : Colors.white,
             currentIndex: _currentIndex,
+            selectedLabelStyle: const TextStyle(
+              fontSize: 11,
+              fontFamily: "Roboto"
+            ),
+            unselectedLabelStyle: const TextStyle(
+                fontSize: 11,
+                fontFamily: "Roboto"
+            ),
+
+
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
               });
             },
             items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.event),
-                label: 'Events',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
-              ),
+              customBottomNavigationBarItem("Home",0),
+              customBottomNavigationBarItem("Explore",1),
+              customBottomNavigationBarItem("Profile",2),
+
             ],
           ),
         );
       }
     );
   }
+  BottomNavigationBarItem customBottomNavigationBarItem(String label, int index){
+    return BottomNavigationBarItem(
+      icon: (_currentIndex == index) ? ImageIcon(
+        AssetImage('assets/icons/bottom-navigation-bar/${label.toLowerCase()}-selected.png'),
+      )
+          :
+      ImageIcon(
+        AssetImage('assets/icons/bottom-navigation-bar/${label.toLowerCase()}.png'),
+      )
+      ,
+      label: label,
+    );
+  }
+
 }
 
 

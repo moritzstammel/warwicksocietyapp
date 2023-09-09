@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'authentication/FirestoreAuthentication.dart';
 import 'authentication/SocietyAuthentication.dart';
 import 'models/society_info.dart';
@@ -111,6 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ListTile(
             title: Text("Impressum"),
             onTap: () {
+              FirebaseAuth.instance.signOut();
               // Navigate to the impressum page
               // Example: Navigator.push(context, MaterialPageRoute(builder: (context) => ImpressumScreen()));
             },

@@ -109,7 +109,7 @@ class SpotlightOverviewScreen extends StatelessWidget {
                     logoUrl: "test.de",
                     ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
                 ),
-                image: AssetImage("assets/spotlights_background_image.jpg"),
+                image: const AssetImage("assets/spotlights_background_image.jpg"),
               ),
               ],
               editable: true,
