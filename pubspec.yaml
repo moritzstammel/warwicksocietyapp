@@ -71,6 +71,7 @@ flutter:
     - assets/dresden.jpg
     - assets/icons/
     - assets/icons/bottom-navigation-bar/
+    - assets/icons/profile/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

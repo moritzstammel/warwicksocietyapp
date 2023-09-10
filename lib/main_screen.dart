@@ -5,7 +5,7 @@ import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/feed/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
-import 'package:warwicksocietyapp/profile_screen.dart';
+import 'package:warwicksocietyapp/profile/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
 
