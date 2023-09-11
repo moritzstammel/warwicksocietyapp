@@ -10,15 +10,16 @@ class FirestoreUser {
   final int points;
   final String imageUrl;
   final String bannerUrl;
+  final List<String> eventsSeen;
 
   FirestoreUser({required this.id, required this.email,
-    required this.username, required this.followedSocieties,required this.points,required this.imageUrl,required this.bannerUrl});
+    required this.username, required this.followedSocieties,required this.points,required this.imageUrl,required this.bannerUrl,required this.eventsSeen});
 
   factory FirestoreUser.fromJson(Map<String, dynamic> json,String id) {
     return FirestoreUser(
       id: id,email: json["email"],
       username: json["username"], followedSocieties: json["followed_societies"].map<SocietyInfo>((doc) => SocietyInfo.fromJson(doc)).toList(),points: json["points"],
-      imageUrl: json["image_url"], bannerUrl: json["banner_url"]
+      imageUrl: json["image_url"], bannerUrl: json["banner_url"], eventsSeen: json["events_seen"].cast<String>()
 
     );
   }

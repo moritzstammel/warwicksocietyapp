@@ -1,4 +1,5 @@
 class TestHolder {
+
   final String title;
   final String imageUrl;
   final int order;
