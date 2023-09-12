@@ -7,8 +7,9 @@ class Spotlight {
   final String text;
   final SocietyInfo society;
   final ImageProvider<Object> image;
+  final List<String> links;
 
-  Spotlight({required this.title, required this.text,required this.society,required this.image});
+  Spotlight({required this.title, required this.text,required this.society,required this.image,required this.links});
 
   factory Spotlight.fromJson(Map<String, dynamic> json) {
     return Spotlight(
@@ -16,6 +17,7 @@ class Spotlight {
       text: json['text'],
       image: Image.network(json["image_url"]).image,
       society: SocietyInfo.fromJson(json["society"]),
+      links: json["links"].cast<String>()
     );
   }
 

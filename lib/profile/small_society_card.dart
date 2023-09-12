@@ -3,8 +3,9 @@ import 'package:warwicksocietyapp/models/society_info.dart';
 
 class SmallSocietyCard extends StatelessWidget {
   final SocietyInfo society;
-
-  SmallSocietyCard({Key? key, required this.society}) : super(key: key);
+  final Color backgroundColor;
+  final Color textColor;
+  SmallSocietyCard({Key? key, required this.society,this.backgroundColor = const Color(0xFFF7F7F7), this.textColor = Colors.black}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,19 +14,23 @@ class SmallSocietyCard extends StatelessWidget {
         height: 28,
         padding: EdgeInsets.only(left: 2,right: 12),
         decoration: BoxDecoration(
-          color: Color(0xFFF7F7F7),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(100)
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
              ClipOval(
-               child: Image.network(
-                  society.logoUrl, // Replace with the network image URL
-                  width: 24,
-                  height: 24,
-                  fit: BoxFit.contain,
-                ),
+               child: Container(
+                 color: Colors.white,
+                 child: Image.network(
+                    society.logoUrl, // Replace with the network image URL
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.contain,
+                  ),
+               ),
+
              ),
            SizedBox(width: 4,),
             Expanded(
@@ -36,7 +41,9 @@ class SmallSocietyCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black,
+                    color: textColor,
+                    decoration: TextDecoration.none,
+                    fontFamily: "Inter"
                   ),
                 ),
               ),

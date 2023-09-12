@@ -158,6 +158,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                         image: _selectedImagePath != null
                             ? Image.file(File(_selectedImagePath!),).image
                             : AssetImage("assets/spotlights_background_image.jpg"),
+                        links: []
                       )],
                       editable: false,
                     ),
