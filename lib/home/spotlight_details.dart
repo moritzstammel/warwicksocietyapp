@@ -13,6 +13,7 @@ class SpotlightDetails extends StatelessWidget {
   Container buildLinkContainer(String linkText, String url) {
     final Uri uri = Uri.parse(url);
     return Container(
+
       child: GestureDetector(
         onTap: () async {
 
@@ -26,16 +27,21 @@ class SpotlightDetails extends StatelessWidget {
               color: Colors.black,
             ),
             SizedBox(width: 4),
-            Text(
-              linkText,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-                decorationColor: Colors.black,
-                decorationStyle: TextDecorationStyle.solid,
-                decoration: TextDecoration.underline,
-                color: Colors.black,
+            Container(
+              width: 280,
+              child: Text(
+
+                linkText,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  decorationColor: Colors.black,
+                  decorationStyle: TextDecorationStyle.solid,
+                  decoration: TextDecoration.underline,
+                  color: Colors.black,
+                ),
               ),
             ),
           ],
@@ -55,7 +61,7 @@ class SpotlightDetails extends StatelessWidget {
           height: 565,
           width: 360,
 
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(20),
 
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

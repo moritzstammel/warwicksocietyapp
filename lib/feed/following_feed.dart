@@ -34,7 +34,7 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
   Stream<List<TestHolder>> getEvents(){
     return FirebaseFirestore.instance.collection("universities/university-of-warwick/testevents")
         .orderBy("title")
-        .limit(30)
+        .limit(10)
         .snapshots()
 
         .map((snap) {
@@ -87,6 +87,7 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
   }
   void markEventsAsSeen(List<String> events) {
     // Replace 'eventTitle' with the actual event title you want to add.
+    return;
     String userId = FirestoreAuthentication.instance.firestoreUser!.id;
 
     // Use FieldValue.arrayUnion to add an item to the 'events_seen' array in Firestore.
