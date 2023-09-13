@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/spotlight.dart';
-import '../profile/small_society_card.dart';
+import '../widgets/small_society_card.dart';
 
 class SpotlightDetails extends StatelessWidget {
   final Spotlight spotlight;

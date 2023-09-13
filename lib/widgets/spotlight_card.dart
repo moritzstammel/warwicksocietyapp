@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/home/spotlight_details.dart';
-import 'package:warwicksocietyapp/profile/small_society_card.dart';
+import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 import 'dart:async';
 
 import '../models/society_info.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
-import 'package:warwicksocietyapp/profile/small_society_card.dart';
+import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 
 import '../authentication/SocietyAuthentication.dart';
 
