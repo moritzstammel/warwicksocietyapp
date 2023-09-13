@@ -183,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                    Wrap(
                      spacing: 8,
                      runSpacing: 8,
-                     children: tags.map((tagName) => TagCard(name: tagName)).toList(),
+                     children: user.tags.keys.map((tagName) => TagCard(name: tagName)).toList(),
                     ),
 
                 ],

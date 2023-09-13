@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/home/search_screen.dart';
 import '../models/event.dart';
 import '../models/firestore_user.dart';
 
@@ -114,23 +115,31 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.network(
-                            widget.event.societyInfo.logoUrl,
-                            width: 40,
-                            height: 40,
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchScreen(onlyShowSelectedOptions: true,selectedSocieties: [widget.event.societyInfo],),
                           ),
-                          SizedBox(width: 16),
-                          Text(
-                            widget.event.societyInfo.name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(
+                              widget.event.societyInfo.logoUrl,
+                              width: 40,
+                              height: 40,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 16),
+                            Text(
+                              widget.event.societyInfo.name,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       SizedBox(height: 16),
                       Container(
