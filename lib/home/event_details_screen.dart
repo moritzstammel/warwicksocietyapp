@@ -58,7 +58,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               height: 300,
               width: double.infinity,
               child: Image.network(
-                "https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_640.jpg",
+                widget.event.images[0],
                 fit: BoxFit.cover,
               ),
             ),
@@ -119,7 +119,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SearchScreen(onlyShowSelectedOptions: true,selectedSocieties: [widget.event.societyInfo],),
+                            builder: (context) => SearchScreen(selectedSocieties: [widget.event.societyInfo],),
                           ),
                         ),
                         child: Row(

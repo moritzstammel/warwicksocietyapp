@@ -4,7 +4,7 @@ import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
-import 'package:warwicksocietyapp/profile/society_card.dart';
+import 'package:warwicksocietyapp/widgets/society_card.dart';
 import 'package:warwicksocietyapp/profile/society_log_in_button.dart';
 import 'package:warwicksocietyapp/widgets/tag_card.dart';
 import '../authentication/FirestoreAuthentication.dart';
@@ -175,14 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                    Wrap(
                      spacing: 8,
                      runSpacing: 8,
-                     children: user.tags.keys.map((tagName) => GestureDetector(
-                         onTap: () => Navigator.push(
-                           context,
-                           MaterialPageRoute(
-                             builder: (context) => SearchScreen(onlyShowSelectedOptions: true,selectedTags: [tagName],),
-                           ),
-                         ),
-                         child: TagCard(name: tagName))).toList(),
+                     children: user.tags.keys.map((tagName) => TagCard(name: tagName)).toList(),
                     ),
 
                 ],

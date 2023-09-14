@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../home/search_screen.dart';
+
 class TagCard extends StatelessWidget {
   final String name;
   final Color backgroundColor;
@@ -10,23 +12,31 @@ class TagCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicWidth(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        height: 29,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(100),
-            border: Border.all(color: borderColor)
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchScreen(selectedTags: [name],),
         ),
-        child: Center(
-          child: Text(
-            name,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              color: textColor,
-              fontSize: 14,
+      ),
+      child: IntrinsicWidth(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          height: 29,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(100),
+              border: Border.all(color: borderColor)
+          ),
+          child: Center(
+            child: Text(
+              name,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                color: textColor,
+                fontSize: 14,
 
+              ),
             ),
           ),
         ),

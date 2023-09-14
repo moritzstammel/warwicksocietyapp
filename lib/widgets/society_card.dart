@@ -15,7 +15,7 @@ class SocietyCard extends StatelessWidget {
       onTap: () => Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SearchScreen(onlyShowSelectedOptions: true,selectedSocieties: [societyInfo],),
+        builder: (context) => SearchScreen(selectedSocieties: [societyInfo],),
       ),
     ),
       child: Container(

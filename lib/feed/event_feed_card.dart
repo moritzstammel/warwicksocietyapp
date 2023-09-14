@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/feed/sign_up_button.dart';
+import 'package:warwicksocietyapp/home/event_details_screen.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import 'package:warwicksocietyapp/widgets/tag_card.dart';
+
+import '../home/search_screen.dart';
 
 class EventFeedCard extends StatelessWidget {
   final Event event;
@@ -17,6 +20,47 @@ class EventFeedCard extends StatelessWidget {
     6: 'Sat',
     7: 'Sun',
   };
+  PageRouteBuilder _customPageRouteBuilder(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0); // Starting offset of the incoming screen
+        const end = Offset.zero; // Ending offset of the incoming screen
+        const curve = Curves.easeInOut; // Transition curve
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+  void navigateToEventDetails(BuildContext context){
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              EventDetailsScreen(event: event),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 1.0); // Slide up from the bottom
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(begin: begin, end: end).chain(
+              CurveTween(curve: curve),
+            );
+
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+        ),
+      );
+    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +104,9 @@ class EventFeedCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TagCard(name: event.tag,backgroundColor: Colors.transparent,textColor: Colors.white,borderColor: Colors.white,),
+                GestureDetector(child: TagCard(name: event.tag,backgroundColor: Colors.transparent,textColor: Colors.white,borderColor: Colors.white,)),
                 SizedBox(height: 8,),
-                displaySociety(),
+                displaySociety(context),
                 SizedBox(height: 8,),
 
                     Container(
@@ -71,33 +115,44 @@ class EventFeedCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
 
-                          Text(event.title,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                fontFamily: "Inter"
-                            ),),
-                          SizedBox(height: 8,),
-                          Container(
-                            width: 260,
-                            child: Text(event.description,
-                              maxLines: 2,
-                              style: TextStyle(
+                          GestureDetector(
+                            onTap: () => navigateToEventDetails(context),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(event.title,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFamily: "Inter"
+                                  ),),
+                                SizedBox(height: 8,),
+                                Container(
+                                  width: 260,
+                                  child: Text(event.description,
+                                    maxLines: 2,
+                                    style: TextStyle(
 
-                                fontSize: 14,
-                                color: Color(0xFFFFFFFF).withOpacity(0.75),
-                                fontFamily: "Inter",
+                                      fontSize: 14,
+                                      color: Color(0xFFFFFFFF).withOpacity(0.75),
+                                      fontFamily: "Inter",
 
-                              ),),
+                                    ),),
+                                ),
+                                SizedBox(height: 8,),
+                                displayCoreDates(),
+                                SizedBox(height: 8,),
+                              ],
+                            ),
                           ),
-                          SizedBox(height: 8,),
-                          displayCoreDates(),
-                          SizedBox(height: 8,),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               GestureDetector(
+                                onTap: () => navigateToEventDetails(context),
                                 child: Text(
                                   "More info",
                                   style: TextStyle(
@@ -179,47 +234,54 @@ class EventFeedCard extends StatelessWidget {
   }
 
 
-  Widget displaySociety(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        ClipOval(
-          child: Container(
-            color: Colors.white,
-            child: Image.network(
-              event.societyInfo.logoUrl, // Replace with the network image URL
-              width: 48,
-              height: 48,
-              fit: BoxFit.contain,
-            ),
-          ),
-
+  Widget displaySociety(BuildContext context){
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        _customPageRouteBuilder(SearchScreen(selectedSocieties: [event.societyInfo],),
         ),
-        SizedBox(width: 12,),
-
-           Padding(
-            padding: EdgeInsets.symmetric(vertical: 2),
-            child: Text(
-              event.societyInfo.name,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  decoration: TextDecoration.none,
-                  fontFamily: "Inter"
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ClipOval(
+            child: Container(
+              color: Colors.white,
+              child: Image.network(
+                event.societyInfo.logoUrl, // Replace with the network image URL
+                width: 48,
+                height: 48,
+                fit: BoxFit.contain,
               ),
             ),
+
           ),
-        SizedBox(width: 4,),
-        Icon(
-          Icons.verified,
-          size: 16,
-          color:  Colors.white,
-        ),
+          SizedBox(width: 12,),
+
+             Padding(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                event.societyInfo.name,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
+                    fontFamily: "Inter"
+                ),
+              ),
+            ),
+          SizedBox(width: 4,),
+          Icon(
+            Icons.verified,
+            size: 16,
+            color:  Colors.white,
+          ),
 
 
-      ],
+        ],
+      ),
     );
   }
 

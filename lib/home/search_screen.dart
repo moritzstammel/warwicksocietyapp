@@ -11,10 +11,10 @@ import 'custom_search_bar.dart';
 import 'event_card.dart';
 
 class SearchScreen extends StatefulWidget {
-  bool onlyShowSelectedOptions;
+
   List<String>? selectedTags ;
   List<SocietyInfo>? selectedSocieties;
-  SearchScreen({Key? key, this.onlyShowSelectedOptions = false,this.selectedTags,this.selectedSocieties}) : super(key: key);
+  SearchScreen({Key? key, this.selectedTags,this.selectedSocieties}) : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -30,7 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
   late List<String> selectedTags = (widget.selectedTags == null) ? [] : widget.selectedTags!;
   late List<SocietyInfo> selectedSocieties = (widget.selectedSocieties == null) ? [] : widget.selectedSocieties!;
 
-  late bool onlyShowSelectedOptions = widget.onlyShowSelectedOptions;
+  late bool onlyShowSelectedOptions = widget.selectedTags != null || widget.selectedSocieties != null;
 
   @override
   void initState() {
