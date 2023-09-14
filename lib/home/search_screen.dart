@@ -118,11 +118,13 @@ class _SearchScreenState extends State<SearchScreen> {
                         contentPadding: const EdgeInsets.only(bottom: 0),
                         hintText: 'Search...',
                         suffixIcon:
-                          (_searchController.text != "") ?
+                        onlyShowSelectedOptions ?
                           GestureDetector(
                             onTap: () {setState(() {
                               _searchController.text="";
                               onlyShowSelectedOptions = false;
+                              selectedTags = [];
+                              selectedSocieties = [];
                             });},
                             child: Icon(Icons.close, color: Colors.black)) : null,
                         prefixIcon: GestureDetector(
