@@ -9,6 +9,7 @@ import 'package:warwicksocietyapp/profile/society_log_in_button.dart';
 import 'package:warwicksocietyapp/widgets/tag_card.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../authentication/SocietyAuthentication.dart';
+import '../home/search_screen.dart';
 import '../models/society_info.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -45,15 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     // Replace these URLs with the actual image URLs you want to use
     FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
-    final List<String> tags = [
-      "Technology",
-      "Science",
-      "Design",
-      "Music",
-      "Travel",
-      "Food",
-      "Fitness",
-    ];
 
 
     return Scaffold(
@@ -183,7 +175,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                    Wrap(
                      spacing: 8,
                      runSpacing: 8,
-                     children: user.tags.keys.map((tagName) => TagCard(name: tagName)).toList(),
+                     children: user.tags.keys.map((tagName) => GestureDetector(
+                         onTap: () => Navigator.push(
+                           context,
+                           MaterialPageRoute(
+                             builder: (context) => SearchScreen(onlyShowSelectedOptions: true,selectedTags: [tagName],),
+                           ),
+                         ),
+                         child: TagCard(name: tagName))).toList(),
                     ),
 
                 ],

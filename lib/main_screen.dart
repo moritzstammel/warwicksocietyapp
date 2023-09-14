@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/feed/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
@@ -8,7 +9,7 @@ import 'package:warwicksocietyapp/authentication/login_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
-
+import 'dart:io';
 import 'SocietyProfileScreen.dart';
 import 'authentication/FirestoreAuthentication.dart';
 import 'event_creation/events_overview_screen.dart';
@@ -21,8 +22,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
-  PageController _pageController = PageController(initialPage: 0);
+  int _currentIndex =1;
+  PageController _pageController = PageController(initialPage: 1);
   late Stream<QuerySnapshot> userStream;
 
   @override
@@ -96,6 +97,16 @@ class _MainScreenState extends State<MainScreen> {
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
+
+                  if (Platform.isAndroid) {
+                    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                      systemNavigationBarColor: (index==1) ? Colors.black : Colors.white,
+                        systemNavigationBarIconBrightness: (index==1) ? Brightness.light : Brightness.dark
+                    ));
+                  }
+
+
+
               });
             },
             items: [

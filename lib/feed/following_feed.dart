@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/feed/event_feed_card.dart';
 import 'package:warwicksocietyapp/feed/testholder.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 
@@ -154,7 +155,6 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
     );
   }
 
-
   Widget FeedContainer(String imageUrl,String title){
     return Stack(
         children: [Container(
@@ -199,5 +199,8 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
 
         ]);
   }
+
+
+
 
 }

@@ -13,10 +13,11 @@ class Event {
   final SocietyInfo societyInfo;
   final List<String> images;
   final Map<String,bool> registeredUsers;
+  final String tag;
 
   Event(
       {required this.id,required this.title, required this.description, required this.location, required this.startTime, required this.endTime,
-        required this.points, required this.societyInfo, required this.images, required this.registeredUsers});
+        required this.points, required this.societyInfo, required this.images, required this.registeredUsers, required this.tag});
 
 
   factory Event.fromJson(Map<String, dynamic> json,String id) {
@@ -30,7 +31,8 @@ class Event {
         points: json["points"],
         societyInfo: SocietyInfo.fromJson(json["society"]),
         images: json["images"].cast<String>(),
-        registeredUsers: Map<String, bool>.from( json["registered_users"])
+        registeredUsers: Map<String, bool>.from(json["registered_users"]),
+        tag: json["tag"]
     );
   }
 
@@ -48,5 +50,8 @@ class Event {
     };
   }
 
-
+  @override
+  String toString() {
+    return title;
+  }
 }
