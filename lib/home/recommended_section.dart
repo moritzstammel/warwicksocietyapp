@@ -6,7 +6,7 @@ import 'package:warwicksocietyapp/models/firestore_user.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/event.dart';
 import '../models/society_info.dart';
-import 'event_card.dart';
+import '../widgets/event_card.dart';
 
 class RecommendedSection extends StatefulWidget {
   final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;

@@ -190,9 +190,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Divider(),
             Column(
               children: [
-                ProfileButton(name: "Manage Account", description: "Lorem ipsum dolor sit amet consecte", path: "assets/icons/profile/filter.png", onTap: () => print("Manage Account")),
-                ProfileButton(name: "Settings", description: "Lorem ipsum dolor sit amet consecte", path: "assets/icons/profile/settings.png", onTap: () => print("Settings")),
-                ProfileButton(name: "Support", description: "Lorem ipsum dolor sit amet consecte", path: "assets/icons/profile/support.png", onTap: () => FirebaseAuth.instance.signOut()),
+                ProfileButton(name: "Manage Account", description: "Edit and update personal information", path: "assets/icons/profile/filter.png", onTap: () => print("Manage Account")),
+                ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png", onTap: () => print("Settings")),
+                ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png", onTap: () => FirebaseAuth.instance.signOut()),
               ],
             ),
             SocietyLogInButton(society:user.followedSocieties[0],notify: widget.notifyMainScreen),

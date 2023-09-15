@@ -53,7 +53,7 @@ class EventCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: EdgeInsets.only(right: 8),
         padding: EdgeInsets.all(0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
@@ -107,10 +107,9 @@ class EventCard extends StatelessWidget {
                           ),
                         ),
                       if (showRegistered) SizedBox(width: 8),
-                      Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: Colors.grey,
+                      ImageIcon(
+                        AssetImage('assets/icons/events/location.png'),
+                        size: 14,
                       ),
                       SizedBox(width: 4),
                       Text(
@@ -159,10 +158,9 @@ class EventCard extends StatelessWidget {
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(
-                        Icons.access_time,
+                      ImageIcon(
+                        AssetImage('assets/icons/events/clock.png'),
                         size: 16,
-                        color: Colors.grey,
                       ),
                       SizedBox(width: 4),
                       Text(
@@ -174,11 +172,11 @@ class EventCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 4),
-                      Icon(
-                        Icons.calendar_today,
+                      ImageIcon(
+                        AssetImage('assets/icons/events/calendar.png'),
                         size: 16,
-                        color: Colors.grey,
                       ),
+
                       SizedBox(width: 4),
                       Text(
                         '${event.startTime.day.toString().padLeft(2, '0')}.${event.startTime.month.toString().padLeft(2, '0')}',
@@ -194,10 +192,9 @@ class EventCard extends StatelessWidget {
               ),
             ),
             SizedBox(width: 8), // Add space between text and arrow
-            Icon(
-              Icons.navigate_next,
+            ImageIcon(
+              AssetImage('assets/icons/events/chevron-right.png'),
               size: 24,
-              color: Colors.grey,
             ),
           ],
         ),

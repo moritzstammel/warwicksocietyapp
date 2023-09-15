@@ -12,4 +12,6 @@ class SocietyInfo {
 
   Map<String, dynamic> toJson() => {"name": name,"logo_url": logoUrl,"ref": ref};
 
+  @override
+  String toString() => name;
 }

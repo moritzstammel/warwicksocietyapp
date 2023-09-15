@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/event_creation/event_creation_screen.dart';
 
-import '../home/event_card.dart';
+import '../widgets/event_card.dart';
 import '../models/event.dart';
 class EventOverviewScreen extends StatefulWidget {
 

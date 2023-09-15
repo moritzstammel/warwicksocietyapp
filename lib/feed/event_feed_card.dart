@@ -245,8 +245,10 @@ class EventFeedCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ClipOval(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
             child: Container(
+
               color: Colors.white,
               child: Image.network(
                 event.societyInfo.logoUrl, // Replace with the network image URL

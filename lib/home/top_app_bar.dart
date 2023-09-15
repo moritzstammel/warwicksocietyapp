@@ -31,37 +31,31 @@ class TopAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
-      margin: EdgeInsets.only(top: 20),
+
+      margin: EdgeInsets.only(top: 24),
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.star,
-                    color: Colors.black,
-                    size: 24,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '${user.points} points',
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                  ),
+      child: Column(
+        children: [
+          Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                  children:[
+                      IconButton(
+                              icon:  ImageIcon(
+                                AssetImage('assets/icons/chats/chat.png'),
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  _customPageRouteBuilder(ChatOverviewScreen()),
+                                );
+                              },
+                            ),
                 ],
               ),
-              IconButton(
-                icon: Icon(Icons.chat, color: Colors.black),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    _customPageRouteBuilder(ChatOverviewScreen()),
-                  );
-                },
-              ),
-            ],
-          ),
+
+        ],
+      ),
 
     );
   }

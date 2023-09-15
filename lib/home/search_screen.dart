@@ -8,7 +8,7 @@ import '../models/event.dart';
 import '../models/society_info.dart';
 import '../widgets/tag_card.dart';
 import 'custom_search_bar.dart';
-import 'event_card.dart';
+import '../widgets/event_card.dart';
 
 class SearchScreen extends StatefulWidget {
 
