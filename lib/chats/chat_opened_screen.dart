@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import '../authentication/FirestoreAuthentication.dart';
@@ -145,62 +146,152 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
+            leading: null,
+            automaticallyImplyLeading: false,
             title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: NetworkImage(chat.societyInfo.logoUrl),
-                      fit: BoxFit.cover,
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.black),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+
+
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatDetailsScreen(chat: chat),
                     ),
                   ),
+                  child: Row(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: NetworkImage(chat.societyInfo.logoUrl),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 4,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            chat.eventInfo.title,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 4,),
+                          Row(
+                            children: [
+                              ImageIcon(
+                                AssetImage('assets/icons/events/location.png'),
+                                size: 14,
+                                color: Color(0xFF333333),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                chat.eventInfo.location,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Inter',
+                                    color: Color(0xFF333333),
+                                    fontWeight: FontWeight.normal
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 2,),
+
+                          Row(
+                            children: [
+                              ImageIcon(
+                                AssetImage('assets/icons/events/clock.png'),
+                                size: 14,
+                                color: Color(0xFF333333),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                '${_weekdayShortMap[chat.eventInfo.startTime.weekday]}, ${chat.eventInfo.startTime.hour.toString().padLeft(2, '0')}:${chat.eventInfo.startTime.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Inter',
+                                    color: Color(0xFF333333),
+                                    fontWeight: FontWeight.normal
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              ImageIcon(
+                                AssetImage('assets/icons/events/calendar.png'),
+                                size: 14,
+                                color: Color(0xFF333333),
+                              ),
+
+                              SizedBox(width: 4),
+                              Text(
+                                '${chat.eventInfo.startTime.day.toString().padLeft(2, '0')}.${chat.eventInfo.startTime.month.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'Inter',
+                                    color: Color(0xFF333333),
+                                    fontWeight: FontWeight.normal
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      chat.eventInfo.title,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 18,
-                        color: Colors.black,
+
+
+                GestureDetector(
+                  onTap: () async {
+                    DocumentReference eventsRef = FirebaseFirestore.instance.doc(
+                        "universities/university-of-warwick/events/${chat.id}");
+                    final eventData = await eventsRef.get();
+                    Event event = Event.fromJson(
+                        eventData.data() as Map<String, dynamic>, eventData.id);
+                    navigateToEventsDetails(event);
+                  },
+                  child: Container(
+                    width: 90,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Event page",
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                    Text(
-                      chat.societyInfo.name,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                )
               ],
             ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.info_outline, color: Colors.black),
-                onPressed: () async {
-                  DocumentReference eventsRef = FirebaseFirestore.instance.doc(
-                      "universities/university-of-warwick/events/${chat.id}");
-                  final eventData = await eventsRef.get();
-                  Event event = Event.fromJson(
-                      eventData.data() as Map<String, dynamic>, eventData.id);
-                  navigateToEventsDetails(event);
-                },
-              ),
-            ],
           ),
           body: Column(
             children: [
