@@ -32,12 +32,19 @@ class _SearchScreenState extends State<SearchScreen> {
 
   late bool onlyShowSelectedOptions = widget.selectedTags != null || widget.selectedSocieties != null;
 
+  late Stream<QuerySnapshot> eventStream;
+
   @override
   void initState() {
     super.initState();
 
     loadAllSocieties();
     loadAllTags();
+
+    eventStream = FirebaseFirestore.instance.collection("universities")
+        .doc("university-of-warwick")
+        .collection("events")
+        .snapshots();
 
   }
 
@@ -182,7 +189,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       lineSpacing: 8,
                       children: allTags.map((tagName) => GestureDetector(
                           onTap: () => toggleTagSelection(tagName),
-                          child: TagCard(name: tagName,textColor: selectedTags.contains(tagName)? Colors.white : const Color(0xFF333333), backgroundColor: selectedTags.contains(tagName)? Colors.black : const Color(0xFFF7F7F7),))).toList()
+                          child: TagCard(name: tagName,textColor: selectedTags.contains(tagName)? Colors.white : const Color(0xFF333333), backgroundColor: selectedTags.contains(tagName)? Colors.black : const Color(0xFFF7F7F7),clickable: false,))).toList()
 
                     ),
                   ],
@@ -198,7 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           +
                           selectedTags.map((tagName) => GestureDetector(
                               onTap: () => toggleTagSelection(tagName),
-                              child: TagCard(name: tagName,textColor: Colors.white, backgroundColor: Colors.black,))).toList()
+                              child: TagCard(name: tagName,textColor: Colors.white, backgroundColor: Colors.black,clickable: false,))).toList()
 
 
                   ),
@@ -219,10 +226,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
 
   Widget showSearchResult(){
-    final eventStream = FirebaseFirestore.instance.collection("universities")
-        .doc("university-of-warwick")
-        .collection("events")
-        .snapshots();
+
 
 
     return StreamBuilder<QuerySnapshot>(
@@ -240,7 +244,27 @@ class _SearchScreenState extends State<SearchScreen> {
             );
           }
 
-          final events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
+          List<Event> events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
+
+
+          String searchString = _searchController.text;
+
+          if (searchString.isNotEmpty) {
+            events = events.where((event) =>
+                event.title.toLowerCase().contains(searchString.toLowerCase()))
+                .toList();
+          }
+          if(selectedSocieties.isNotEmpty) {
+            events = events.where((event) =>
+                selectedSocieties.contains(event.societyInfo))
+                .toList();
+          }
+          if(selectedTags.isNotEmpty) {
+            events = events.where((event) =>
+                selectedTags.contains(event.tag))
+                .toList();
+          }
+
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

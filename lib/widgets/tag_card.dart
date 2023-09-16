@@ -7,18 +7,19 @@ class TagCard extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final Color borderColor;
+  final bool clickable;
 
-  TagCard({required this.name,this.backgroundColor = const Color(0xFFF7F7F7), this.textColor = const Color(0xFF333333),this.borderColor = Colors.transparent});
+  TagCard({required this.name,this.backgroundColor = const Color(0xFFF7F7F7), this.textColor = const Color(0xFF333333),this.borderColor = Colors.transparent, this.clickable = true});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
+      onTap: (clickable)?() => Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => SearchScreen(selectedTags: [name],),
-        ),
-      ),
+        ) ,
+      ): null,
       child: IntrinsicWidth(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 12),

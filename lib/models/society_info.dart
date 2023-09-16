@@ -14,4 +14,14 @@ class SocietyInfo {
 
   @override
   String toString() => name;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SocietyInfo &&
+          runtimeType == other.runtimeType &&
+          ref == other.ref;
+
+  @override
+  int get hashCode => ref.hashCode;
 }
