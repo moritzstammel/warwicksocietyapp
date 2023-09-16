@@ -200,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _customPageRouteBuilder(ManageAccountScreen()),
                     )),
                 ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png", onTap: () => print("Settings")),
-                ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png", onTap: () => FirebaseAuth.instance.signOut()),
+                ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png", onTap: () => {}),
               ],
             ),
             SocietyLogInButton(society:user.followedSocieties[0],notify: widget.notifyMainScreen),

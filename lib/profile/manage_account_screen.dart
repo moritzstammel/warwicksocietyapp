@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
@@ -207,12 +208,18 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                     color: Colors.black
                 ),),
                 SizedBox(height: 24,),
-                Text("Sign Out",style: TextStyle(
-                    fontFamily: "Inter",
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                    color: Color(0xFFDD0000)
-                ),),
+                GestureDetector(
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
+                  },
+                  child: Text("Sign Out",style: TextStyle(
+                      fontFamily: "Inter",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Color(0xFFDD0000)
+                  ),),
+                ),
               ],
             ),
             if(_textModified)
