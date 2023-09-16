@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:warwicksocietyapp/profile/manage_account_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 import 'package:warwicksocietyapp/widgets/society_card.dart';
@@ -23,24 +24,27 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
+  PageRouteBuilder _customPageRouteBuilder(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0); // Starting offset of the incoming screen
+        const end = Offset.zero; // Ending offset of the incoming screen
+        const curve = Curves.easeInOut; // Transition curve
 
-  String emailToFullName(String email) {
-    // Remove the @warwick.ac.uk from the end
-    email = email.replaceAll(RegExp(r'@warwick\.ac\.uk$'), '');
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
 
-    // Replace "." and "-" with a space
-    email = email.replaceAll(RegExp(r'[.-]'), ' ');
-
-    // Split the string by spaces, capitalize each word, and join them back
-    email = email.split(' ').map((word) {
-      if (word.isNotEmpty) {
-        return word[0].toUpperCase() + word.substring(1);
-      }
-      return word;
-    }).join(' ');
-
-    return email;
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Container(
                   
-                  height: 150,
+                  height: 125,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -75,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       SizedBox(height: 22,),
                       Container(
-                        margin: EdgeInsets.only(top: 60), // Adjust as needed
+                        margin: EdgeInsets.only(top: 35), // Adjust as needed
                         width: 128,
                         height: 128,
                         decoration: BoxDecoration(
@@ -90,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-                      Text(emailToFullName(user.email),style: TextStyle(
+                      Text(user.fullName,style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold
                       ),),
@@ -108,9 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
 
-            SizedBox(height: 18),
+            SizedBox(height: 8),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(horizontal: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -164,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         IconButton(
-                          icon: Icon(Icons.edit, size: 20), // Adjust the size as needed
+                          icon: Icon(Icons.edit, size: 16), // Adjust the size as needed
                           onPressed: () {
                             // Handle edit action
                           },
@@ -186,11 +190,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
 
-            SizedBox(height: 16),
+            SizedBox(height: 8),
             Divider(),
             Column(
               children: [
-                ProfileButton(name: "Manage Account", description: "Edit and update personal information", path: "assets/icons/profile/filter.png", onTap: () => print("Manage Account")),
+                ProfileButton(name: "Manage Account", description: "Edit and update personal information", path: "assets/icons/profile/filter.png",
+                    onTap: () => Navigator.push(
+                      context,
+                      _customPageRouteBuilder(ManageAccountScreen()),
+                    )),
                 ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png", onTap: () => print("Settings")),
                 ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png", onTap: () => FirebaseAuth.instance.signOut()),
               ],

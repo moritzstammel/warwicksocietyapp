@@ -22,6 +22,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _passwordVisible = false;
   bool _isPasswordValid = true;
 
+  String emailToFullName(String email) {
+    // Remove the @warwick.ac.uk from the end
+    email = email.replaceAll(RegExp(r'@warwick\.ac\.uk$'), '');
+
+    // Replace "." and "-" with a space
+    email = email.replaceAll(RegExp(r'[.-]'), ' ');
+
+    // Split the string by spaces, capitalize each word, and join them back
+    email = email.split(' ').map((word) {
+      if (word.isNotEmpty) {
+        return word[0].toUpperCase() + word.substring(1);
+      }
+      return word;
+    }).join(' ');
+
+    return email;
+  }
 
   void _validatePassword() {
     String password = _passwordController.text;

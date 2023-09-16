@@ -186,27 +186,28 @@ class EventFeedCard extends StatelessWidget {
   Widget displayCoreDates(){
     return Row(
       children: [
-        Icon(
-          Icons.location_on,
+        ImageIcon(
+          AssetImage('assets/icons/events/location.png'),
           size: 16,
           color: Colors.white,
         ),
-        SizedBox(width: 2),
+        SizedBox(width: 4),
         Text(
           event.location,
           style: TextStyle(
             fontSize: 12,
             fontFamily: 'Inter',
             color:  Colors.white,
+
           ),
         ),
-        SizedBox(width: 2),
-        Icon(
-          Icons.access_time,
+        SizedBox(width: 4),
+        ImageIcon(
+          AssetImage('assets/icons/events/clock.png'),
           size: 16,
-          color:  Colors.white,
+          color: Colors.white,
         ),
-        SizedBox(width: 2),
+        SizedBox(width: 4),
         Text(
           '${_weekdayShortMap[event.startTime.weekday]}, ${event.startTime.hour.toString().padLeft(2, '0')}:${event.startTime.minute.toString().padLeft(2, '0')}',
           style: TextStyle(
@@ -215,13 +216,13 @@ class EventFeedCard extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        SizedBox(width: 2),
-        Icon(
-          Icons.calendar_today,
+        SizedBox(width: 4),
+        ImageIcon(
+          AssetImage('assets/icons/events/calendar.png'),
           size: 16,
           color: Colors.white,
         ),
-        SizedBox(width: 2),
+        SizedBox(width: 4 ),
         Text(
           '${event.startTime.day.toString().padLeft(2, '0')}.${event.startTime.month.toString().padLeft(2, '0')}',
           style: TextStyle(
@@ -229,6 +230,7 @@ class EventFeedCard extends StatelessWidget {
             fontFamily: 'Inter',
             color:  Colors.white,
           ),
+
         ),
       ],
     );
