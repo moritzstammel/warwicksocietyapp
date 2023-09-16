@@ -25,6 +25,15 @@ class _FollowingFeedState extends State<AllSocietiesFeed> with AutomaticKeepAliv
   DocumentSnapshot? lastDocument;
   List<Event> events = [];
   int currentPage = 0;
+  final _pageController = PageController();
+
+
+  void scrollToNextPage(){
+
+    if(_pageController.page == null || _pageController.page!.round() >= events.length) return;
+    final int currentPage = _pageController.page!.round();
+    _pageController.animateToPage(currentPage +1, duration: Duration(milliseconds: 350), curve: Curves.easeOut);
+  }
 
   Future<void> fetchNewEvents() async{
     print("Reloading current length :${events.length}");
@@ -43,6 +52,8 @@ class _FollowingFeedState extends State<AllSocietiesFeed> with AutomaticKeepAliv
         .startAfterDocument(lastDocument!)
         .get();
 
+
+    if(result.docs.isEmpty) return;
     lastDocument = result.docs.last;
 
     setState(() {
@@ -70,7 +81,7 @@ class _FollowingFeedState extends State<AllSocietiesFeed> with AutomaticKeepAliv
         }
 
         return PageView.builder(
-
+          controller: _pageController,
           scrollDirection: Axis.vertical,
           itemCount: events.length,
           itemBuilder: (context, index) {
@@ -82,7 +93,7 @@ class _FollowingFeedState extends State<AllSocietiesFeed> with AutomaticKeepAliv
               print("reloading");
               fetchNewEvents();
             }
-            return EventFeedCard(event: event);
+            return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,);
           },
         );
 

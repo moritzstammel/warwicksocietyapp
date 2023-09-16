@@ -9,7 +9,8 @@ import '../home/search_screen.dart';
 
 class EventFeedCard extends StatelessWidget {
   final Event event;
-  const EventFeedCard({Key? key,required this.event}) : super(key: key);
+  final Function scrollToNextPage;
+  const EventFeedCard({Key? key,required this.event,required this.scrollToNextPage}) : super(key: key);
 
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
@@ -165,7 +166,7 @@ class EventFeedCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SignUpButton()
+                              SignUpButton(event: event,additionalBehaviour: scrollToNextPage,)
                             ],
                           )
                         ],
