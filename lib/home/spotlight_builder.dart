@@ -22,14 +22,14 @@ class SpotlightBuilder extends StatefulWidget {
 class _SpotlightBuilderState extends State<SpotlightBuilder> {
 
   late Stream<QuerySnapshot> spotlightStream;
+  late List<String> buildSocieties;
 
+  void setStream(){
+    List<SocietyInfo> societies = List<SocietyInfo>.from(widget.user.followedSocieties);
 
-  @override
-  void initState() {
-    super.initState();
-    List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
+    List<DocumentReference> societyRefs = societies.map((society) => society.ref).toList();
     spotlightStream = (societyRefs.isEmpty) ?
-     FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")
         .collection("spotlights")
@@ -43,12 +43,26 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
         .snapshots();
 
 
+      buildSocieties = societies.map((society) => society.ref.id).toList();
+  }
+
+  bool societiesWereUpdated() {
+    var set1 = Set.from(buildSocieties);
+    var set2 = Set.from(widget.user.followedSocieties.map((society) => society.ref.id));
+    return set1.length != set2.length || !set1.containsAll(set2);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setStream();
   }
 
 
 
   @override
   Widget build(BuildContext context) {
+    if(societiesWereUpdated()) setStream();
 
     return StreamBuilder<QuerySnapshot>(
       stream: spotlightStream,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 class FirestoreAuthentication {
@@ -10,3 +11,4 @@ class FirestoreAuthentication {
   static FirestoreAuthentication get instance => _instance;
 
 }
+

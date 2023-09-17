@@ -44,6 +44,7 @@ dependencies:
   rxdart: ^0.27.7
   url_launcher: ^6.1.14
   assorted_layout_widgets: ^8.0.4
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:
