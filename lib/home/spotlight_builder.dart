@@ -28,12 +28,20 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
   void initState() {
     super.initState();
     List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
-    spotlightStream = FirebaseFirestore.instance
+    spotlightStream = (societyRefs.isEmpty) ?
+     FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("spotlights")
+        .snapshots()
+        :
+    FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")
         .collection("spotlights")
         .where('society.ref', whereIn: societyRefs)
         .snapshots();
+
 
   }
 

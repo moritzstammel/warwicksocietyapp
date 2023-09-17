@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:warwicksocietyapp/profile/edit_societies.dart';
 import 'package:warwicksocietyapp/profile/edit_tags.dart';
 import 'package:warwicksocietyapp/profile/manage_account_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
@@ -17,7 +18,7 @@ import '../models/society_info.dart';
 class ProfileScreen extends StatefulWidget {
   final Function() notifyMainScreen;
 
-  ProfileScreen({required this.notifyMainScreen});
+  ProfileScreen({super.key, required this.notifyMainScreen});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -44,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void openEditTags(){
+  void openEdit(Widget screen){
     showGeneralDialog(
       barrierDismissible: true,
       barrierLabel: "",
@@ -56,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         var curve = Curves.easeInOut.transform(a1.value);
         return Transform.scale(
           scale: curve,
-          child: EditTags(),
+          child: screen,
         );
       },
       transitionDuration: const Duration(milliseconds: 200),
@@ -153,12 +154,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         IconButton(
                           icon: Icon(Icons.edit,size: 16,),
                           onPressed: () {
-                            // Handle edit action
+                            openEdit(EditSocieties());
                           },
                         ),
                       ],
                     ),
-
+                  if(user.followedSocieties.isNotEmpty)
                   Container(
 
                     height: 108, // Set an appropriate height
@@ -169,13 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return SocietyCard(societyInfo: user.followedSocieties[index]);
                       },
                     ),
-                  )
-
-
-
-               ,
-              
-
+                  ),
                      Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -190,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         IconButton(
                           icon: Icon(Icons.edit, size: 16), // Adjust the size as needed
                           onPressed: () {
-                            openEditTags();
+                            openEdit(EditTags());
                           },
                         ),
                       ],
@@ -223,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png", onTap: () => {}),
               ],
             ),
-            SocietyLogInButton(society:user.followedSocieties[0],notify: widget.notifyMainScreen),
+           //SocietyLogInButton(society:user.followedSocieties[0],notify: widget.notifyMainScreen),
 
 
           ],

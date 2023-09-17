@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/home/custom_search_bar.dart';
 import 'package:warwicksocietyapp/home/recommended_section.dart';
 import 'package:warwicksocietyapp/home/spotlight_builder.dart';

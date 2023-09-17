@@ -44,7 +44,6 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
         selectedSocieties.add(society);
       }
     });
-    print(selectedSocieties);
   }
 
   @override
@@ -129,7 +128,6 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
     );
   }
   Future<void> _followSocieties() async{
-
 
     widget.userRef.update({
       "followed_societies" : selectedSocieties.map((e) => e.toJson()).toList()

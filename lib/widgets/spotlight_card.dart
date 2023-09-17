@@ -24,7 +24,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
   @override
   void initState() {
     super.initState();
-    if(widget.spotlights.length < 2) return;
+    if(widget.spotlights.length <= 1) return;
     _timer = Timer.periodic(Duration(seconds: 10), (timer) {
       setState(() {
         _currentIndex = (_currentIndex + 1) % widget.spotlights.length;
@@ -35,7 +35,6 @@ class _SpotlightCardState extends State<SpotlightCard> {
   @override
   void dispose() {
     if(widget.spotlights.length > 1) _timer.cancel();
-    
     super.dispose();
   }
 
@@ -68,7 +67,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
     if (widget.spotlights.isEmpty){
       widget.spotlights.add(Spotlight(title: "Freshers\nEvents", text: "cool Text",  society: SocietyInfo(
           name: "Warwick Piano Society",
-          logoUrl: "test.de",
+          logoUrl: "https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill",
           ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
       ), image: NetworkImage("https://warwick.ac.uk/about/campus/oculus-3-2.jpg"),links: []));
     }
