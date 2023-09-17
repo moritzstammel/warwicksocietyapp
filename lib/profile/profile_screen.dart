@@ -6,6 +6,7 @@ import 'package:warwicksocietyapp/profile/edit_societies.dart';
 import 'package:warwicksocietyapp/profile/edit_tags.dart';
 import 'package:warwicksocietyapp/profile/manage_account_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
+import 'package:warwicksocietyapp/profile/support_screen.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 import 'package:warwicksocietyapp/widgets/society_card.dart';
 import 'package:warwicksocietyapp/profile/society_log_in_button.dart';
@@ -214,8 +215,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context,
                       _customPageRouteBuilder(ManageAccountScreen()),
                     )),
-                ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png", onTap: () => print("Settings")),
-                ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png", onTap: () => {}),
+                ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png",
+                    onTap: () => Navigator.push(
+                      context,
+                      _customPageRouteBuilder(SupportScreen()),
+                    )),
+                ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png",
+                    onTap: () => Navigator.push(
+                  context,
+                  _customPageRouteBuilder(SupportScreen()),
+                )),
               ],
             ),
            //SocietyLogInButton(society:user.followedSocieties[0],notify: widget.notifyMainScreen),
