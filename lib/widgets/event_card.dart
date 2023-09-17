@@ -114,72 +114,7 @@ class EventCard extends StatelessWidget {
                       SizedBox(width: 4),
                       Text(
                         event.location,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Inter',
-                          color: Color(0xFF333333),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        event.title,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Inter',
-                        ),
-                      ),
-                      if (event.points > 0)
-                        SizedBox(width: 8),
-                      if (event.points > 0)
-                        Container(
-                          height: 13,
-                          padding: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          alignment: Alignment.center,
-                          child: Center(child: Text(
-                            " ${event.points.toString()} points",
-                            style: TextStyle(
-                              fontSize: 8,
-                              color: Colors.white,
-                              fontFamily: 'Inter',
-                            ),
-                          )),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      ImageIcon(
-                        AssetImage('assets/icons/events/clock.png'),
-                        size: 16,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        '${_weekdayShortMap[event.startTime.weekday]}, ${event.startTime.hour.toString().padLeft(2, '0')}:${event.startTime.minute.toString().padLeft(2, '0')}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Inter',
-                          color: Color(0xFF333333),
-                        ),
-                      ),
-                      SizedBox(width: 4),
-                      ImageIcon(
-                        AssetImage('assets/icons/events/calendar.png'),
-                        size: 16,
-                      ),
 
-                      SizedBox(width: 4),
-                      Text(
-                        '${event.startTime.day.toString().padLeft(2, '0')}.${event.startTime.month.toString().padLeft(2, '0')}',
                         style: TextStyle(
                           fontSize: 12,
                           fontFamily: 'Inter',
@@ -188,14 +123,94 @@ class EventCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                event.title,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                              if (event.points > 0)
+                                SizedBox(width: 8),
+                              if (event.points > 0)
+                                Container(
+                                  height: 13,
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Center(child: Text(
+                                    " ${event.points.toString()} points",
+                                    style: TextStyle(
+                                      fontSize: 8,
+                                      color: Colors.white,
+                                      fontFamily: 'Inter',
+                                    ),
+                                  )),
+                                ),
+                            ],
+                          ),
+                          SizedBox(height: 8,),
+                          Row(
+                            children: [
+                              ImageIcon(
+                                AssetImage('assets/icons/events/clock.png'),
+                                size: 16,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                '${_weekdayShortMap[event.startTime.weekday]}, ${event.startTime.hour.toString().padLeft(2, '0')}:${event.startTime.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'Inter',
+                                  color: Color(0xFF333333),
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              ImageIcon(
+                                AssetImage('assets/icons/events/calendar.png'),
+                                size: 16,
+                              ),
+
+                              SizedBox(width: 4),
+                              Text(
+                                '${event.startTime.day.toString().padLeft(2, '0')}.${event.startTime.month.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'Inter',
+                                  color: Color(0xFF333333),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 8), // Add space between text and arrow
+                      ImageIcon(
+                        AssetImage('assets/icons/events/chevron-right.png'),
+                        size: 24,
+                      ),
+                    ],
+                  ),
+
+
                 ],
               ),
             ),
-            SizedBox(width: 8), // Add space between text and arrow
-            ImageIcon(
-              AssetImage('assets/icons/events/chevron-right.png'),
-              size: 24,
-            ),
+
           ],
         ),
       ),

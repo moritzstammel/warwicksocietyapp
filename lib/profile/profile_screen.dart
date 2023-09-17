@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:warwicksocietyapp/profile/edit_tags.dart';
 import 'package:warwicksocietyapp/profile/manage_account_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
@@ -40,6 +41,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: child,
         );
       },
+    );
+  }
+
+  void openEditTags(){
+    showGeneralDialog(
+      barrierDismissible: true,
+      barrierLabel: "",
+      context: context,
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        var curve = Curves.easeInOut.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
+          child: EditTags(),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
     );
   }
 
@@ -170,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         IconButton(
                           icon: Icon(Icons.edit, size: 16), // Adjust the size as needed
                           onPressed: () {
-                            // Handle edit action
+                            openEditTags();
                           },
                         ),
                       ],

@@ -272,7 +272,7 @@ class _SearchScreenState extends State<SearchScreen> {
               for (final event in events)
                 EventCard(
                   event: event,
-                  showRegistered: false,
+                  showRegistered: event.registeredUsers.containsKey(user.id) && event.registeredUsers[user.id]!,
                 ),
             ],
 

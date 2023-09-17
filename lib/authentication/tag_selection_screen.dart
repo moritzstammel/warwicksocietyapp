@@ -16,10 +16,10 @@ class _TagSelectionScreenState extends State<TagSelectionScreen> {
   @override
   void initState() {
     super.initState();
-    fetchSocieties();
+    fetchTags();
   }
 
-  Future<void> fetchSocieties() async {
+  Future<void> fetchTags() async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('universities')
         .doc('university-of-warwick')
@@ -95,7 +95,7 @@ class _TagSelectionScreenState extends State<TagSelectionScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  _followSocieties();
+                  _addTags();
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -120,14 +120,14 @@ class _TagSelectionScreenState extends State<TagSelectionScreen> {
       ),
     );
   }
-  Future<void> _followSocieties() async{
+  Future<void> _addTags() async{
 
     widget.userRef.update({
       "tags" : { for (var e in selectedTags) e : true }
     });
   }
   Widget clickableTagCard(String tag){
-    bool isTapped=  selectedTags.contains(tag);
+    bool isTapped =  selectedTags.contains(tag);
 
     return GestureDetector(
       onTap: () {
