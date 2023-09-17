@@ -113,6 +113,7 @@ class _SupportScreenState extends State<SupportScreen> {
                               "user_id": user.id,
                               "email" : user.email,
                               "message" : message,
+                              "app_version" : "1.0.0"
                             });
                             Navigator.of(context).pop();
                           },

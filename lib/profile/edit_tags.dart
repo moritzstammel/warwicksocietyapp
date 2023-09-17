@@ -90,10 +90,26 @@ class _EditTagsState extends State<EditTags> {
                   ),
                 ],
               ),
-              if(tagsWereChanged())
+
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Container(
+                      height: 35,
+                      child: Center(
+                        child: Text(
+                          "${selectedTags.length} tags selected",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF888888),
+                              fontFamily: "Inter",
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none
+                          ),
+                        ),
+                      ),
+                    ),
+                    if(tagsWereChanged())
                     GestureDetector(
                       onTap: (){
                         saveTagSelection();

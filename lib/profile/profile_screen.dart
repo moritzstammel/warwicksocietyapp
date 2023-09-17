@@ -6,6 +6,7 @@ import 'package:warwicksocietyapp/profile/edit_societies.dart';
 import 'package:warwicksocietyapp/profile/edit_tags.dart';
 import 'package:warwicksocietyapp/profile/manage_account_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
+import 'package:warwicksocietyapp/profile/settings_screen.dart';
 import 'package:warwicksocietyapp/profile/support_screen.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 import 'package:warwicksocietyapp/widgets/society_card.dart';
@@ -79,58 +80,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              children: [
-                Container(
-                  
-                  height: 125,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(user.bannerUrl),
-                      fit: BoxFit.cover,
-                      
-                     ),
-                    borderRadius: BorderRadius.circular(2)
-                    ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                _customPageRouteBuilder(ManageAccountScreen()),
+              ),
+              child: Stack(
+                children: [
+                  Container(
 
-                    children: [
-                      SizedBox(height: 22,),
-                      Container(
-                        margin: EdgeInsets.only(top: 35), // Adjust as needed
-                        width: 128,
-                        height: 128,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white, // Set the border color to white
-                            width: 4, // Set the border width
-                          ),
-                          image: DecorationImage(
-                            image: NetworkImage(user.imageUrl),
-                            fit: BoxFit.cover,
+                    height: 125,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(user.bannerUrl),
+                        fit: BoxFit.cover,
+
+                       ),
+                      borderRadius: BorderRadius.circular(2)
+                      ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Column(
+
+                      children: [
+                        SizedBox(height: 22,),
+                        Container(
+                          margin: EdgeInsets.only(top: 35), // Adjust as needed
+                          width: 128,
+                          height: 128,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white, // Set the border color to white
+                              width: 4, // Set the border width
+                            ),
+                            image: DecorationImage(
+                              image: NetworkImage(user.imageUrl),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(user.fullName,style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold
-                      ),),
-                      SizedBox(height: 4,),
-                      Text("@${user.username}",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Color(0xFF888888)
-                        ),)
-                    ],
+                        Text(user.fullName,style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold
+                        ),),
+                        SizedBox(height: 4,),
+                        Text("@${user.username}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Color(0xFF888888)
+                          ),)
+                      ],
+                    ),
                   ),
-                ),
-              ]),
+                ]),
+            ),
 
 
 
@@ -218,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png",
                     onTap: () => Navigator.push(
                       context,
-                      _customPageRouteBuilder(SupportScreen()),
+                      _customPageRouteBuilder(SettingsScreen()),
                     )),
                 ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png",
                     onTap: () => Navigator.push(

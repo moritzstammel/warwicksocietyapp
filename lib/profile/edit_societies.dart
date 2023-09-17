@@ -21,7 +21,7 @@ class _EditSocietiesState extends State<EditSocieties> {
   @override
   void initState() {
     super.initState();
-    selectedSocieties = user.followedSocieties;
+    selectedSocieties = List<SocietyInfo>.from(user.followedSocieties);
     fetchSocieties();
   }
   @override
@@ -91,10 +91,26 @@ class _EditSocietiesState extends State<EditSocieties> {
                       )
                 ],
               ),
-              if(tagsWereChanged())
+
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Container(
+                      height: 35,
+                      child: Center(
+                        child: Text(
+                          "${selectedSocieties.length} societies selected",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF888888),
+                              fontFamily: "Inter",
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none
+                          ),
+                        ),
+                      ),
+                    ),
+                    if(societiesWereChanged())
                     GestureDetector(
                       onTap: (){
                         _followSocieties();
@@ -129,9 +145,11 @@ class _EditSocietiesState extends State<EditSocieties> {
       ),
     );
   }
-  bool tagsWereChanged() {
+  bool societiesWereChanged() {
+    print(selectedSocieties);
+    print(user.followedSocieties);
     var set1 = Set.from(selectedSocieties);
-    var set2 = Set.from(user.tags.keys);
+    var set2 = Set.from(user.followedSocieties);
     return set1.length != set2.length || !set1.containsAll(set2);
   }
 
@@ -166,7 +184,7 @@ class _EditSocietiesState extends State<EditSocieties> {
     });
   }
   Widget ClickableSocietyCard(SocietyInfo societyInfo){
-    bool isTapped=  selectedSocieties.contains(societyInfo);
+    bool isTapped=  !selectedSocieties.contains(societyInfo);
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -186,8 +204,8 @@ class _EditSocietiesState extends State<EditSocieties> {
                   child: Center(
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 100),
-                      width: (isTapped) ? 56 : 64,
-                      height: (isTapped) ? 56 : 64 ,
+                      width: (isTapped) ? 52 : 64,
+                      height: (isTapped) ? 52 : 64 ,
                       foregroundDecoration:(isTapped) ? BoxDecoration(
                         color: Colors.grey,
                         backgroundBlendMode: BlendMode.saturation,
@@ -203,17 +221,7 @@ class _EditSocietiesState extends State<EditSocieties> {
                     ),
                   ),
                 ),
-                if (isTapped)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Icon(
-                      Icons.check_circle,
-                      color: Colors.white,
-                    ),
-                  ),
+
               ],
             ),
             SizedBox(height: 8), // Spacing
