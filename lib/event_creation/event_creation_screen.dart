@@ -271,12 +271,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
       "last_time_message_sent" : null,
       "messages" : [],
       "society" : SocietyAuthentication.instance.societyInfo!.toJson(),
-      "description": description,
-      "location": location,
-      "start_time": startTime,
-      "end_time": endTime,
-      "user_ids": {},
-      "users" : []
+      "users" :{}
     };
 
 

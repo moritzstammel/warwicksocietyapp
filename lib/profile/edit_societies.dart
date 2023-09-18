@@ -177,11 +177,17 @@ class _EditSocietiesState extends State<EditSocieties> {
   }
 
   Future<void> _followSocieties() async{
-    final DocumentReference userRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${user.id}");
+    List<SocietyInfo> societiesToUnfollow = user.followedSocieties.where((society) => !selectedSocieties.contains(society)).toList();
+    List<SocietyInfo> societiesToFollow = selectedSocieties.where((society) => !user.followedSocieties.contains(society)).toList();
 
-    userRef.update({
-      "followed_societies" : selectedSocieties.map((e) => e.toJson()).toList()
-    });
+    for(final society in societiesToUnfollow){
+      print("unfollowed ${society.name}");
+      FirestoreAuthentication.instance.unfollowSociety(society);
+    }
+    for(final society in societiesToFollow){
+      print("followed ${society.name}");
+      FirestoreAuthentication.instance.followSociety(society);
+    }
   }
   Widget ClickableSocietyCard(SocietyInfo societyInfo){
     bool isTapped=  !selectedSocieties.contains(societyInfo);

@@ -342,9 +342,8 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                           shape: BoxShape.circle,
                         ),
                         child: Center(
-                          child: Icon(
-
-                            Icons.send,
+                          child: ImageIcon(
+                            AssetImage('assets/icons/chats/send.png'),
                             color: Colors.white,
                             size: 24,
                           ),

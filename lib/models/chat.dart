@@ -13,7 +13,7 @@ class Chat {
   final DateTime? timeOfLastMessage;
 
 
-  Chat({required this.id,required this.type, required this.eventInfo,required this.messages,required this.users,required this.societyInfo,
+  Chat({required this.id,required this.type, this.eventInfo,required this.messages,required this.users,required this.societyInfo,
       required this.timeOfLastMessage});
 
   factory Chat.fromJson(Map<String, dynamic> json, String id) {
@@ -27,8 +27,8 @@ class Chat {
 
     return Chat(
         id: id,
-        eventInfo: EventInfo.fromJson(json["event"]),
         type: json["type"],
+        eventInfo: (json["event"]!=null) ? EventInfo.fromJson(json["event"]): null,
         messages: messageList,
         users: userList,
         societyInfo: SocietyInfo.fromJson(json["society"]),

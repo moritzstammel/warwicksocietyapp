@@ -242,6 +242,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+  Future<void> createChats() async{
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('universities')
+        .doc('university-of-warwick')
+        .collection('societies')
+        .get();
+
+
+      final allSocieties = snapshot.docs.map((doc) => SocietyInfo.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      for (final society in allSocieties ){
+
+        Map<String, dynamic> newChat = {
+          "type": "society_chat",
+          "event": null,
+          "last_time_message_sent" : null,
+          "messages" : [],
+          "society" : {
+            "name": society.name,
+            "ref": society.ref,
+            "logo_url":  society.logoUrl,
+          },
+          "users" : {}
+        };
+
+        CollectionReference chatCollection = FirebaseFirestore.instance
+            .collection("universities")
+            .doc("university-of-warwick")
+            .collection("chats");
+
+        chatCollection.add(newChat);
+      }
+
+  }
   Future<void> createTags() async {
     final List<String> tags = [
       "Academic",
