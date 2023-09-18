@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
@@ -20,6 +22,7 @@ import 'home/home_screen.dart';
 import 'main_screen.dart';
 
 
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -27,11 +30,32 @@ Future main() async {
   );
 
 
+
+
+  const AndroidInitializationSettings androidInitializationSettings =
+  AndroidInitializationSettings('@mipmap/ic_launcher'); // Replace 'app_icon' with your app's icon name
+
+  final InitializationSettings initializationSettings =
+  InitializationSettings(
+    android: androidInitializationSettings,
+    iOS: null,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  FirebaseMessaging.instance.requestPermission();
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(MyApp()));
 }
 
-
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+  print("Handling a background message: ${message.messageId}");
+}
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -57,6 +81,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -16,7 +16,6 @@ class ChatOverviewScreen extends StatefulWidget {
 
 class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
   late Stream<QuerySnapshot> eventChatStream;
-  late Stream<QuerySnapshot> societyChatStream;
 
   bool showingSocietyChats = true;
   TextEditingController searchController = TextEditingController();
@@ -30,15 +29,9 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
         .collection("universities")
         .doc("university-of-warwick")
         .collection("chats")
-        .where("user_ids.${widget.user.id}", isEqualTo: true)
+        .where("users.${widget.user.id}.active", isEqualTo: true)
         .snapshots();
 
-    societyChatStream = FirebaseFirestore.instance
-        .collection("universities")
-        .doc("university-of-warwick")
-        .collection("chats")
-        .where("user_ids.${widget.user.id}", isEqualTo: true)
-        .snapshots();
 
   }
 

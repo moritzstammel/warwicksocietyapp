@@ -152,8 +152,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             Map<String,dynamic> updatedEventUsers = {
                               'registered_users.${user.id}': !userIsRegistered
                             };
+
                             Map<String,dynamic> updatedChatUsers = {
-                              'user_ids.${user.id}': !userIsRegistered
+                              'users.${user.id}': {
+                                "full_name": user.fullName,
+                                "image_url": user.imageUrl,
+                                "ref" : FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${user.id}"),
+                                "active" : !userIsRegistered,
+                                "chat_muted" : false,
+                                "username" : user.username,
+                                "fcm_token": user.fcmToken,
+                              }
                             };
 
                             final batch = FirebaseFirestore.instance.batch();

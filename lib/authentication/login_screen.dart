@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -108,13 +110,26 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   _validatePassword();
                   if (!_isPasswordValid) return;
                   // Log in button logic
                   final password = _passwordController.text;
+
                   _auth.signInWithEmailAndPassword(email: widget.email, password: password);
                   Navigator.pop(context);
+
+                  String? fcmToken = await FirebaseMessaging.instance.getToken();
+                  QuerySnapshot snapshot = await FirebaseFirestore.instance
+                      .collection("universities")
+                      .doc("university-of-warwick")
+                      .collection("users")
+                      .where("email",isEqualTo: widget.email)
+                      .get();
+
+                  DocumentReference ref = snapshot.docs.first.reference;
+                  ref.update({"fcm_token":fcmToken});
+
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,

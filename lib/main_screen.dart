@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/feed/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
@@ -15,6 +17,9 @@ import 'authentication/FirestoreAuthentication.dart';
 import 'event_creation/events_overview_screen.dart';
 import 'home/top_app_bar.dart';
 import 'models/firestore_user.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 
 class MainScreen extends StatefulWidget {
   @override
@@ -35,7 +40,36 @@ class _MainScreenState extends State<MainScreen> {
         .collection("users")
         .where("email",isEqualTo: FirebaseAuth.instance.currentUser!.email!)
         .snapshots();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      displayNotification(message);
+    });
   }
+
+  void displayNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'SocsChatMessageReceived', // Replace with your channel ID
+      'New Chat Message', // Replace with your channel name
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: null,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID (can be any unique value)
+      message.notification?.title ?? 'Notification',
+      message.notification?.body ?? 'You have a new notification',
+      platformChannelSpecifics,
+      payload: message.data['data'], // Optional, you can pass additional data
+    );
+  }
+
 
   @override
   void dispose() {
@@ -70,6 +104,7 @@ class _MainScreenState extends State<MainScreen> {
 
         FirestoreAuthentication.instance.firestoreUser = FirestoreUser.fromJson(snapshot.data!.docs[0].data() as Map<String, dynamic>,snapshot.data!.docs[0].id);
 
+        print("token->${FirestoreAuthentication.instance.firestoreUser!.fcmToken}");
         return Scaffold(
           body: IndexedStack(
             index: _currentIndex,

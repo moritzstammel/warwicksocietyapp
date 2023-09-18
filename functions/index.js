@@ -93,6 +93,25 @@ exports.updateSpotlightsOnSocietyUpdate = functions.firestore
   });
 
 
+  exports.sendChatNotification = functions.firestore
+  .document('/universities/university-of-warwick/users/{userId}')
+  .onCreate(async(snapshot, context) => {
+      
+      // Get the FCM token of the recipient from your database
+      const recipientToken = "fEcIrv3YT4mbUfBlpE4cvH:APA91bGfmm7dmk7ahOatGyGpwKIdUQLw1drM8KTUxt-J9S_QNSEx4hb6I8puvzqe3WSozPYL0N3R1TdgkFIEyUwHPdefQwC-3oyrsXVAhvL9nnysYCSCDM1jSW9rr4rDlp3VAzAFwhr4";
+      const payload = {
+        notification: {
+          title: "New Message",
+          body: "You have a new message.",
+        },
+      };
+
+      // Send the notification to the recipient
+      return admin.messaging().sendToDevice(recipientToken, payload);
+    });
+
+
+
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
