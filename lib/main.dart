@@ -33,7 +33,7 @@ Future main() async {
 
 
   const AndroidInitializationSettings androidInitializationSettings =
-  AndroidInitializationSettings('@mipmap/ic_launcher'); // Replace 'app_icon' with your app's icon name
+  AndroidInitializationSettings('app_icon'); // Replace 'app_icon' with your app's icon name
 
   final InitializationSettings initializationSettings =
   InitializationSettings(
@@ -53,8 +53,27 @@ Future main() async {
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
-  print("Handling a background message: ${message.messageId}");
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  AndroidNotificationDetails(
+    'SocsChatMessageReceived', // Replace with your channel ID
+    'New Chat Message', // Replace with your channel name
+    importance: Importance.max,
+    priority: Priority.high,
+  );
+
+
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+    iOS: null,
+  );
+
+  await flutterLocalNotificationsPlugin.show(
+    0, // Notification ID (can be any unique value)
+    message.notification?.title ?? 'Notification',
+    message.notification?.body ?? 'You have a new notification',
+    platformChannelSpecifics,
+    payload: message.data['data'], // Optional, you can pass additional data
+  );
 }
 
 class MyApp extends StatelessWidget {

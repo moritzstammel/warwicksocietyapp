@@ -98,7 +98,7 @@ exports.updateSpotlightsOnSocietyUpdate = functions.firestore
   .onCreate(async(snapshot, context) => {
       
       // Get the FCM token of the recipient from your database
-      const recipientToken = "fEcIrv3YT4mbUfBlpE4cvH:APA91bGfmm7dmk7ahOatGyGpwKIdUQLw1drM8KTUxt-J9S_QNSEx4hb6I8puvzqe3WSozPYL0N3R1TdgkFIEyUwHPdefQwC-3oyrsXVAhvL9nnysYCSCDM1jSW9rr4rDlp3VAzAFwhr4";
+      const recipientToken = "eTYAvXyMTS-H-JEkvkEUPw:APA91bFN8WS__0YbBs3ZqxmyfTo0xZTwVeDl-9mYlbWj3d4nbb3gIsYAPSjzReLnJdJU6Z0qC9gG9kvnS8Ip2mW6BTAs8yDCHhocazL0zlbix3TlJnQwdYPnlhBA966XQQYypfrsaHKk";
       const payload = {
         notification: {
           title: "New Message",
@@ -110,7 +110,56 @@ exports.updateSpotlightsOnSocietyUpdate = functions.firestore
       return admin.messaging().sendToDevice(recipientToken, payload);
     });
 
+  exports.sendPushNotificationOnMessageAdded = functions.firestore
+    .document('/universities/university-of-warwick/chats/{chatId}')
+    .onUpdate(async (change, context) => {
+      const newValue = change.after.data(); // Updated document data
+      const previousValue = change.before.data(); // Previous document data
+  
+      if (!newValue || !previousValue) {
+        // Document data not available, exit
+        return null;
+      }
+  
+      // Check if a new message was added
+      const newMessages = newValue.messages;
+      const previousMessages = previousValue.messages;
+  
+      if (!newMessages || !previousMessages || newMessages.length <= previousMessages.length) {
+        // No new message added or messages were deleted, exit
+        return null;
+      }
+  
+      // Iterate through users in the "users" map
+      const usersMap = newValue.users || {};
+      const fcmTokens = Object.values(usersMap).map((user) => user.fcm_token);
+  
+      // Construct the notification payload
 
+      const newMessage = newMessages[newMessages.length - 1]
+      const payload = {
+        notification: {
+          title: newValue.society.name,
+          body: newMessage.author.name + ": " + newMessage.content,
+        },
+      };
+  
+      // Send the notification to each user in the "users" map
+      const messaging = admin.messaging();
+      const sendNotifications = fcmTokens.map(async (token) => {
+        try {
+          await messaging.sendToDevice(token, payload);
+          console.log('Notification sent to user with FCM token:', token);
+        } catch (error) {
+          console.error('Error sending notification:', error);
+        }
+      });
+  
+      // Wait for all notifications to be sent
+      await Promise.all(sendNotifications);
+  
+      return null;
+    });
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
