@@ -20,7 +20,7 @@ class _SignUpButtonState extends State<SignUpButton> {
 
 
   void changeSignUpState() async{
-
+      return;
       DocumentReference eventRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/events/${widget.event.id}");
       DocumentReference chatRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/chats/${widget.event.id}");
       String userId = FirestoreAuthentication.instance.firestoreUser!.id;

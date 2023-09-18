@@ -19,17 +19,19 @@ class YourEventsSection extends StatefulWidget {
 
 class _YourEventsSectionState extends State<YourEventsSection> {
   late Stream<QuerySnapshot> eventStream;
+  late List<String> buildSocieties;
+
 
 
   @override
   void initState() {
     super.initState();
-    DocumentReference userRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${widget.user.id}");
+
     eventStream = FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")
         .collection("events")
-        .where('registered_users.${userRef.id}',isEqualTo: true)
+        .where('registered_users.${widget.user.id}',isEqualTo: true)
         .snapshots();
 
 
@@ -37,8 +39,6 @@ class _YourEventsSectionState extends State<YourEventsSection> {
 
   @override
   Widget build(BuildContext context) {
-
-    List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
 
     return StreamBuilder<QuerySnapshot>(
         stream: eventStream,

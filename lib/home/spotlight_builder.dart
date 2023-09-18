@@ -33,6 +33,7 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
         .collection("universities")
         .doc("university-of-warwick")
         .collection("spotlights")
+        .where('society.name', isEqualTo : 'socs' )
         .snapshots()
         :
     FirebaseFirestore.instance

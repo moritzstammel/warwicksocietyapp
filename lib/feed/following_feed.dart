@@ -20,139 +20,86 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
   @override
   bool get wantKeepAlive => true;
 
-  final PageController _followingController = PageController();
+
   int loading = 3;
   DocumentSnapshot? lastDocument;
-  List<TestHolder> events = [];
-  Set<String> seenEvents = {};
+  List<Event> events = [];
   int currentPage = 0;
+  final _pageController = PageController();
 
 
+  void scrollToNextPage(){
 
-  Stream<FirestoreUser> getUser(){
-    return FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${FirestoreAuthentication.instance.firestoreUser!.id}").snapshots().map((e) => FirestoreUser.fromJson(e.data()!,e.id));
-  }
-  Stream<List<TestHolder>> getEvents(){
-    return FirebaseFirestore.instance.collection("universities/university-of-warwick/testevents")
-        .orderBy("title")
-        .limit(10)
-        .snapshots()
-
-        .map((snap) {
-          return snap.docs.map((doc) => TestHolder.fromJson(doc.data())).toList();});
-
-  }
-  Stream<List<TestHolder>> getUnseenEvents(){
-    return Rx.combineLatest2(
-        getUser(),
-        getEvents(),
-            (FirestoreUser user, List<TestHolder> events) =>
-                events.where((event) => !user.eventsSeen.contains(event.title)).toList()
-    );
+    if(_pageController.page == null || _pageController.page!.round() >= events.length) return;
+    final int currentPage = _pageController.page!.round();
+    _pageController.animateToPage(currentPage +1, duration: Duration(milliseconds: 350), curve: Curves.easeOut);
   }
 
   Future<void> fetchNewEvents() async{
-
-    return;
-
-    print(events);
-    if (currentPage +1  < events.length) return;
-
     print("Reloading current length :${events.length}");
 
     CollectionReference eventsCollection =
     FirebaseFirestore.instance
-        .collection('universities/university-of-warwick/testevents');
+        .collection('universities/university-of-warwick/events');
+
 
     QuerySnapshot result = (lastDocument == null) ?
     await eventsCollection
         .limit(loading)
-        .orderBy("title")
-        // Adjust the limit based on the current page
+        .orderBy("start_time")
         .get()
         :
     await eventsCollection
-
-      .limit(loading)
-        .orderBy("title")
+        .limit(loading)
+        .orderBy("start_time")
         .startAfterDocument(lastDocument!)
         .get();
 
+
+    if(result.docs.isEmpty) return;
     lastDocument = result.docs.last;
-    events.addAll(result.docs.map((doc) => TestHolder.fromJson(doc.data() as Map<String,dynamic>)));
 
-    print(events);
-
-
-
-  }
-  void markEventsAsSeen(List<String> events) {
-    // Replace 'eventTitle' with the actual event title you want to add.
-    return;
-    String userId = FirestoreAuthentication.instance.firestoreUser!.id;
-
-    // Use FieldValue.arrayUnion to add an item to the 'events_seen' array in Firestore.
-    FirebaseFirestore.instance
-        .doc("universities/university-of-warwick/users/$userId")
-        .update({
-      "events_seen": FieldValue.arrayUnion(events)
+    setState(() {
+      events.addAll(result.docs.map((doc) => Event.fromJson(doc.data() as Map<String,dynamic>,doc.id)));
     });
+
+
+
+
+
   }
 
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    fetchNewEvents();
   }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
-    super.dispose();
-  }
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    if (state == AppLifecycleState.paused) {
-      // The app is being paused (user is leaving the app)
-      markEventsAsSeen(seenEvents.toList());
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
 
-    return StreamBuilder(
-            stream: getUnseenEvents(),
-            builder: (BuildContext context, AsyncSnapshot<List<TestHolder>> snapshot) {
-              if(!snapshot.hasData) return CircularProgressIndicator();
-              events = snapshot.data!;
-              seenEvents.add(events[0].title);
-              print(seenEvents);
-              print(events.length);
-              if (events.isEmpty) return CircularProgressIndicator();
-              return PageView.builder(
-                onPageChanged: (int index){
-                  seenEvents.add(events[index].title);
-                  print(seenEvents);} ,
-                controller: _followingController,
-                scrollDirection: Axis.vertical,
+    if(events.isEmpty){
+      return Center(child: Text("No events"),);
+    }
 
-                itemBuilder: (context, index) {
-
-                  final event = events[index];
-                  //if(events.length == index + 1){
-                  //  fetchNewEvents();}
-                  return FeedContainer(event.imageUrl,event.title);
-                },
-              );
-
-            },
-
+    return PageView.builder(
+      controller: _pageController,
+      scrollDirection: Axis.vertical,
+      itemCount: events.length,
+      itemBuilder: (context, index) {
+        print(index);
+        print(events.length);
+        print(events);
+        final event = events[index];
+        if(index + 1 == events.length) {
+          print("reloading");
+          fetchNewEvents();
+        }
+        return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,);
+      },
     );
+
   }
 
   Widget FeedContainer(String imageUrl,String title){

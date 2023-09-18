@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -65,13 +66,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
         '/universities/university-of-warwick/users');
 
     String username = email.split('@')[0];
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
 
     return await userRef.add({
       "email": email,
       "followed_societies": [],
       "points": 0,
       "username" :username,
-      "image_url" : "https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/default_profile_image.png?alt=media"
+      "image_url" : "https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/default_profile_image.png?alt=media",
+      "fcm_token":fcmToken
     });
   }
 

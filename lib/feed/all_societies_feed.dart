@@ -13,10 +13,10 @@ class AllSocietiesFeed extends StatefulWidget {
   const AllSocietiesFeed({Key? key}) : super(key: key);
 
   @override
-  State<AllSocietiesFeed> createState() => _FollowingFeedState();
+  State<AllSocietiesFeed> createState() => _AllSocietiesFeedState();
 }
 
-class _FollowingFeedState extends State<AllSocietiesFeed> with AutomaticKeepAliveClientMixin,WidgetsBindingObserver  {
+class _AllSocietiesFeedState extends State<AllSocietiesFeed> with AutomaticKeepAliveClientMixin,WidgetsBindingObserver  {
   @override
   bool get wantKeepAlive => true;
 

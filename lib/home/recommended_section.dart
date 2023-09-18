@@ -19,23 +19,48 @@ class RecommendedSection extends StatefulWidget {
 
 class _RecommendedSectionState extends State<RecommendedSection> {
   late Stream<QuerySnapshot> eventStream;
+  late List<String> buildSocieties;
 
+  void setStream(){
+    List<SocietyInfo> societies = List<SocietyInfo>.from(widget.user.followedSocieties);
+
+    List<DocumentReference> societyRefs = societies.map((society) => society.ref).toList();
+    eventStream = (societyRefs.isEmpty) ?
+    FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("events")
+        .limit(5)
+        .snapshots()
+
+        :
+    FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("events")
+        .where('society.ref', whereIn: societyRefs)
+        .limit(5)
+        .snapshots();
+
+
+    buildSocieties = societies.map((society) => society.ref.id).toList();
+  }
+
+  bool societiesWereUpdated() {
+    var set1 = Set.from(buildSocieties);
+    var set2 = Set.from(widget.user.followedSocieties.map((society) => society.ref.id));
+    return set1.length != set2.length || !set1.containsAll(set2);
+  }
 
   @override
   void initState() {
     super.initState();
-
-    List<DocumentReference> societyRefs = widget.user.followedSocieties.map((society) => society.ref).toList();
-    eventStream = FirebaseFirestore.instance.collection("universities")
-        .doc("university-of-warwick")
-        .collection("events")
-        .where("society.ref", whereIn: societyRefs)
-        .snapshots();
+    setStream();
   }
 
   @override
   Widget build(BuildContext context) {
-
+    if(societiesWereUpdated()) setStream();
     DocumentReference userRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${widget.user.id}");
 
     return StreamBuilder<QuerySnapshot>(
