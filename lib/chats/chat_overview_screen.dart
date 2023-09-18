@@ -16,7 +16,7 @@ class ChatOverviewScreen extends StatefulWidget {
 
 class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
   late Stream<QuerySnapshot> eventChatStream;
-
+  final PageController _pageController = PageController();
   bool showingSocietyChats = true;
   TextEditingController searchController = TextEditingController();
   String searchString = "";
@@ -31,6 +31,20 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
         .collection("chats")
         .where("users.${widget.user.id}.active", isEqualTo: true)
         .snapshots();
+
+
+  }
+
+  void toggleSelection() {
+    setState(() {
+      showingSocietyChats = !showingSocietyChats;
+    });
+
+    _pageController.animateToPage(
+      showingSocietyChats ? 0 : 1,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+    );
 
 
   }
@@ -98,12 +112,12 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
                   );
                 }
 
-                List<Chat> chats = snapshot.data!.docs
+                List<Chat> allChats = snapshot.data!.docs
                     .map((doc) =>
                     Chat.fromJson(doc.data() as Map<String, dynamic>, doc.id))
                     .toList();
 
-                chats.sort((a, b) {
+                allChats.sort((a, b) {
                   if (a.timeOfLastMessage == null) {
                     return 1; // Move items with null timeOfLastMessage to the end
                   } else if (b.timeOfLastMessage == null) {
@@ -116,28 +130,49 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
 
                 // Filter chats based on the search string
                 if (searchString.isNotEmpty) {
-                  chats = chats.where((chat) =>
-                      chat.eventInfo.title.toLowerCase().contains(searchString.toLowerCase()))
-                      .toList();
+                  allChats = allChats.where((chat) =>
+                  (chat.isEventChat? chat.eventInfo!.title.toLowerCase().contains(searchString.toLowerCase()) : chat.societyInfo.name.toLowerCase().contains(searchString.toLowerCase() )
+                  )).toList();
                 }
 
-                return ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemCount: chats.length,
-                  itemBuilder: (context, index) {
-                    var chat = chats[index];
+                List<Chat> societyChats = List.from(allChats.where((chat) => chat.type == "society_chat"));
+                List<Chat> eventChats = List.from(allChats.where((chat) => chat.type == "event_chat"));
+                print(eventChats);
 
-                    // Create a ChatCard widget with chat data
-                    return ChatCard(
-                      chat: chat, // Pass the chat instance to ChatCard
-                    );
+              return PageView(
+                  controller: _pageController,
+                  onPageChanged: (index){
+                    setState(() {
+                      showingSocietyChats = index.isEven;
+                    });
                   },
-                );
+
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    chatList(societyChats),
+                    chatList(eventChats)
+                  ]
+              );
+
+
               },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget chatList(chats){
+    return ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: chats.length,
+      itemBuilder: (context, index) {
+        var chat = chats[index];
+        return ChatCard(
+          chat: chat,
+        );
+      },
     );
   }
 
@@ -181,9 +216,7 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () => setState(() {
-                        showingSocietyChats = true;
-                      }),
+                      onTap: () => toggleSelection(),
                       child: AnimatedContainer(
 
                         duration: Duration(milliseconds: durationInMilliseconds),
@@ -208,9 +241,7 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => setState(() {
-                        showingSocietyChats = false;
-                      }),
+                      onTap: () => toggleSelection(),
                       child: AnimatedContainer(
                         height: 39,
                         width: 151.5,

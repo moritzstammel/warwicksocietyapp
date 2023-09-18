@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:warwicksocietyapp/models/event.dart';
+import '../home/event_details_screen.dart';
 import '../models/chat.dart';
 
 class ChatDetailsScreen extends StatefulWidget {
@@ -12,7 +14,13 @@ class ChatDetailsScreen extends StatefulWidget {
   State<ChatDetailsScreen> createState() => _ChatDetailsScreenState();
 }
 
+
 class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
+
+  void navigateToEventsDetails(Event event) {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => EventDetailsScreen(event: event)));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +52,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
               ),
             ),
 
-            Text(widget.chat.eventInfo.title,
+            Text(widget.chat.isEventChat ? widget.chat.eventInfo!.title : widget.chat.societyInfo.name,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 18,
@@ -60,21 +68,33 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                   fontFamily: "Inter"
               ),),
             SizedBox(height: 20,),
-            Container(
-              width: 105,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Center(
-                child: Text(
-                  "Event page",
-                  style: TextStyle(
-                    fontFamily: "Inter",
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+            if(widget.chat.isEventChat)
+            GestureDetector(
+              onTap: () async{
+
+                DocumentReference eventsRef = FirebaseFirestore.instance.doc(
+                    "universities/university-of-warwick/events/${widget.chat.id}");
+                final eventData = await eventsRef.get();
+                Event event = Event.fromJson(
+                    eventData.data() as Map<String, dynamic>, eventData.id);
+                navigateToEventsDetails(event);
+              },
+              child: Container(
+                width: 105,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Center(
+                  child: Text(
+                    "Event page",
+                    style: TextStyle(
+                      fontFamily: "Inter",
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),

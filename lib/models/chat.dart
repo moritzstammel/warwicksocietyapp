@@ -6,7 +6,7 @@ import 'message.dart';
 class Chat {
   final String id;
   final String type; // for now "event_chat" or "society_chat"
-  final EventInfo eventInfo;
+  final EventInfo? eventInfo;
   final List<Message> messages;
   final Map<String,UserInfo> users;
   final SocietyInfo societyInfo;
@@ -35,5 +35,10 @@ class Chat {
         timeOfLastMessage: (json["time_of_last_message"] != null) ? json["time_of_last_message"].toDate() : null);
   }
 
-
+  bool get isSocietyChat {
+    return type == "society_chat";
+  }
+  bool get isEventChat {
+    return type == "event_chat";
+  }
 }

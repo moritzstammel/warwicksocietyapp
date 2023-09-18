@@ -94,7 +94,7 @@ class ChatCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    chat.eventInfo.title,
+                    chat.isEventChat? chat.eventInfo!.title : chat.societyInfo.name,
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 18,
