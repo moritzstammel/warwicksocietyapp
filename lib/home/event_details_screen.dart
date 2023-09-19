@@ -49,6 +49,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
 
       body:
            Column(
@@ -77,15 +78,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
-                  Icon(Icons.location_on,color:Color(0xFF333333) ,),
+                  ImageIcon(
+                    AssetImage('assets/icons/events/location.png'),
+                    size: 20,
+                  ),
                   Spacer(),
                   Text(widget.event.location , style: TextStyle(color: Color(0xFF333333),fontSize: 12),),
                   Spacer(),
-                  Icon(Icons.calendar_today,color:Color(0xFF333333) ,),
+                  ImageIcon(
+                    AssetImage('assets/icons/events/calendar.png'),
+                    size: 20,
+                  ),
                   Spacer(),
                   Text(formatDateTime(widget.event.startTime), style: TextStyle(color: Color(0xFF333333),fontSize: 12),),
                   Spacer(),
-                  Icon(Icons.access_time,color:Color(0xFF333333) ,),
+                  ImageIcon(
+                    AssetImage('assets/icons/events/clock.png'),
+                    size: 20,
+                  ),
                   Spacer(),
                   Text(formatDateTimeRange(widget.event.startTime,widget.event.endTime), style: TextStyle(color: Color(0xFF333333),fontSize: 12),),
                 ],
