@@ -12,7 +12,7 @@ import 'package:warwicksocietyapp/profile/profile_screen.dart';
 import 'package:warwicksocietyapp/rewards_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_overview_screen.dart';
 import 'dart:io';
-import 'SocietyProfileScreen.dart';
+import 'admin/SocietyProfileScreen.dart';
 import 'authentication/FirestoreAuthentication.dart';
 import 'event_creation/events_overview_screen.dart';
 import 'home/top_app_bar.dart';
@@ -115,9 +115,9 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
-            selectedItemColor: (_currentIndex == 1 ) ? Colors.white : Colors.black,
+            selectedItemColor: (_currentIndex == 1 && !_isSociety) ? Colors.white : Colors.black,
             unselectedItemColor: Colors.grey,
-            backgroundColor:(_currentIndex == 1 ) ? Colors.black : Colors.white,
+            backgroundColor:(_currentIndex == 1 && !_isSociety) ? Colors.black : Colors.white,
             currentIndex: _currentIndex,
             selectedLabelStyle: const TextStyle(
               fontSize: 11,
@@ -135,8 +135,8 @@ class _MainScreenState extends State<MainScreen> {
 
                   if (Platform.isAndroid) {
                     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                      systemNavigationBarColor: (index==1) ? Colors.black : Colors.white,
-                        systemNavigationBarIconBrightness: (index==1) ? Brightness.light : Brightness.dark
+                      systemNavigationBarColor: (index==1 && !_isSociety) ? Colors.black : Colors.white,
+                        systemNavigationBarIconBrightness: (index==1&& !_isSociety) ? Brightness.light : Brightness.dark
                     ));
                   }
 

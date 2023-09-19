@@ -152,7 +152,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                         text: "",
                         society: SocietyInfo(
                             name: "Warwick Piano Society",
-                            logoUrl: "test.de",
+                            logoUrl: "https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill",
                             ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
                         ),
                         image: _selectedImagePath != null

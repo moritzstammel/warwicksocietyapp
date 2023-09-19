@@ -26,7 +26,6 @@ class _YourEventsSectionState extends State<YourEventsSection> {
   @override
   void initState() {
     super.initState();
-
     eventStream = FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")

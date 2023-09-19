@@ -27,6 +27,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late Stream<QuerySnapshot> administeredSocietyStream;
+  FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+
 
   PageRouteBuilder _customPageRouteBuilder(Widget page) {
     return PageRouteBuilder(
@@ -67,14 +70,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
 
+  @override
+  void initState() {
+    super.initState();
+    administeredSocietyStream =
+    FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("societies")
+        .where("admins.${user.id}",isEqualTo: true)
+        .snapshots();
 
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Replace these URLs with the actual image URLs you want to use
-    FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
-
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -234,7 +244,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )),
               ],
             ),
-           //SocietyLogInButton(society:user.followedSocieties[0],notify: widget.notifyMainScreen),
+
+           StreamBuilder(
+             stream: administeredSocietyStream,
+               builder:(context, snapshot) {
+                 if(snapshot.hasData){
+                   List<SocietyInfo> administeredSocieties = snapshot.data!.docs.map((soc) => SocietyInfo.fromJson(soc.data() as Map<String,dynamic>)).toList();
+                   return Column(
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                     children: [
+                          for (final society in administeredSocieties)
+                            SocietyLogInButton(society:society,notify: widget.notifyMainScreen)
+                     ],
+                   );
+                 }
+                 return Container();
+
+               })
+
 
 
           ],
