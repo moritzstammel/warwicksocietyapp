@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/home/search_screen.dart';
 import '../models/event.dart';
 import '../models/firestore_user.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class EventDetailsScreen extends StatefulWidget {
   final Event event;
@@ -201,6 +203,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           ),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: scheduleNotification,
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          color: Colors.amber,
+                          child: Center(child: Text("test"),),
+                        ),
+                      )
                   ],
                 ),
               ),
@@ -224,5 +235,38 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final endTimeStr = '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}';
     return '$startDay $startTimeStr - $endTimeStr';
   }
+
+    Future<void> scheduleNotification() async {
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+        'SocsChatMessageReceived', // Replace with your channel ID
+        'New Chat Message', // Replace with your channel name
+        importance: Importance.max,
+        priority: Priority.high,
+        color:Colors.black
+      );
+
+
+      var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: null,
+      );
+
+      // Replace these values with your desired notification content
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        1, // Notification ID (can be any unique number)
+        'Scheduled Notification Title',
+        'Scheduled Notification Body',
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 10)), // Schedule time
+        platformChannelSpecifics,
+        payload: 'Scheduled Notification Payload', // Optional payload
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
+
+
 
 }

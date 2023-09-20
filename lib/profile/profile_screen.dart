@@ -28,7 +28,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late Stream<QuerySnapshot> administeredSocietyStream;
-  FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+
 
 
   PageRouteBuilder _customPageRouteBuilder(Widget page) {
@@ -73,6 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+
     administeredSocietyStream =
     FirebaseFirestore.instance
         .collection("universities")
@@ -85,6 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+
+    print("Profile Societies:");
+    print(user.followedSocieties);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

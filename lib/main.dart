@@ -20,8 +20,8 @@ import 'package:warwicksocietyapp/verification_screen.dart';
 import 'firebase_options.dart';
 import 'home/home_screen.dart';
 import 'main_screen.dart';
-
-
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tzdata;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
+  tzdata.initializeTimeZones();
 
 
   const AndroidInitializationSettings androidInitializationSettings =
@@ -59,6 +59,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     'New Chat Message', // Replace with your channel name
     importance: Importance.max,
     priority: Priority.high,
+    color: const Color(0xFF000000)
   );
 
 

@@ -53,6 +53,7 @@ class _MainScreenState extends State<MainScreen> {
       'New Chat Message', // Replace with your channel name
       importance: Importance.max,
       priority: Priority.high,
+        color: const Color(0xFF000000)
     );
 
 

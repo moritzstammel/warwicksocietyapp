@@ -379,9 +379,13 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       final downloadUrl = await uploadImageToFirebaseStorage(_selectedImagePath!);
       userRef.update({"image_url" : downloadUrl});
     }
-    setState(() {
-      _contentModified = false;
-    });
+
+    if(context.mounted){
+      setState(() {
+        _contentModified = false;
+      });
+    }
+
 
 
   }
