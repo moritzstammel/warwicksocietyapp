@@ -113,9 +113,9 @@ class FirestoreHelper {
     await batch.commit();
   }
 
-  Future<void> createSpotlight(Spotlight newSpotlight) async {
-    await FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").add(newSpotlight.toJson());
-  }
+  void createSpotlight(Spotlight newSpotlight) => FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").add(newSpotlight.toJson());
+  void updateSpotlight(Spotlight updatedSpotlight) => FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").doc(updatedSpotlight.id).set(updatedSpotlight.toJson());
+  void cancelSpotlight(Spotlight spotlight) => FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").doc(spotlight.id).update({"end_time": Timestamp.now()});
 
 }
 

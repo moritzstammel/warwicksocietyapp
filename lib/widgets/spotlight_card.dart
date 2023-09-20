@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/home/spotlight_details.dart';
+import 'package:warwicksocietyapp/spotlight_creation/spotlight_creation_screen.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 import 'dart:async';
 
@@ -66,7 +67,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
   Widget build(BuildContext context) {
     if(_currentIndex >= widget.spotlights.length) _currentIndex = 0;
     if (widget.spotlights.isEmpty){
-      widget.spotlights.add(Spotlight(title: "Freshers\nEvents", text: "cool Text",  society: SocietyInfo(
+      widget.spotlights.add(Spotlight(id:"",title: "Freshers\nEvents", text: "cool Text",  society: SocietyInfo(
           name: "Warwick Piano Society",
           logoUrl: "https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill",
           ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
@@ -79,6 +80,13 @@ class _SpotlightCardState extends State<SpotlightCard> {
         width: double.infinity,
         child: GestureDetector(
           onTap: widget.clickable ? () {
+            if(widget.editable) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SpotlightCreationScreen(spotlight: widget.spotlights[_currentIndex],)),);
+                  return;
+            }
+
             setState(() {
               if(widget.spotlights.length>1) {
                 _currentIndex = (_currentIndex + 1) % widget.spotlights.length;
@@ -108,7 +116,14 @@ class _SpotlightCardState extends State<SpotlightCard> {
                 Positioned(
                   top: 0,
                   right: 0,
-                  child: widget.editable ? Icon(Icons.edit,color: Colors.white,size: 20,) : SmallSocietyCard(society: widget.spotlights[_currentIndex].society,)
+                  child: widget.editable ? GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SpotlightCreationScreen(spotlight: widget.spotlights[_currentIndex],)),
+                      );},
+                      child: Icon(Icons.edit,color: Colors.white,size: 20,))
+                      : SmallSocietyCard(society: widget.spotlights[_currentIndex].society,)
                 ),
 
                 Container(

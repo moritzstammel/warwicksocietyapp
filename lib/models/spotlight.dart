@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
 class Spotlight {
+  final String id;
   final String title;
   final String text;
   final SocietyInfo society;
@@ -13,10 +14,11 @@ class Spotlight {
   final DateTime startTime;
   final DateTime endTime;
 
-  Spotlight({required this.title, required this.text,required this.society,required this.imageUrl,required this.links,required this.startTime, required this.endTime, this.image});
+  Spotlight({required this.id,required this.title, required this.text,required this.society,required this.imageUrl,required this.links,required this.startTime, required this.endTime, this.image});
 
-  factory Spotlight.fromJson(Map<String, dynamic> json) {
+  factory Spotlight.fromJson(Map<String, dynamic> json,String id) {
     return Spotlight(
+      id:id,
       title: json['title'],
       text: json['text'],
       imageUrl: json["image_url"],

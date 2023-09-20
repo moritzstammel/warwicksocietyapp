@@ -14,6 +14,10 @@ import '../models/society_info.dart';
 import '../models/spotlight.dart';
 
 class SpotlightCreationScreen extends StatefulWidget {
+  final Spotlight? spotlight;
+
+  const SpotlightCreationScreen({this.spotlight});
+
   @override
   _SpotlightCreationScreenState createState() => _SpotlightCreationScreenState();
 }
@@ -34,7 +38,20 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
   @override
   void dispose() {
     _titleController.dispose();
+    _descriptionController.dispose();
+    _linksController.dispose();
     super.dispose();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.spotlight != null){
+      _titleController.text = widget.spotlight!.title;
+      _descriptionController.text = widget.spotlight!.text;
+      _linksController.text = widget.spotlight!.links.join(";");
+    }
   }
 
   Future<void> _selectImage() async {
@@ -90,6 +107,51 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
     // No validation errors
     return null;
   }
+  Future<void> _editSpotlight() async {
+
+    String? titleValidationResult = validateTitle(_titleController.text);
+
+
+    String? linksValidationResult = validateLinks(_linksController.text);
+
+
+    if (titleValidationResult != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(titleValidationResult),
+      ));
+      return;
+    }
+
+    if (linksValidationResult != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(linksValidationResult),
+      ));
+      return;
+    }
+    Navigator.pop(context);
+    DateTime now = DateTime.now();
+
+    String title = _titleController.text;
+    String description = _descriptionController.text;
+    List<String> links = splitAndTrimLinks(_linksController.text);
+    String imageUrl = widget.spotlight!.imageUrl;
+    if(_selectedImagePath != null){
+      imageUrl = await uploadImageToFirebaseStorage(_selectedImagePath!, now.hashCode.toString());
+    }
+
+
+
+    Spotlight updatedSpotlight = Spotlight(
+        id:widget.spotlight!.id,title: title, text: description, society: SocietyAuthentication.instance.societyInfo!, imageUrl: imageUrl, links: links, startTime: widget.spotlight!.startTime, endTime: widget.spotlight!.endTime);
+
+    FirestoreHelper.instance.updateSpotlight(updatedSpotlight);
+
+  }
+  Future<void> _cancelSpotlight() async{
+    FirestoreHelper.instance.cancelSpotlight(widget.spotlight!);
+    Navigator.pop(context);
+  }
+
   Future<void> _createSpotlight() async {
 
     String? titleValidationResult = validateTitle(_titleController.text);
@@ -117,6 +179,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
       ));
       return;
     }
+    Navigator.pop(context);
     DateTime now = DateTime.now();
 
     DateTime startTime = now;
@@ -129,17 +192,14 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
     String imageUrl = await uploadImageToFirebaseStorage(_selectedImagePath!, now.hashCode.toString());
 
     Spotlight newSpotlight = Spotlight(
-        title: title, text: description, society: SocietyAuthentication.instance.societyInfo!, imageUrl: imageUrl, links: links, startTime: startTime, endTime: endTime);
+        id:"",title: title, text: description, society: SocietyAuthentication.instance.societyInfo!, imageUrl: imageUrl, links: links, startTime: startTime, endTime: endTime);
 
     FirestoreHelper.instance.createSpotlight(newSpotlight);
 
-
-
-
-
-
-
   }
+
+
+
   Future<String> uploadImageToFirebaseStorage(String imagePath,String id) async {
     final SocietyInfo society = SocietyAuthentication.instance.societyInfo!;
     final imageFile = File(imagePath);
@@ -186,6 +246,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextFormField(
+
                             validator: validateTitle,
                             onChanged: (value) {
                               _titleNotifier.value = value;
@@ -263,7 +324,9 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                               ),
                             ),
                           ),
+                          if(widget.spotlight==null)
                           SizedBox(height: 16,),
+                          if(widget.spotlight==null)
                              Row(
                               children: [
                                 ImageIcon(
@@ -313,15 +376,16 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                           onTap: _selectImage,
                           child: SpotlightCard(
                               spotlights: [Spotlight(
+                                id: "",
                                   title: title == "" ? "Freshers \nEvents" : title,
                                   text: "",
                                   society: SocietyAuthentication.instance.societyInfo!,
-                                  image: _selectedImagePath != null
+                                  image: (widget.spotlight == null) ? (_selectedImagePath != null
                                       ? Image.file(File(_selectedImagePath!),).image
-                                      : AssetImage("assets/spotlights_background_image.jpg"),
+                                      : AssetImage("assets/spotlights_background_image.jpg")) : null,
                                   links: [],
                                   startTime: DateTime.now(),
-                                  endTime: DateTime.now().add(Duration(days: 3)), imageUrl: ''
+                                  endTime: DateTime.now().add(Duration(days: 3)), imageUrl: (widget.spotlight==null) ? '' : widget.spotlight!.imageUrl
                               )],
                               editable: false, clickable: false
 
@@ -337,7 +401,9 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
 
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
+                child:
+                  (widget.spotlight==null) ?
+                Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     GestureDetector(
@@ -363,7 +429,58 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                       ),
                     ),
                   ],
-                ),
+                )
+                :
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: _cancelSpotlight,
+                        child: Container(
+                          width: 130,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFDD0000),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "End Spotlight",
+                              style: TextStyle(
+                                fontFamily: "Inter",
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: _editSpotlight,
+                        child: Container(
+                          width: 130,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Save Changes",
+                              style: TextStyle(
+                                fontFamily: "Inter",
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ,
               ),
 
             ],

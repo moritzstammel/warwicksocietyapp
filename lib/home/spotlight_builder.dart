@@ -7,7 +7,6 @@ import 'package:warwicksocietyapp/models/spotlight.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
-
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/society_info.dart';
 
@@ -41,6 +40,7 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
         .doc("university-of-warwick")
         .collection("spotlights")
         .where('society.ref', whereIn: societyRefs)
+        .where('end_time', isGreaterThan: Timestamp.now())
         .snapshots();
 
 
@@ -52,6 +52,8 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
     var set2 = Set.from(widget.user.followedSocieties.map((society) => society.ref.id));
     return set1.length != set2.length || !set1.containsAll(set2);
   }
+
+
 
   @override
   void initState() {
@@ -68,10 +70,12 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
     return StreamBuilder<QuerySnapshot>(
       stream: spotlightStream,
       builder: (context,snapshot) {
+
           if (snapshot.hasError || !snapshot.hasData) return CircularProgressIndicator();
 
-          final spotlightData = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>)).toList();
-          return SpotlightCard(spotlights: spotlightData, editable: false,);
+          final List<Spotlight> spotlights = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
+
+          return SpotlightCard(spotlights: spotlights, editable: false,);
 
           
           },

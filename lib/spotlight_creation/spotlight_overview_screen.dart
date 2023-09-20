@@ -52,6 +52,7 @@ class _SpotlightOverviewScreenState extends State<SpotlightOverviewScreen> {
   Widget build(BuildContext context) {
     if(buildSociety != SocietyAuthentication.instance.societyInfo) setStream();
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -66,9 +67,11 @@ class _SpotlightOverviewScreenState extends State<SpotlightOverviewScreen> {
           if(!snapshot.hasData){
             return ErrorScreen();
           }
-          final List<Spotlight> spotlightData = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>)).toList();
+          final List<Spotlight> spotlightData = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
 
-          final Spotlight? liveSpotlight = spotlightData.isNotEmpty? spotlightData.where((spotlight) => spotlight.endTime.isAfter(DateTime.now())).first : null;
+          final List<Spotlight> tempList  = spotlightData.where((spotlight) => spotlight.endTime.isAfter(DateTime.now())).toList();
+
+          final Spotlight? liveSpotlight = tempList.isNotEmpty ? tempList.first : null;
           final List<Spotlight> pastSpotlights = spotlightData.where((spotlight) => spotlight.endTime.isBefore(DateTime.now())).toList();
           print(liveSpotlight);
           print(pastSpotlights);
