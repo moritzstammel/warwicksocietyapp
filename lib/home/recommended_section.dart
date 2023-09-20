@@ -81,7 +81,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
 
 
         List<Event> events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
-        List<Event> eventsNotSignedUp = events.where((event) => !((event.registeredUsers.containsKey(userRef.id))&&(event.registeredUsers[userRef.id]==true))).toList();
+        List<Event> eventsNotSignedUp = events.where((event) => !((event.registeredUsers.containsKey(userRef.id))&&(event.registeredUsers[userRef.id]!.active))).toList();
 
 
         return Column(

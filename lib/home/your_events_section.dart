@@ -30,7 +30,7 @@ class _YourEventsSectionState extends State<YourEventsSection> {
         .collection("universities")
         .doc("university-of-warwick")
         .collection("events")
-        .where('registered_users.${widget.user.id}',isEqualTo: true)
+        .where('registered_users.${widget.user.id}.active',isEqualTo: true)
         .snapshots();
 
 

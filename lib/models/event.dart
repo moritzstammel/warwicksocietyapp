@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
+import 'package:warwicksocietyapp/models/user_info.dart';
 
 class Event {
   final String id;
@@ -12,7 +13,7 @@ class Event {
   final int points;
   final SocietyInfo societyInfo;
   final List<String> images;
-  final Map<String,bool> registeredUsers;
+  final Map<String,UserInfo> registeredUsers;
   final String tag;
 
   Event(
@@ -21,6 +22,7 @@ class Event {
 
 
   factory Event.fromJson(Map<String, dynamic> json,String id) {
+    Map<String,UserInfo> userList =  Map<String, dynamic>.from(json["registered_users"]).map((key, value) => MapEntry(key,UserInfo.fromJson(value)));
     return Event(
         id:id,
         title: json["title"],
@@ -31,7 +33,7 @@ class Event {
         points: json["points"],
         societyInfo: SocietyInfo.fromJson(json["society"]),
         images: json["images"].cast<String>(),
-        registeredUsers: Map<String, bool>.from(json["registered_users"]),
+        registeredUsers: userList,
         tag: json["tag"]
     );
   }

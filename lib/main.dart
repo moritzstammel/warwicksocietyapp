@@ -22,7 +22,8 @@ import 'home/home_screen.dart';
 import 'main_screen.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -40,6 +41,8 @@ Future main() async {
     android: androidInitializationSettings,
     iOS: null,
   );
+
+
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
