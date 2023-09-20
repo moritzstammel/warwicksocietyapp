@@ -49,6 +49,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
     super.initState();
     if (widget.spotlight != null){
       _titleController.text = widget.spotlight!.title;
+      _titleNotifier.value = widget.spotlight!.title;
       _descriptionController.text = widget.spotlight!.text;
       _linksController.text = widget.spotlight!.links.join(";");
     }
@@ -380,9 +381,8 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
                                   title: title == "" ? "Freshers \nEvents" : title,
                                   text: "",
                                   society: SocietyAuthentication.instance.societyInfo!,
-                                  image: (widget.spotlight == null) ? (_selectedImagePath != null
-                                      ? Image.file(File(_selectedImagePath!),).image
-                                      : AssetImage("assets/spotlights_background_image.jpg")) : null,
+                                  image:  (_selectedImagePath != null)? Image.file(File(_selectedImagePath!),).image
+                                      : ((widget.spotlight==null) ? AssetImage("assets/spotlights_background_image.jpg") : null),
                                   links: [],
                                   startTime: DateTime.now(),
                                   endTime: DateTime.now().add(Duration(days: 3)), imageUrl: (widget.spotlight==null) ? '' : widget.spotlight!.imageUrl
