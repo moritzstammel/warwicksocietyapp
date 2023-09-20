@@ -96,16 +96,20 @@ class SpotlightDetails extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Container(
-                    width: 280,
-                    child: Text(
-                      spotlight.text,
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontFamily: "Inter",
-                          fontWeight: FontWeight.normal,
-                          decoration: TextDecoration.none
+                  SingleChildScrollView(
+                    child: Container(
+                      width: 280,
+                      child: Text(
+                        spotlight.text,
+                        maxLines: 20,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontFamily: "Inter",
+                            fontWeight: FontWeight.normal,
+                            decoration: TextDecoration.none
+                        ),
                       ),
                     ),
                   ),

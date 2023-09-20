@@ -10,8 +10,8 @@ import '../models/spotlight.dart';
 class SpotlightCard extends StatefulWidget {
   final List<Spotlight> spotlights;
   final bool editable;
-
-  const SpotlightCard({required this.spotlights, required this.editable});
+  final bool clickable;
+  const SpotlightCard({required this.spotlights, required this.editable, this.clickable = true});
 
   @override
   State<SpotlightCard> createState() => _SpotlightCardState();
@@ -64,12 +64,13 @@ class _SpotlightCardState extends State<SpotlightCard> {
 
   @override
   Widget build(BuildContext context) {
+    if(_currentIndex >= widget.spotlights.length) _currentIndex = 0;
     if (widget.spotlights.isEmpty){
       widget.spotlights.add(Spotlight(title: "Freshers\nEvents", text: "cool Text",  society: SocietyInfo(
           name: "Warwick Piano Society",
           logoUrl: "https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill",
           ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
-      ), image: NetworkImage("https://warwick.ac.uk/about/campus/oculus-3-2.jpg"),links: []));
+      ), imageUrl: "https://warwick.ac.uk/about/campus/oculus-3-2.jpg",links: [],startTime: DateTime.now(),endTime: DateTime.now()),);
     }
     
     
@@ -77,7 +78,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
       return Container(
         width: double.infinity,
         child: GestureDetector(
-          onTap: () {
+          onTap: widget.clickable ? () {
             setState(() {
               if(widget.spotlights.length>1) {
                 _currentIndex = (_currentIndex + 1) % widget.spotlights.length;
@@ -86,14 +87,14 @@ class _SpotlightCardState extends State<SpotlightCard> {
                 openSpotlightInfo(widget.spotlights.first);
               }
             });
-          },
+          } : null,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: EdgeInsets.only(right: 8,top: 8,left: 15),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               image: DecorationImage(
-                image: widget.spotlights[_currentIndex].image,
+                image: widget.spotlights[_currentIndex].image ?? NetworkImage( widget.spotlights[_currentIndex].imageUrl),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   Colors.black.withOpacity(0.5),
@@ -107,7 +108,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
                 Positioned(
                   top: 0,
                   right: 0,
-                  child: SmallSocietyCard(society: widget.spotlights[_currentIndex].society,)
+                  child: widget.editable ? Icon(Icons.edit,color: Colors.white,size: 20,) : SmallSocietyCard(society: widget.spotlights[_currentIndex].society,)
                 ),
 
                 Container(
@@ -120,6 +121,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
                       Text(
 
                         widget.spotlights[_currentIndex].title,
+                        maxLines: 2,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -131,9 +133,9 @@ class _SpotlightCardState extends State<SpotlightCard> {
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: widget.clickable ? () {
                             openSpotlightInfo( widget.spotlights[_currentIndex]);
-                          },
+                          }: (){},
                           child: Text(
                             'More Info',
                             style: TextStyle(color: Colors.black,fontFamily: 'Inter'),

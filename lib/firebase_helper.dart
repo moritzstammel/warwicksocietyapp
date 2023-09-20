@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
+import 'package:warwicksocietyapp/models/spotlight.dart';
 import 'package:warwicksocietyapp/notification_helper.dart';
 
 class FirestoreHelper {
@@ -109,6 +111,10 @@ class FirestoreHelper {
     }
 
     await batch.commit();
+  }
+
+  Future<void> createSpotlight(Spotlight newSpotlight) async {
+    await FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").add(newSpotlight.toJson());
   }
 
 }

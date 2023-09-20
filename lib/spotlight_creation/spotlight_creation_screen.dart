@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
+import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'dart:io';
 
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
 
+
+import '../authentication/FirestoreAuthentication.dart';
 import '../models/society_info.dart';
 import '../models/spotlight.dart';
 
@@ -15,9 +20,15 @@ class SpotlightCreationScreen extends StatefulWidget {
 
 class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
   final TextEditingController _titleController = TextEditingController();
-  final ValueNotifier<String> _titleNotifier = ValueNotifier<String>('');
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _linksController = TextEditingController();
 
-  DateTime? _selectedDateTime;
+
+  final ValueNotifier<String> _titleNotifier = ValueNotifier<String>('');
+  int _selectedDuration = 1; // Default duration is 1 day
+
+  final List<int> _durationOptions = [1, 2, 3, 5, 7, 14,30]; // Duration options in days
+
   String? _selectedImagePath;
 
   @override
@@ -38,49 +49,118 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
     }
   }
 
-  void _selectDateTime(BuildContext context) async {
-    DateTime currentDate = DateTime.now();
-    DateTime initialDate = _selectedDateTime ?? currentDate;
-
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(currentDate.year - 1),
-      lastDate: DateTime(currentDate.year + 1),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.dark(), // Change to ThemeData.light() for light theme
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDate != null) {
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate),
-      );
-
-      if (pickedTime != null) {
-        setState(() {
-          _selectedDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-        });
-      }
+  String? validateTitle(String? title) {
+    if (title == null || title.isEmpty) {
+      return 'Title cannot be empty';
     }
+    final RegExp alphaRegex = RegExp(r'^[a-zA-Z\s]+$');
+    if (!alphaRegex.hasMatch(title)) {
+      return 'Title should only contain spaces or alphabetical symbols';
+    }
+    return null;
   }
 
+  List<String> splitAndTrimLinks(String text) => text.split(';').map((link) => link.trim()).toList();
+
+  String? validateLinks(String? links) {
+    if (links == null || links.isEmpty) {
+      // Return null if the string is empty or null (no validation error)
+      return null;
+    }
+
+    // Split the input string by semicolons to get individual links
+    List<String> linkList = links.split(';');
+
+    if (linkList.length > 3) {
+      // Check if there are more than three links
+      return 'Up to three links are allowed';
+    }
+
+    // Regular expression to validate each link as a URL
+    final RegExp urlRegex = RegExp(
+        r'^(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]');
+
+    for (String link in linkList) {
+      if (!urlRegex.hasMatch(link.trim())) {
+        // Check if any link is not a valid URL
+        return 'Invalid URL format';
+      }
+    }
+
+    // No validation errors
+    return null;
+  }
+  Future<void> _createSpotlight() async {
+
+    String? titleValidationResult = validateTitle(_titleController.text);
+
+
+    String? linksValidationResult = validateLinks(_linksController.text);
+
+
+    if (titleValidationResult != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(titleValidationResult),
+      ));
+      return;
+    }
+
+    if (linksValidationResult != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(linksValidationResult),
+      ));
+      return;
+    }
+    if (_selectedImagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Please select an image by clicking on the spotlight preview"),
+      ));
+      return;
+    }
+    DateTime now = DateTime.now();
+
+    DateTime startTime = now;
+    DateTime endTime = now.add(Duration(days: _selectedDuration));
+    String title = _titleController.text;
+    String description = _descriptionController.text;
+    List<String> links = splitAndTrimLinks(_linksController.text);
+
+
+    String imageUrl = await uploadImageToFirebaseStorage(_selectedImagePath!, now.hashCode.toString());
+
+    Spotlight newSpotlight = Spotlight(
+        title: title, text: description, society: SocietyAuthentication.instance.societyInfo!, imageUrl: imageUrl, links: links, startTime: startTime, endTime: endTime);
+
+    FirestoreHelper.instance.createSpotlight(newSpotlight);
+
+
+
+
+
+
+
+  }
+  Future<String> uploadImageToFirebaseStorage(String imagePath,String id) async {
+    final SocietyInfo society = SocietyAuthentication.instance.societyInfo!;
+    final imageFile = File(imagePath);
+
+    final Reference storageReference =
+    FirebaseStorage.instance.ref().child('spotlights/${society.ref.id}/$id.jpg');
+
+    final UploadTask uploadTask = storageReference.putFile(imageFile);
+    await uploadTask;
+    final String downloadURL = await storageReference.getDownloadURL();
+
+    return downloadURL;
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    print("xxx");
+
     return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -91,90 +171,201 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
           iconTheme: IconThemeData(color: Colors.black)
       ),
       body:
-        SingleChildScrollView(
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextField(
-                controller: _titleController,
-                onChanged: (value) {
-                  _titleNotifier.value = value;
-                },
-                decoration: InputDecoration(hintText: 'e.g. New Podcast Episode'),
-              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            validator: validateTitle,
+                            onChanged: (value) {
+                              _titleNotifier.value = value;
+                            },
+                            style: TextStyle(
+                                fontFamily: "Inter",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16
+                            ),
+                            controller: _titleController,
+                            decoration: InputDecoration(
 
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () => _selectDateTime(context),
-                child: Row(
-                  children: [
-                    Icon(Icons.calendar_today),
-                    SizedBox(width: 10),
-                    Text(
-                      _selectedDateTime != null
-                          ? 'Selected Date: ${_selectedDateTime!.toLocal()}'
-                          : 'Select Date and Time',
+                              labelText: "Title",
+                              labelStyle: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                  color: Colors.black
+                              ),
+                              suffixIcon: ImageIcon(
+                                AssetImage('assets/icons/profile/edit_black.png'),
+                                size: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8,),
+                          TextFormField(
+                            style: TextStyle(
+                                fontFamily: "Inter",
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16
+                            ),
+                            controller: _descriptionController,
+                            minLines: 2,
+                            maxLines: 8,
+                            decoration: InputDecoration(
+
+                              labelText: "Description",
+                              labelStyle: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                  color: Colors.black
+                              ),
+                              suffixIcon: ImageIcon(
+                                AssetImage('assets/icons/profile/edit_black.png'),
+                                size: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8,),
+                          TextFormField(
+                            validator: validateLinks,
+                            style: TextStyle(
+                                fontFamily: "Inter",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16
+                            ),
+                            controller: _linksController,
+                            decoration: InputDecoration(
+
+                              labelText: "Up to 3 links seperated by semicolons (;)",
+                              labelStyle: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                  color: Colors.black
+                              ),
+                              suffixIcon: ImageIcon(
+                                AssetImage('assets/icons/profile/edit_black.png'),
+                                size: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16,),
+                             Row(
+                              children: [
+                                ImageIcon(
+                                  AssetImage('assets/icons/events/calendar.png'),
+                                  size: 24,
+                                ),
+                                SizedBox(width: 8),
+                                Text('Select the duration of the spotlight'),
+                                SizedBox(width: 8),
+                                DropdownButton<int>(
+                                  value: _selectedDuration,
+                                  onChanged: (int? newValue) {
+                                    if (newValue == null) return;
+                                    setState(() {
+                                      _selectedDuration = newValue;
+                                    });
+                                  },
+                                  items: _durationOptions.map((int duration) {
+                                    return DropdownMenuItem<int>(
+                                      value: duration,
+                                      child: Text('$duration ${duration == 1 ? "day" : "days"}'),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          SizedBox(height: 8,),
+                          Text("Preview", style: TextStyle(
+                              fontFamily: "Inter",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18
+                          ),),
+
+
+
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: _selectImage,
-                child: Row(
-                  children: [
-                    Icon(Icons.image),
-                    SizedBox(width: 10),
-                    Text(
-                      _selectedImagePath != null ? 'Image selected' : 'Select an Image',
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              _selectedImagePath != null
-                  ? Image.file(
-                File(_selectedImagePath!),
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
-              ) // Display selected image preview
-                  : Container(), // Empty container if no image is selected
-              SizedBox(height: 20),
-              ValueListenableBuilder(
-                valueListenable: _titleNotifier,
-                builder: (context, title, child) {
-                  return Container(
-                    width: double.infinity,
-                    child: SpotlightCard(
-                      spotlights: [Spotlight(
-                        title: title == "" ? "Example \nAnnouncement" : title,
-                        text: "",
-                        society: SocietyInfo(
-                            name: "Warwick Piano Society",
-                            logoUrl: "https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill",
-                            ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
+                  ),
+                  SizedBox(height: 8,),
+                  ValueListenableBuilder(
+                    valueListenable: _titleNotifier,
+                    builder: (context, title, child) {
+                      return Container(
+                        width: double.infinity,
+                        child: GestureDetector(
+                          onTap: _selectImage,
+                          child: SpotlightCard(
+                              spotlights: [Spotlight(
+                                  title: title == "" ? "Freshers \nEvents" : title,
+                                  text: "",
+                                  society: SocietyAuthentication.instance.societyInfo!,
+                                  image: _selectedImagePath != null
+                                      ? Image.file(File(_selectedImagePath!),).image
+                                      : AssetImage("assets/spotlights_background_image.jpg"),
+                                  links: [],
+                                  startTime: DateTime.now(),
+                                  endTime: DateTime.now().add(Duration(days: 3)), imageUrl: ''
+                              )],
+                              editable: false, clickable: false
+
+                          ),
                         ),
-                        image: _selectedImagePath != null
-                            ? Image.file(File(_selectedImagePath!),).image
-                            : AssetImage("assets/spotlights_background_image.jpg"),
-                        links: []
-                      )],
-                      editable: false,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 8,),
+                  Text("Click on the Spotlight to select an image"),
+                ],
+              ),
+
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: _createSpotlight,
+                      child: Container(
+                        width: 130,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Create Spotlight",
+                            style: TextStyle(
+                              fontFamily: "Inter",
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
 
-
-
-
-              ElevatedButton(
-                onPressed: () {
-                  // Implement logic to save the spotlight
-                },
-                child: Text('Create Spotlight'),
-              ),
             ],
           ),
         ),

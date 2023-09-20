@@ -341,7 +341,6 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   }
 
   Future<String> uploadImageToFirebaseStorage(String imagePath) async {
-    print("test");
     final String userId = FirestoreAuthentication.instance.firestoreUser!.id;
     final imageFile = File(imagePath);
 
