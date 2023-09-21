@@ -31,6 +31,8 @@ class _EventOverviewScreenState extends State<EventOverviewScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -57,44 +59,92 @@ class _EventOverviewScreenState extends State<EventOverviewScreen> {
 
           List<Event> events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String, dynamic>, json.id)).toList();
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-                createEventButton(),
+          return SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                  createEventButton(),
+                  upcomingEventsSection(events),
+                pastEventsSection(events+events)
 
-              SizedBox(height: 20),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  'Live',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                height: 5,
-                width: 30,
-                decoration: BoxDecoration(
-                  color: Colors.green, // Use your desired color
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              SizedBox(height: 10),
-              for (final event in events)
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: EventCard(
-                    event: event,
-                    showRegistered: false,
-                  ),
-                ),
-            ],
 
+              ],
+
+            ),
           );
 
         },
       ),
+    );
+  }
+  Widget pastEventsSection(List<Event> pastEvents){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 20),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Past events',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          height: 5,
+          width: 30,
+          decoration: BoxDecoration(
+            color: Color(0xFFDD0000), // Use your desired color
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        SizedBox(height: 10),
+        for (final event in pastEvents)
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: EventCard(
+              event: event,
+              showRegistered: false,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget upcomingEventsSection(List<Event> upcomingEvents){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 20),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Upcoming events',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          height: 5,
+          width: 30,
+          decoration: BoxDecoration(
+            color: Colors.green, // Use your desired color
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        SizedBox(height: 10),
+        for (final event in upcomingEvents)
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: EventCard(
+              event: event,
+              showRegistered: false,
+            ),
+          ),
+      ],
     );
   }
 

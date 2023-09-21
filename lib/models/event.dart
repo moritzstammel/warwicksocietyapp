@@ -43,12 +43,13 @@ class Event {
       "title": title,
       "description": description,
       "location": location,
-      "start_time": startTime,
-      "end_time": endTime,
+      "start_time": Timestamp.fromDate(startTime),
+      "end_time": Timestamp.fromDate(endTime),
       "points": points,
       "society": societyInfo.toJson(),
       "images": images,
       "registered_users": registeredUsers,
+      "tag": tag
     };
   }
 

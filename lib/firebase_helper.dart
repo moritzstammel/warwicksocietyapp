@@ -117,5 +117,42 @@ class FirestoreHelper {
   void updateSpotlight(Spotlight updatedSpotlight) => FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").doc(updatedSpotlight.id).set(updatedSpotlight.toJson());
   void cancelSpotlight(Spotlight spotlight) => FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("spotlights").doc(spotlight.id).update({"end_time": Timestamp.now()});
 
+  Future<void> createEvent(Event newEvent) async {
+
+    CollectionReference eventCollection = FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("events");
+    CollectionReference chatsCollection = FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("chats");
+
+    DocumentReference chatRef = chatsCollection.doc();
+    DocumentReference eventRef = eventCollection.doc(chatRef.id);
+
+    Map<String, dynamic> newChat = {
+      "event": {
+        "title" : newEvent.title,
+        "location": newEvent.location,
+        "start_time": Timestamp.fromDate(newEvent.startTime),
+        "end_time": Timestamp.fromDate(newEvent.endTime),
+        "ref" : eventRef
+      },
+      "last_time_message_sent" : null,
+      "messages" : [],
+      "society" : SocietyAuthentication.instance.societyInfo!.toJson(),
+      "users" :{},
+      "type" : "event_chat"
+    };
+
+
+    final batch = FirebaseFirestore.instance.batch();
+    batch.set(eventRef, newEvent.toJson());
+    batch.set(chatRef, newChat);
+    await batch.commit();
+
+  }
+
 }
 

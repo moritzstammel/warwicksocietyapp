@@ -1,8 +1,14 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
-import '../models/event.dart';
+import 'package:warwicksocietyapp/models/event.dart';
+import 'dart:io';
+
+import '../firebase_helper.dart';
+import '../models/society_info.dart';
 class EventCreationScreen extends StatefulWidget {
   @override
   _EventCreationScreenState createState() => _EventCreationScreenState();
@@ -14,16 +20,23 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
   late TextEditingController _locationController;
   late DateTime _startTime;
   late DateTime _endTime;
-
+  String? _selectedImagePath;
   String? _titleError;
   String? _descriptionError;
   String? _locationError;
   String? _startTimeError;
   String? _endTimeError;
 
+  String? _selectedTag; // Default duration is 1 day
+
+  List<String> _tagOptions = []; // Duration options in days
+
+
   @override
   void initState() {
     super.initState();
+
+    fetchTags();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
     _locationController = TextEditingController();
@@ -43,7 +56,10 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
         title: Text(
           'Create Event',
@@ -84,7 +100,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Start Time: ${_startTime.toString()}'),
+                Text('Start Time: ${formatDate(_startTime)}'),
                 ElevatedButton(
                   onPressed: () async {
                     final DateTime? selectedDate = await showDatePicker(
@@ -129,7 +145,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('End Time: ${_endTime.toString()}'),
+                Text('End Time: ${formatDate(_endTime)}'),
                 ElevatedButton(
                   onPressed: () async {
                     final DateTime? selectedDate = await showDatePicker(
@@ -171,12 +187,49 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
                 _startTimeError!,
                 style: TextStyle(color: Colors.red[800]),
               ),
+            SizedBox(height: 8),
+            GestureDetector(
+              onTap: _selectImage,
+              child: Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: (_selectedImagePath != null && _selectedImagePath!.isNotEmpty)
+                    ? Image.file(File(_selectedImagePath!), fit: BoxFit.cover,)
+                    : Icon(Icons.add_photo_alternate, color: Colors.black),
+              ),
+            ),
+            Row(
+              children: [
+
+
+                Text('Select a tag'),
+                SizedBox(width: 8),
+                DropdownButton<String>(
+                  value: _selectedTag,
+                  onChanged: (String? newValue) {
+                    if (newValue == null) return;
+                    setState(() {
+                      _selectedTag = newValue;
+                    });
+                  },
+                  items: _tagOptions.map((String tag) {
+                    return DropdownMenuItem<String>(
+                      value: tag,
+                      child: Text(tag),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: (){
                 if(_validateFields()){
                   createEvent();
-                  Navigator.pop(context);
                 }
 
 
@@ -194,7 +247,27 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
       ),
     );
   }
+  String formatDate(DateTime dateTime) {
+    String day = dateTime.day.toString().padLeft(2, '0');
+    String month = dateTime.month.toString().padLeft(2, '0');
+    String year = dateTime.year.toString();
+    String hour = dateTime.hour.toString().padLeft(2, '0');
+    String minute = dateTime.minute.toString().padLeft(2, '0');
 
+    return '$day.$month.$year $hour:$minute';
+  }
+
+  Future<void> _selectImage() async {
+    final picker = ImagePicker();
+
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImagePath = pickedImage.path;
+      });
+    }
+  }
 
 
   bool _validateFields() {
@@ -228,59 +301,72 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
   }
 
   void createEvent()async {
+    if (_selectedImagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please select an image for the event"),
+      ));
+      return;
+    }
+    if (_selectedTag == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please select an tag for the event"),
+      ));
+      return;
+    }
+
+    DateTime now = DateTime.now();
+    String imageUrl = await uploadImageToFirebaseStorage(_selectedImagePath!, now.hashCode.toString());
+
+
+
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
     final location = _locationController.text.trim();
-    final startTime = Timestamp.fromDate(_startTime);
-    final endTime = Timestamp.fromDate(_endTime);
+    final startTime = _startTime;
+    final endTime = _endTime;
 
-    CollectionReference eventCollection = FirebaseFirestore.instance
-        .collection("universities")
-        .doc("university-of-warwick")
-        .collection("events");
-    CollectionReference chatsCollection = FirebaseFirestore.instance
-        .collection("universities")
-        .doc("university-of-warwick")
-        .collection("chats");
+    Event newEvent = Event(
+        id: "",
+        title: title,
+        description: description,
+        location: location,
+        startTime: startTime,
+        endTime: endTime,
+        points: 0,
+        societyInfo: SocietyAuthentication.instance.societyInfo!,
+        images: [imageUrl],
+        registeredUsers: {},
+        tag: _selectedTag!);
 
-    Map<String, dynamic> newEvent = {
-      "title": title,
-      "description": description,
-      "location": location,
-      "start_time": startTime,
-      "end_time": endTime,
-      "points": 0,
-      "society": SocietyAuthentication.instance.societyInfo!.toJson(),
-      "images": [],
-      "registered_users": {},
-    };
+    FirestoreHelper.instance.createEvent(newEvent);
 
 
+  }
+  Future<String> uploadImageToFirebaseStorage(String imagePath,String id) async {
+    final SocietyInfo society = SocietyAuthentication.instance.societyInfo!;
+    final imageFile = File(imagePath);
 
-    DocumentReference eventRef = eventCollection.doc();
-    DocumentReference chatRef = chatsCollection.doc(eventRef.id);
+    final Reference storageReference =
+    FirebaseStorage.instance.ref().child('events/${society.ref.id}/$id.jpg');
 
-    Map<String, dynamic> newChat = {
-      "event": {
-        "title" : title,
-        "location": location,
-        "start_time": startTime,
-        "end_time": endTime,
-        "ref" : eventRef
-      },
-      "last_time_message_sent" : null,
-      "messages" : [],
-      "society" : SocietyAuthentication.instance.societyInfo!.toJson(),
-      "users" :{}
-    };
+    final UploadTask uploadTask = storageReference.putFile(imageFile);
+    await uploadTask;
+    final String downloadURL = await storageReference.getDownloadURL();
 
+    return downloadURL;
+  }
 
-    final batch = FirebaseFirestore.instance.batch();
-    batch.set(eventRef, newEvent);
-    batch.set(chatRef, newChat);
-    await batch.commit();
+  Future<void> fetchTags() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('universities')
+        .doc('university-of-warwick')
+        .collection('tags')
+        .get();
 
-
+    setState(() {
+      _tagOptions =
+          snapshot.docs.map((doc) => doc.id).toList();
+    });
   }
 
 }

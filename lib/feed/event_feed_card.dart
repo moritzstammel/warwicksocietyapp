@@ -249,7 +249,7 @@ class EventFeedCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(100),
             child: Container(
 
               color: Colors.white,

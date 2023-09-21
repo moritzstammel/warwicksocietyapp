@@ -54,4 +54,8 @@ class SocietyAuthentication {
     batch.set(chatRef,newChat);
     await batch.commit();
   }
+
+  void refresh() async {
+    societyInfo = await societyInfo!.ref.get().then((value) => SocietyInfo.fromJson(value.data() as Map<String,dynamic>));
+  }
 }

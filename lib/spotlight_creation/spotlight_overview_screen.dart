@@ -52,6 +52,7 @@ class _SpotlightOverviewScreenState extends State<SpotlightOverviewScreen> {
   Widget build(BuildContext context) {
     if(buildSociety != SocietyAuthentication.instance.societyInfo) setStream();
     return Scaffold(
+
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -73,6 +74,8 @@ class _SpotlightOverviewScreenState extends State<SpotlightOverviewScreen> {
 
           final Spotlight? liveSpotlight = tempList.isNotEmpty ? tempList.first : null;
           final List<Spotlight> pastSpotlights = spotlightData.where((spotlight) => spotlight.endTime.isBefore(DateTime.now())).toList();
+          pastSpotlights.sort( (a,b) => a.endTime.compareTo(b.endTime));
+
           print(liveSpotlight);
           print(pastSpotlights);
 
