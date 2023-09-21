@@ -154,5 +154,39 @@ class FirestoreHelper {
 
   }
 
+  Future<void> updateEvent(Event event) async {
+
+    DocumentReference eventRef = FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("events")
+        .doc(event.id);
+    DocumentReference chatRef = FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("chats")
+        .doc(event.id);
+
+    Map<String, dynamic> updatedChat = {
+      "event": {
+        "title" : event.title,
+        "location": event.location,
+        "start_time": Timestamp.fromDate(event.startTime),
+        "end_time": Timestamp.fromDate(event.endTime),
+        "ref" : eventRef
+      },
+    };
+
+
+    final batch = FirebaseFirestore.instance.batch();
+    batch.update(eventRef, event.toJson());
+    batch.update(chatRef, updatedChat);
+    await batch.commit();
+  }
+
+  Future<void> deleteEvent(Event event) async {
+    FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("events").doc(event.id).delete();
+    FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("chats").doc(event.id).delete();
+  }
 }
 

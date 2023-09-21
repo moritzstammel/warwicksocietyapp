@@ -1,6 +1,7 @@
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
+import '../event_creation/event_creation_screen.dart';
 import '../models/event.dart';
 
 import 'package:flutter/material.dart';
@@ -10,9 +11,10 @@ class EventCard extends StatelessWidget {
   final Event event;
   final bool showRegistered;
   final bool isLive = false;
+  final bool isEditable;
 
 
-  const EventCard({required this.event, this.showRegistered = true});
+  const EventCard({required this.event, this.showRegistered = true,this.isEditable = false});
 
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
@@ -198,11 +200,27 @@ class EventCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(width: 8), // Add space between text and arrow
+                      SizedBox(width: 8),
+                      (isEditable) ?
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => EventCreationScreen(event: event,)),
+                          );
+                        },
+                        child: ImageIcon(
+                          AssetImage('assets/icons/edit-black.png'),
+                          size: 24,
+                        ),
+                      )
+                      :
                       ImageIcon(
                         AssetImage('assets/icons/events/chevron-right.png'),
                         size: 24,
-                      ),
+                      )
+
+                      ,
                     ],
                   ),
 

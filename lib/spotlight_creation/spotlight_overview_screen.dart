@@ -59,7 +59,8 @@ class _SpotlightOverviewScreenState extends State<SpotlightOverviewScreen> {
         backgroundColor: Colors.white,
         title: Text(
           'Spotlights',
-          style: TextStyle(color: Colors.black, fontFamily: 'Inter'),
+          style: TextStyle(color: Colors.black, fontFamily: 'Inter',fontSize: 22,fontWeight: FontWeight.w500),
+
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(

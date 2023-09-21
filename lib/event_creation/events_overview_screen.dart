@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/event_creation/event_creation_screen.dart';
 
+import '../admin/society_app_bar.dart';
 import '../widgets/event_card.dart';
 import '../models/event.dart';
 class EventOverviewScreen extends StatefulWidget {
@@ -33,14 +34,7 @@ class _EventOverviewScreenState extends State<EventOverviewScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Text(
-          'Events',
-          style: TextStyle(color: Colors.black, fontFamily: 'Inter'),
-        ),
-      ),
+
       body: StreamBuilder<QuerySnapshot>(
         stream: eventStream,
         builder: (context, snapshot) {
@@ -58,15 +52,22 @@ class _EventOverviewScreenState extends State<EventOverviewScreen> {
           }
 
           List<Event> events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String, dynamic>, json.id)).toList();
+          List<Event> upcomingEvents = events.where((event) => DateTime.now().isBefore(event.endTime.add(Duration(hours: 2)))).toList();
+          List<Event> pastEvents = events.where((event) => DateTime.now().isAfter(event.endTime.add(Duration(hours: 2)))).toList();
+
 
           return SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                  SocietyAppBar(),
+                  SizedBox(height: 18,),
                   createEventButton(),
-                  upcomingEventsSection(events),
-                pastEventsSection(events+events)
+                  if (upcomingEvents.isNotEmpty)
+                  upcomingEventsSection(upcomingEvents),
+                  if(pastEvents.isNotEmpty)
+                  pastEventsSection(pastEvents)
 
 
               ],
@@ -142,6 +143,7 @@ class _EventOverviewScreenState extends State<EventOverviewScreen> {
             child: EventCard(
               event: event,
               showRegistered: false,
+              isEditable: true,
             ),
           ),
       ],

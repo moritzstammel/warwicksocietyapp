@@ -268,7 +268,7 @@ class _ManageSocietyAccountScreenState extends State<ManageSocietyAccountScreen>
       });
 
 
-
+    Navigator.pop(context);
     if(_selectedImagePath != null) {
       final downloadUrl = await uploadImageToFirebaseStorage(_selectedImagePath!);
       society.ref.update({"logo_url" : downloadUrl});

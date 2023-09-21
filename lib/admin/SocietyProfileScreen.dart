@@ -54,6 +54,7 @@ class _SocietyProfileScreenState extends State<SocietyProfileScreen> {
           builder: (context, snapshot) {
             if(!snapshot.hasData) return ErrorScreen();
             SocietyInfo society = SocietyInfo.fromJson(snapshot.data!.data() as Map<String,dynamic>);
+            SocietyAuthentication.instance.societyInfo = society;
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
