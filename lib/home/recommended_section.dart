@@ -30,15 +30,16 @@ class _RecommendedSectionState extends State<RecommendedSection> {
         .collection("universities")
         .doc("university-of-warwick")
         .collection("events")
+        .where('end_time', isGreaterThan: Timestamp.fromDate(DateTime.now().add(Duration(hours: 2))))
         .limit(5)
         .snapshots()
-
         :
     FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")
         .collection("events")
         .where('society.ref', whereIn: societyRefs)
+        .where('end_time', isGreaterThan: Timestamp.fromDate(DateTime.now().add(Duration(hours: 2))))
         .limit(5)
         .snapshots();
 

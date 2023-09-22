@@ -55,7 +55,8 @@ class _YourEventsSectionState extends State<YourEventsSection> {
           }
 
 
-          final events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
+          List<Event> events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
+          events = events.where((event) => event.endTime.isAfter(DateTime.now().add(Duration(hours: 2)))).toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
