@@ -1,6 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:warwicksocietyapp/models/author_info.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
 class FirestoreUser {
@@ -29,9 +28,7 @@ class FirestoreUser {
 
     );
   }
-
-  Author toAuthor() {
-    return Author(name: username, imageUrl: imageUrl, ref: FirebaseFirestore.instance.doc("universities/university-of-warwick/users/$id"));
+  DocumentReference get ref {
+    return FirebaseFirestore.instance.doc("universities/university-of-warwick/users/$id");
   }
-
 }

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/chat.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
+import 'package:warwicksocietyapp/models/message.dart';
 
 import '../authentication/FirestoreAuthentication.dart';
 import 'chat_opened_screen.dart';
@@ -62,6 +63,13 @@ class ChatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String nameOfLastAuthor = "";
+    if(chat.messages.isNotEmpty){
+      Message lastMessage = chat.messages.last;
+      nameOfLastAuthor = lastMessage.authorIsSociety? chat.societyInfo.name : chat.users[lastMessage.author.id]!.fullName;
+    }
+
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -103,7 +111,7 @@ class ChatCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    chat.messages.isNotEmpty ? formatContent("${chat.messages.last.author.name}: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}"): "Be the first to write a message",
+                    chat.messages.isNotEmpty ? formatContent("$nameOfLastAuthor: ${chat.messages.last.isDeleted ? "(deleted)" : chat.messages.last.content}"): "Be the first to write a message",
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 14,

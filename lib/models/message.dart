@@ -1,11 +1,10 @@
 
-import 'author_info.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 class Message {
   final String content;
   final DateTime createdAt;
   final bool isDeleted;
-  final Author author;
+  final DocumentReference author;
 
   Message({required this.content, required this.createdAt,required this.isDeleted,required this.author});
 
@@ -15,8 +14,13 @@ class Message {
         content: json["content"],
         createdAt: json["created_at"].toDate(),
         isDeleted: json["is_deleted"],
-        author: Author.fromJson(json["author"]));
+        author: json["author"]);
   }
-
+  bool get authorIsSociety {
+    return author.path.contains('societies');
+  }
+  bool get authorIsUser {
+    return author.path.contains('users');
+  }
 
 }

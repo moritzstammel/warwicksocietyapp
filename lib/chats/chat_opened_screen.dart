@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
-import 'package:warwicksocietyapp/models/author_info.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
@@ -24,7 +24,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   late Stream<DocumentSnapshot> chatStream;
-  late Author currentAuthor;
+  late DocumentReference currentAuthor;
 
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
@@ -37,9 +37,8 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
   };
   void _setAuthor(){
     currentAuthor = (SocietyAuthentication.instance.isSociety) ?
-        SocietyAuthentication.instance.societyInfo!.toAuthor() :
-        FirestoreAuthentication.instance.firestoreUser!.toAuthor();
-
+        SocietyAuthentication.instance.societyInfo!.ref :
+        FirestoreAuthentication.instance.firestoreUser!.ref;
   }
 
 
@@ -213,13 +212,16 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
           ),
           body: Column(
             children: [
+              SizedBox(height: 8,),
               Expanded(
                   child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     controller: _scrollController,
                     itemCount: chat.messages.length,
                     itemBuilder: (context, index) {
                       Message message = chat.messages[index];
-                      bool isUserMessage = (message.author.ref == currentAuthor.ref);
+                      bool isUserMessage = (message.author == currentAuthor);
+
 
                       return Container(
                         margin: EdgeInsets.symmetric(
@@ -238,7 +240,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                                     borderRadius: BorderRadius.circular(100),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                          message.author.imageUrl),
+                                         message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -278,7 +280,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                                     children: [
                                       if (!isUserMessage)
                                         Text(
-                                          message.author.name, style: TextStyle(
+                                           message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             color: Colors.black
@@ -387,7 +389,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     await chatRef.update({
       'messages': FieldValue.arrayUnion([
         {
-          'author': currentAuthor.toJson(),
+          'author': currentAuthor,
           'content': content,
           'is_deleted': false,
           'created_at': now

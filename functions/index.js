@@ -161,6 +161,79 @@ exports.updateSpotlightsOnSocietyUpdate = functions.firestore
       return null;
     });
 
+
+    
+  exports.updateChatsOnUserUpdate = functions.firestore
+    .document('universities/university-of-warwick/users/{userId}')
+    .onUpdate(async (change, context) => {
+      const userId = context.params.userId;
+      const newData = change.after.data();
+      const previousData = change.before.data();
+  
+      // Check if relevant fields have changed
+      const fieldsToCheck = ['full_name', 'username', 'fcm_token', 'image_url'];
+      const hasFieldsChanged = fieldsToCheck.some(field => newData[field] !== previousData[field]);
+  
+      if (hasFieldsChanged) {
+        const chatsRef = firestore.collection('universities/university-of-warwick/chats');
+  
+        // Query and update documents in the 'chats' collection
+        const chatsQuery = await chatsRef.where(`users.${userId}.active`, 'in', [true, false]).get();
+  
+        const batch = firestore.batch();
+  
+        chatsQuery.forEach(doc => {
+          const chatData = doc.data();
+          chatData.users[userId].full_name = newData.full_name;
+          chatData.users[userId].username = newData.username;
+          chatData.users[userId].fcm_token = newData.fcm_token;
+          chatData.users[userId].image_url = newData.image_url;
+  
+          batch.update(doc.ref, chatData);
+        });
+  
+        // Commit the batch update
+        return batch.commit();
+      }
+  
+      return null; // No changes in relevant fields
+    });
+    
+    exports.updateEventsOnUserUpdate = functions.firestore
+    .document('universities/university-of-warwick/registered_users/{userId}')
+    .onUpdate(async (change, context) => {
+      const userId = context.params.userId;
+      const newData = change.after.data();
+      const previousData = change.before.data();
+  
+      // Check if relevant fields have changed
+      const fieldsToCheck = ['full_name', 'username', 'fcm_token', 'image_url'];
+      const hasFieldsChanged = fieldsToCheck.some(field => newData[field] !== previousData[field]);
+  
+      if (hasFieldsChanged) {
+        const eventsRef = firestore.collection('universities/university-of-warwick/events');
+  
+        // Query and update documents in the 'events' collection for both 'true' and 'false'
+        const eventsQuery = await eventsRef.where(`registered_users.${userId}.active`, 'in', [true, false]).get();
+  
+        const batch = firestore.batch();
+  
+        eventsQuery.forEach(doc => {
+          const eventData = doc.data();
+          eventData.registered_users[userId].full_name = newData.full_name;
+          eventData.registered_users[userId].username = newData.username;
+          eventData.registered_users[userId].fcm_token = newData.fcm_token;
+          eventData.registered_users[userId].image_url = newData.image_url;
+  
+          batch.update(doc.ref, eventData);
+        });
+  
+        // Commit the batch update
+        return batch.commit();
+      }
+  
+      return null; // No changes in relevant fields
+    });
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 

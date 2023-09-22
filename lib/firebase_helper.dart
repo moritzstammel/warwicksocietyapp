@@ -36,7 +36,6 @@ class FirestoreHelper {
         "image_url": user.imageUrl,
         "ref" : FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${user.id}"),
         "active" : newState,
-        "chat_muted" : false,
         "username" : user.username,
         "fcm_token": user.fcmToken,
       }
