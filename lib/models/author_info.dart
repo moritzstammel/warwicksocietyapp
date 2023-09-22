@@ -17,4 +17,12 @@ class Author {
   bool get isSociety {
     return ref.path.contains('societies');
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'image_url': imageUrl,
+      'ref': ref,
+    };
+  }
 }

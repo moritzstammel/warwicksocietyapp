@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
+import 'package:warwicksocietyapp/models/author_info.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
@@ -10,7 +12,6 @@ import '../models/message.dart';
 
 class ChatOpenedScreen extends StatefulWidget {
   final String chatId;
-  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
 
   ChatOpenedScreen({required this.chatId});
 
@@ -23,6 +24,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   late Stream<DocumentSnapshot> chatStream;
+  late Author currentAuthor;
 
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
@@ -33,6 +35,12 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     6: 'Sat',
     7: 'Sun',
   };
+  void _setAuthor(){
+    currentAuthor = (SocietyAuthentication.instance.isSociety) ?
+        SocietyAuthentication.instance.societyInfo!.toAuthor() :
+        FirestoreAuthentication.instance.firestoreUser!.toAuthor();
+
+  }
 
 
   @override
@@ -46,6 +54,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
   @override
   void initState() {
     super.initState();
+    _setAuthor();
 
     WidgetsBinding.instance.addObserver(this);
 
@@ -168,8 +177,8 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                       Row(
                         children: [
                           Container(
-                            width: 56,
-                            height: 56,
+                            width: 48,
+                            height: 48,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               image: DecorationImage(
@@ -210,8 +219,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                     itemCount: chat.messages.length,
                     itemBuilder: (context, index) {
                       Message message = chat.messages[index];
-                      bool isUserMessage = message.author.ref.id ==
-                          widget.user.id;
+                      bool isUserMessage = (message.author.ref == currentAuthor.ref);
 
                       return Container(
                         margin: EdgeInsets.symmetric(
@@ -227,10 +235,10 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                                   width: 36,
                                   height: 36,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(100),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                          chat.societyInfo.logoUrl),
+                                          message.author.imageUrl),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -379,13 +387,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     await chatRef.update({
       'messages': FieldValue.arrayUnion([
         {
-          'author': {
-            'name': widget.user.username,
-            'image_url': widget.user.imageUrl,
-            'ref': FirebaseFirestore.instance
-                .doc(
-                "/universities/university-of-warwick/users/${widget.user.id}")
-          },
+          'author': currentAuthor.toJson(),
           'content': content,
           'is_deleted': false,
           'created_at': now

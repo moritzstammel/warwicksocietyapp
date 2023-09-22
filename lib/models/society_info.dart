@@ -1,6 +1,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'author_info.dart';
+
 class SocietyInfo {
   final String name;
   final String logoUrl;
@@ -24,4 +26,8 @@ class SocietyInfo {
 
   @override
   int get hashCode => ref.hashCode;
+
+  Author toAuthor() {
+    return Author(name: name, imageUrl: logoUrl, ref: ref);
+  }
 }
