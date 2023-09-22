@@ -139,10 +139,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.network(
-                              widget.event.societyInfo.logoUrl,
-                              width: 40,
-                              height: 40,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(
+                                widget.event.societyInfo.logoUrl,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
+                                
+                              ),
+                              
                             ),
                             SizedBox(width: 16),
                             Text(

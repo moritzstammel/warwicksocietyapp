@@ -66,7 +66,7 @@ class FirestoreHelper {
     final batch = FirebaseFirestore.instance.batch();
 
     batch.update(userRef, {
-      "followed_societies" : FieldValue.arrayUnion([society.toJson()])
+      "followed_societies.${society.ref.id}" : society.toJson()
     });
 
     Map<String,dynamic> updatedChatUsers = {
@@ -92,7 +92,7 @@ class FirestoreHelper {
     final batch = FirebaseFirestore.instance.batch();
 
     batch.update(userRef, {
-      "followed_societies" : FieldValue.arrayRemove([society.toJson()])
+      "followed_societies.${society.ref.id}" : FieldValue.delete()
     });
 
     Map<String,dynamic> updatedChatUsers = {
@@ -165,6 +165,8 @@ class FirestoreHelper {
         .doc("university-of-warwick")
         .collection("chats")
         .doc(event.id);
+
+
 
     Map<String, dynamic> updatedChat = {
       "event": {

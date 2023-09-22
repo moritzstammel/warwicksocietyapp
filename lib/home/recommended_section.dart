@@ -22,7 +22,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
   late List<String> buildSocieties;
 
   void setStream(){
-    List<SocietyInfo> societies = List<SocietyInfo>.from(widget.user.followedSocieties);
+    List<SocietyInfo> societies = List<SocietyInfo>.from(widget.user.followedSocieties.values);
 
     List<DocumentReference> societyRefs = societies.map((society) => society.ref).toList();
     eventStream = (societyRefs.isEmpty) ?
@@ -48,7 +48,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
 
   bool societiesWereUpdated() {
     var set1 = Set.from(buildSocieties);
-    var set2 = Set.from(widget.user.followedSocieties.map((society) => society.ref.id));
+    var set2 = Set.from(widget.user.followedSocieties.values.map((society) => society.ref.id));
     return set1.length != set2.length || !set1.containsAll(set2);
   }
 

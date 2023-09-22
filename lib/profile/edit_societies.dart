@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
@@ -21,7 +22,7 @@ class _EditSocietiesState extends State<EditSocieties> {
   @override
   void initState() {
     super.initState();
-    selectedSocieties = List<SocietyInfo>.from(user.followedSocieties);
+    selectedSocieties = List<SocietyInfo>.from(user.followedSocieties.values);
     fetchSocieties();
   }
   @override
@@ -149,7 +150,7 @@ class _EditSocietiesState extends State<EditSocieties> {
     print(selectedSocieties);
     print(user.followedSocieties);
     var set1 = Set.from(selectedSocieties);
-    var set2 = Set.from(user.followedSocieties);
+    var set2 = Set.from(user.followedSocieties.values);
     return set1.length != set2.length || !set1.containsAll(set2);
   }
 
@@ -177,16 +178,16 @@ class _EditSocietiesState extends State<EditSocieties> {
   }
 
   Future<void> _followSocieties() async{
-    List<SocietyInfo> societiesToUnfollow = user.followedSocieties.where((society) => !selectedSocieties.contains(society)).toList();
-    List<SocietyInfo> societiesToFollow = selectedSocieties.where((society) => !user.followedSocieties.contains(society)).toList();
+    List<SocietyInfo> societiesToUnfollow = user.followedSocieties.values.where((society) => !selectedSocieties.contains(society)).toList();
+    List<SocietyInfo> societiesToFollow = selectedSocieties.where((society) => !user.followedSocieties.values.contains(society)).toList();
 
     for(final society in societiesToUnfollow){
       print("unfollowed ${society.name}");
-      FirestoreAuthentication.instance.unfollowSociety(society);
+      FirestoreHelper.instance.unfollowSociety(society);
     }
     for(final society in societiesToFollow){
       print("followed ${society.name}");
-      FirestoreAuthentication.instance.followSociety(society);
+      FirestoreHelper.instance.followSociety(society);
     }
   }
   Widget ClickableSocietyCard(SocietyInfo societyInfo){

@@ -48,7 +48,6 @@ class Event {
       "points": points,
       "society": societyInfo.toJson(),
       "images": images,
-      "registered_users": registeredUsers,
       "tag": tag
     };
   }

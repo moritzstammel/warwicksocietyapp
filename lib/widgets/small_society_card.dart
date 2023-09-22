@@ -27,7 +27,7 @@ class SmallSocietyCard extends StatelessWidget {
                     society.logoUrl, // Replace with the network image URL
                     width: 24,
                     height: 24,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                   ),
                ),
 

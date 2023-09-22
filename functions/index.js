@@ -14,77 +14,79 @@ admin.initializeApp();
 
 const firestore = admin.firestore();
 
-exports.updateSpotlightsOnSocietyUpdate = functions.firestore
+exports.updateCollectionsOnSocietyUpdate = functions.firestore
   .document('/universities/university-of-warwick/societies/{societyId}')
   .onUpdate(async (change, context) => {
     const updatedSocietyData = change.after.data();
-    const newSocietyName = updatedSocietyData.name;
     const societyRef = change.after.ref;
-
-    const spotlightsCollection = firestore.collection('/universities/university-of-warwick/spotlights');
-
-    const snapshot = await spotlightsCollection
-      .where('society_ref', '==', societyRef)
-      .get();
-
-    const batch = firestore.batch();
-
-    snapshot.forEach((doc) => {
-      const spotlightRef = doc.ref;
-      batch.update(spotlightRef, { name: newSocietyName });
-    });
-
-    return batch.commit();
-  });
-
-
-  exports.updateChatsOnSocietyUpdate = functions.firestore
-  .document('/universities/university-of-warwick/societies/{societyId}')
-  .onUpdate(async (change, context) => {
-    const updatedSocietyData = change.after.data();
-    const updatedSocietyRef = change.after.ref;
-
     const updatedLogoUrl = updatedSocietyData.logo_url;
     const updatedSocietyName = updatedSocietyData.name;
 
+    const eventsCollection = firestore.collection('/universities/university-of-warwick/events');
+    const spotlightsCollection = firestore.collection('/universities/university-of-warwick/spotlights');
     const chatsCollection = firestore.collection('/universities/university-of-warwick/chats');
+    const usersCollection = firestore.collection('/universities/university-of-warwick/users');
 
-    const snapshot = await chatsCollection
-      .where('society.ref', '==', updatedSocietyRef)
+    // Update events
+    const eventsSnapshot = await eventsCollection
+      .where('society.ref', '==', societyRef)
+      .get();
+
+    // Update spotlights
+    const spotlightsSnapshot = await spotlightsCollection
+      .where('society.ref', '==', societyRef)
+      .get();
+
+    // Update chats
+    const chatsSnapshot = await chatsCollection
+      .where('society.ref', '==', societyRef)
+      .get();
+
+    // Update users
+    const usersSnapshot = await usersCollection
+      .where(`followed_societies.${societyRef.id}.ref`, '==', societyRef)
       .get();
 
     const batch = firestore.batch();
 
-    snapshot.forEach((doc) => {
-      const chatRef = doc.ref;
-      const chatData = doc.data();
+    // Update events
+    eventsSnapshot.forEach((eventDoc) => {
+      const eventRef = eventDoc.ref;
+      batch.update(eventRef, {
+        'society.logo_url': updatedLogoUrl,
+        'society.name': updatedSocietyName
+      });
+    });
 
-      // Update society fields in chat
+    // Update spotlights
+    spotlightsSnapshot.forEach((spotlightDoc) => {
+      const spotlightRef = spotlightDoc.ref;
+      batch.update(spotlightRef, {
+        'society.logo_url': updatedLogoUrl,
+        'society.name': updatedSocietyName
+      });
+    });
+
+    // Update chats
+    chatsSnapshot.forEach((chatDoc) => {
+      const chatRef = chatDoc.ref;
       batch.update(chatRef, {
         'society.logo_url': updatedLogoUrl,
         'society.name': updatedSocietyName
       });
-
-      // Update author fields in messages
-      const messages = chatData.messages || [];
-      const updatedMessages = messages.map((message) => {
-        if (message.author && message.author.ref.path === updatedSocietyRef.path) {
-          return {
-            ...message,
-            author: {
-              ...message.author,
-              image_url: updatedLogoUrl,
-              name: updatedSocietyName
-            }
-          };
-        }
-        return message;
-      });
-
-      batch.update(chatRef, { messages: updatedMessages });
     });
 
-    batch.update(updatedSocietyRef, {
+    // Update users
+    usersSnapshot.forEach((userDoc) => {
+      const userRef = userDoc.ref;
+      batch.update(userRef, {
+        [`followed_societies.${societyRef.id}.name`]: updatedSocietyName,
+        [`followed_societies.${societyRef.id}.logo_url`]: updatedLogoUrl
+      });
+    });
+
+    // Update society document
+    batch.update(societyRef, {
       logo_url: updatedLogoUrl,
       name: updatedSocietyName
     });
@@ -92,74 +94,115 @@ exports.updateSpotlightsOnSocietyUpdate = functions.firestore
     return batch.commit();
   });
 
+  exports.sendEventUpdateNotification = functions.firestore
+  .document('/universities/university-of-warwick/events/{eventId}')
+  .onUpdate(async (change, context) => {
+    const newValue = change.after.data(); // Updated event data
+    const previousValue = change.before.data(); // Previous event data
 
-  exports.sendChatNotification = functions.firestore
-  .document('/universities/university-of-warwick/users/{userId}')
-  .onCreate(async(snapshot, context) => {
-      
-      // Get the FCM token of the recipient from your database
-      const recipientToken = "eTYAvXyMTS-H-JEkvkEUPw:APA91bFN8WS__0YbBs3ZqxmyfTo0xZTwVeDl-9mYlbWj3d4nbb3gIsYAPSjzReLnJdJU6Z0qC9gG9kvnS8Ip2mW6BTAs8yDCHhocazL0zlbix3TlJnQwdYPnlhBA966XQQYypfrsaHKk";
+    if (!newValue || !previousValue) {
+      // Document data not available, exit
+      return null;
+    }
+
+
+
+    // Construct the notification payload
+    const notificationTitle = `${newValue.title} @ ${newValue.society.name} `;
+    const notificationText = 'Event details were changed';
+
+    // Iterate through users in the "users" map and send notifications
+    const usersMap = newValue.registered_users || {};
+    const fcmTokens = Object.values(usersMap).map((user) => user.fcm_token);
+
+    const messaging = admin.messaging();
+    const sendNotifications = fcmTokens.map(async (token) => {
       const payload = {
         notification: {
-          title: "New Message",
-          body: "You have a new message.",
+          title: notificationTitle,
+          body: notificationText,
         },
       };
 
-      // Send the notification to the recipient
-      return admin.messaging().sendToDevice(recipientToken, payload);
+      try {
+        await messaging.sendToDevice(token, payload);
+        console.log('Notification sent to user with FCM token:', token);
+      } catch (error) {
+        console.error('Error sending notification:', error);
+      }
     });
+
+    // Wait for all notifications to be sent
+    await Promise.all(sendNotifications);
+
+    return null;
+  });
+
+
+ 
 
   exports.sendPushNotificationOnMessageAdded = functions.firestore
-    .document('/universities/university-of-warwick/chats/{chatId}')
-    .onUpdate(async (change, context) => {
-      const newValue = change.after.data(); // Updated document data
-      const previousValue = change.before.data(); // Previous document data
-  
-      if (!newValue || !previousValue) {
-        // Document data not available, exit
-        return null;
-      }
-  
-      // Check if a new message was added
-      const newMessages = newValue.messages;
-      const previousMessages = previousValue.messages;
-  
-      if (!newMessages || !previousMessages || newMessages.length <= previousMessages.length) {
-        // No new message added or messages were deleted, exit
-        return null;
-      }
-  
-      // Iterate through users in the "users" map
-      const usersMap = newValue.users || {};
-      const fcmTokens = Object.values(usersMap).map((user) => user.fcm_token);
-  
-      // Construct the notification payload
+  .document('/universities/university-of-warwick/chats/{chatId}')
+  .onUpdate(async (change, context) => {
+    const newValue = change.after.data(); // Updated document data
+    const previousValue = change.before.data(); // Previous document data
 
-      const newMessage = newMessages[newMessages.length - 1]
-      const payload = {
-        notification: {
-          title: newValue.society.name,
-          body: newMessage.author.name + ": " + newMessage.content,
-        },
-      };
-  
-      // Send the notification to each user in the "users" map
-      const messaging = admin.messaging();
-      const sendNotifications = fcmTokens.map(async (token) => {
-        try {
-          await messaging.sendToDevice(token, payload);
-          console.log('Notification sent to user with FCM token:', token);
-        } catch (error) {
-          console.error('Error sending notification:', error);
-        }
-      });
-  
-      // Wait for all notifications to be sent
-      await Promise.all(sendNotifications);
-  
+    if (!newValue || !previousValue) {
+      // Document data not available, exit
       return null;
+    }
+
+    // Check if a new message was added
+    const newMessages = newValue.messages;
+    const previousMessages = previousValue.messages;
+
+    if (!newMessages || !previousMessages || newMessages.length <= previousMessages.length) {
+      // No new message added or messages were deleted, exit
+      return null;
+    }
+
+    // Iterate through users in the "users" map
+    const usersMap = newValue.users || {};
+    const fcmTokens = Object.values(usersMap).map((user) => user.fcm_token);
+
+    // Construct the notification payload
+    const newMessage = newMessages[newMessages.length - 1];
+    let authorName = '';
+
+    if (newMessage.author.path && newMessage.author.path.includes('societies')) {
+      // Author is a society
+      authorName = newValue.society.name;
+    } else {
+      // Author is a user
+      const userId = newMessage.author.id;
+      const userFullName = usersMap[userId] ? usersMap[userId].full_name : '';
+      authorName = userFullName;
+    }
+
+    const payload = {
+      notification: {
+        title: `${newValue.type == "event_chat" ? `${newValue.event.title} @ ` :  `` }${newValue.society.name}`,
+        body: `${authorName}: ${newMessage.content}`,
+      },
+    };
+
+    // Send the notification to each user in the "users" map
+    const messaging = admin.messaging();
+    const sendNotifications = fcmTokens.map(async (token) => {
+      try {
+        await messaging.sendToDevice(token, payload);
+        console.log('Notification sent to user with FCM token:', token);
+      } catch (error) {
+        console.error('Error sending notification:', error);
+      }
     });
+
+    // Wait for all notifications to be sent
+    await Promise.all(sendNotifications);
+
+    return null;
+  });
+
 
 
     

@@ -270,9 +270,14 @@ class _SearchScreenState extends State<SearchScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for (final event in events)
-                EventCard(
-                  event: event,
-                  showRegistered: event.registeredUsers.containsKey(user.id) && event.registeredUsers[user.id]!.active,
+                Column(
+                  children: [
+                    EventCard(
+                      event: event,
+                      showRegistered: event.registeredUsers.containsKey(user.id) && event.registeredUsers[user.id]!.active,
+                    ),
+                    SizedBox(height: 8,)
+                  ],
                 ),
             ],
 

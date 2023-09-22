@@ -24,7 +24,7 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
   late List<String> buildSocieties;
 
   void setStream(){
-    List<SocietyInfo> societies = List<SocietyInfo>.from(widget.user.followedSocieties);
+    List<SocietyInfo> societies = List<SocietyInfo>.from(widget.user.followedSocieties.values);
 
     List<DocumentReference> societyRefs = societies.map((society) => society.ref).toList();
     spotlightStream = (societyRefs.isEmpty) ?
@@ -49,7 +49,7 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
 
   bool societiesWereUpdated() {
     var set1 = Set.from(buildSocieties);
-    var set2 = Set.from(widget.user.followedSocieties.map((society) => society.ref.id));
+    var set2 = Set.from(widget.user.followedSocieties.values.map((society) => society.ref.id));
     return set1.length != set2.length || !set1.containsAll(set2);
   }
 

@@ -63,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
     );
 
     await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID (can be any unique value)
+      message.notification?.title.hashCode ?? 0, // Notification ID (can be any unique value)
       message.notification?.title ?? 'Notification',
       message.notification?.body ?? 'You have a new notification',
       platformChannelSpecifics,

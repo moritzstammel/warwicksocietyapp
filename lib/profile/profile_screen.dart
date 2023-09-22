@@ -189,9 +189,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 108, // Set an appropriate height
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: user.followedSocieties.length,
+                      itemCount: user.followedSocieties.values.length,
                       itemBuilder: (context, index) {
-                        return SocietyCard(societyInfo: user.followedSocieties[index]);
+                        return SocietyCard(societyInfo: user.followedSocieties.values.toList()[index]);
                       },
                     ),
                   ),

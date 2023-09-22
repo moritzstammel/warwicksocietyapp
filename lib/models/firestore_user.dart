@@ -6,7 +6,7 @@ class FirestoreUser {
   final String id;
   final String email;
   final String username;
-  final List<SocietyInfo> followedSocieties;
+  final Map<String,SocietyInfo> followedSocieties;
   final int points;
   final String imageUrl;
   final String bannerUrl;
@@ -22,7 +22,7 @@ class FirestoreUser {
   factory FirestoreUser.fromJson(Map<String, dynamic> json,String id) {
     return FirestoreUser(
       id: id,email: json["email"],
-      username: json["username"], followedSocieties: json["followed_societies"].map<SocietyInfo>((doc) => SocietyInfo.fromJson(doc)).toList(),points: json["points"],
+      username: json["username"], followedSocieties: Map<String, dynamic>.from(json["followed_societies"]).map((key, value) => MapEntry(key, SocietyInfo.fromJson(value))),points: json["points"],
       imageUrl: json["image_url"], bannerUrl: json["banner_url"], eventsSeen: json["events_seen"].cast<String>(), tags: Map<String, bool>.from(json["tags"]),fullName: json["full_name"],
       createdAt: json["created_at"].toDate(),fcmToken: json["fcm_token"]
 
