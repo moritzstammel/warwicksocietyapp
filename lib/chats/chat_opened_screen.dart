@@ -97,7 +97,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     else if (isYesterday(dateTime,now)) {
       date = 'yesterday, ';
     } else if (difference <= 6) {
-      date = '$difference days ago, ';
+      date = '$difference day${difference==1 ? "":"s"} ago, ';
     } else if(difference > 6) {
       date = '${dateTime.day}.${dateTime.month} ';
     }

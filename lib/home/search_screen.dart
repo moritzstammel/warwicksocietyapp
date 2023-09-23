@@ -41,9 +41,11 @@ class _SearchScreenState extends State<SearchScreen> {
     loadAllSocieties();
     loadAllTags();
 
-    eventStream = FirebaseFirestore.instance.collection("universities")
+    eventStream = FirebaseFirestore.instance
+        .collection("universities")
         .doc("university-of-warwick")
         .collection("events")
+        .where('end_time', isGreaterThan: Timestamp.fromDate(DateTime.now().add(Duration(hours: 2))))
         .snapshots();
 
   }

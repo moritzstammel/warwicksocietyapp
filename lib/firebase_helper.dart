@@ -133,7 +133,20 @@ class FirestoreHelper {
     DocumentReference chatRef = chatsCollection.doc();
     DocumentReference eventRef = eventCollection.doc(chatRef.id);
 
-    Map<String, dynamic> newChat = {
+    Map<String, dynamic> eventJson = {
+      "title": newEvent.title,
+      "description": newEvent.description,
+      "location": newEvent.location,
+      "start_time": Timestamp.fromDate(newEvent.startTime),
+      "end_time": Timestamp.fromDate(newEvent.endTime),
+      "points": newEvent.points,
+      "society": newEvent.societyInfo.toJson(),
+      "images": newEvent.images,
+      "tag": newEvent.tag,
+      "registered_users" :{},
+    };
+
+    Map<String, dynamic> chatJson = {
       "event": {
         "title" : newEvent.title,
         "location": newEvent.location,
@@ -149,9 +162,10 @@ class FirestoreHelper {
     };
 
 
+
     final batch = FirebaseFirestore.instance.batch();
-    batch.set(eventRef, newEvent.toJson());
-    batch.set(chatRef, newChat);
+    batch.set(eventRef, eventJson);
+    batch.set(chatRef, chatJson);
     await batch.commit();
 
   }

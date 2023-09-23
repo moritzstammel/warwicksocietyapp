@@ -34,6 +34,7 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
     setState(() {
       allSocieties =
           snapshot.docs.map((doc) => SocietyInfo.fromJson(doc.data() as Map<String, dynamic>)).toList();
+
     });
   }
 
@@ -49,6 +50,7 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       backgroundColor: Colors.white,
@@ -86,11 +88,21 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
                       fontWeight: FontWeight.w500
                   ),),
                 SizedBox(height: 40,),
-                Wrap(
-                    runSpacing: 16,
-                    spacing: 12,
-                    children: allSocieties.map((soc) => ClickableSocietyCard(soc)).toList()
-                ),
+                Container(
+                  height: 480,
+                  child: ListView(
+
+                    padding: EdgeInsets.all(0),
+                    shrinkWrap: true,
+                    children: [
+                      Wrap(
+                          runSpacing: 16,
+                          spacing: 12,
+                          children: allSocieties.map((soc) => ClickableSocietyCard(soc)).toList()
+                      ),
+                    ],
+                  ),
+                )
 
               ],
             ),
@@ -99,13 +111,19 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  _followSocieties();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TagSelectionScreen(userRef: widget.userRef),
-                    ),
-                  );
+                  if(selectedSocieties.length > 10){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Select up to 10 societies")));
+                  }
+                  else{
+                    _followSocieties();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TagSelectionScreen(userRef: widget.userRef),
+                      ),
+                    );
+                  }
+
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
@@ -158,7 +176,7 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
                       width: (isTapped) ? 52 : 64,
                       height: (isTapped) ? 52 : 64 ,
                       foregroundDecoration:(isTapped) ? BoxDecoration(
-                        color: Colors.grey,
+                        color: Colors.white,
                         backgroundBlendMode: BlendMode.saturation,
                       ) : null,
                       decoration: BoxDecoration(

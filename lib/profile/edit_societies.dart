@@ -85,11 +85,20 @@ class _EditSocietiesState extends State<EditSocieties> {
                     ),
                   ),
                   SizedBox(height: 24),
-                   Wrap(
-                          runSpacing: 16,
-                          spacing: 12,
-                          children: allSocieties.map((soc) => ClickableSocietyCard(soc)).toList()
-                      )
+                   Container(
+                     height: 370,
+                     child: ListView(
+                       padding: EdgeInsets.all(0),
+                         shrinkWrap: true,
+                         children: [
+                         Wrap(
+                                runSpacing: 16,
+                                spacing: 12,
+                                children: allSocieties.map((soc) => ClickableSocietyCard(soc)).toList()
+                            ),
+                       ],
+                     ),
+                   )
                 ],
               ),
 
@@ -100,7 +109,7 @@ class _EditSocietiesState extends State<EditSocieties> {
                       height: 35,
                       child: Center(
                         child: Text(
-                          "${selectedSocieties.length} societies selected",
+                          (selectedSocieties.length <= 10) ? "${selectedSocieties.length} societies selected" : "Select up to 10 societies.",
                           style: TextStyle(
                               fontSize: 14,
                               color: Color(0xFF888888),
@@ -111,7 +120,7 @@ class _EditSocietiesState extends State<EditSocieties> {
                         ),
                       ),
                     ),
-                    if(societiesWereChanged())
+                    if(societiesWereChanged() && selectedSocieties.length <= 10)
                     GestureDetector(
                       onTap: (){
                         _followSocieties();
@@ -164,6 +173,7 @@ class _EditSocietiesState extends State<EditSocieties> {
     setState(() {
       allSocieties =
           snapshot.docs.map((doc) => SocietyInfo.fromJson(doc.data() as Map<String, dynamic>)).toList();
+
     });
   }
 

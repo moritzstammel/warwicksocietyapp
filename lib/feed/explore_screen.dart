@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/error_screen.dart';
 import 'package:warwicksocietyapp/feed/all_societies_feed.dart';
 import 'package:warwicksocietyapp/feed/event_feed_card.dart';
+import 'package:warwicksocietyapp/feed/feed_container.dart';
 import 'package:warwicksocietyapp/feed/following_feed.dart';
 import 'package:warwicksocietyapp/feed/testholder.dart';
+import 'package:warwicksocietyapp/models/firestore_user.dart';
+
+import '../models/event.dart';
 
 
 class ExploreScreen extends StatefulWidget {
@@ -13,7 +19,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   final PageController _pageController = PageController();
-
+  List<Event> allEvents = [];
   bool onFirstFeed = true;
 
 
@@ -31,35 +37,60 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   }
 
+  void fetchEvents() async{
+    List<Event> fetchedEvents = await FirebaseFirestore.instance
+        .collection("universities")
+        .doc("university-of-warwick")
+        .collection("events")
+        .where('start_time', isGreaterThan: Timestamp.fromDate(DateTime.now()))
+        .get().then((value) => value.docs.map((element) => Event.fromJson(element.data(),element.id)).toList());
+
+    setState(() {
+      allEvents = fetchedEvents;
+    });
+
+  }
 
 
+  @override
+  void initState() {
+    super.initState();
+    fetchEvents();
 
-
-
+  }
 
   @override
   Widget build(BuildContext context) {
 
+    FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+    allEvents = allEvents.where((event) => !event.registeredUsers.containsKey(user.id) || event.registeredUsers[user.id]!.active==false).toList();
+
+    List<Event> nonSocietyEvents = allEvents.where((event) => !user.followedSocieties.containsKey(event.societyInfo.ref.id)).toList();
+
+
+    List<Event> nonSocietyEventsWithTag = nonSocietyEvents.where((event) => user.tags.keys.contains(event.tag)).toList();
+    List<Event> nonSocietyEventsWithoutTag = nonSocietyEvents.where((event) => !user.tags.keys.contains(event.tag)).toList();
+
+    List<Event> societyFeed = allEvents.where((event) => user.followedSocieties.containsKey(event.societyInfo.ref.id)).toList();
+    List<Event> allSocietiesFeed = nonSocietyEventsWithTag + nonSocietyEventsWithoutTag;
     return Scaffold(
       body: Stack(
         children: [
           PageView(
+                controller: _pageController,
+                onPageChanged: (index){
+                  setState(() {
+                    onFirstFeed = index.isEven;
+                  });
+                },
 
-            controller: _pageController,
-            onPageChanged: (index){
-              setState(() {
-                onFirstFeed = index.isEven;
-              });
-            },
-
-            scrollDirection: Axis.horizontal,
-            children: [
+                scrollDirection: Axis.horizontal,
+                children: [
+                  FeedContainer(events: societyFeed),
+                  FeedContainer(events: allSocietiesFeed)
+                ]
 
 
-              FollowingFeed(),
-              AllSocietiesFeed(),
-
-            ]
           ),
           FeedSelectionBar(),
 
