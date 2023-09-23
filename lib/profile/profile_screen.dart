@@ -247,11 +247,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context,
                       _customPageRouteBuilder(ManageAccountScreen()),
                     )),
-                ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png",
+                /*ProfileButton(name: "Settings", description: "Adjust app and account preferences", path: "assets/icons/profile/settings.png",
                     onTap: () => Navigator.push(
                       context,
                       _customPageRouteBuilder(SettingsScreen()),
-                    )),
+                    )),*/
                 ProfileButton(name: "Support", description: "Notify us of problems or seek help", path: "assets/icons/profile/support.png",
                     onTap: () => Navigator.push(
                   context,

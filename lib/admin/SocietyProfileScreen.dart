@@ -7,6 +7,7 @@ import 'package:warwicksocietyapp/error_screen.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
 import '../profile/profile_button.dart';
+import '../profile/skelton_profile_screen.dart';
 import '../profile/support_screen.dart';
 import 'manage_society_account_screen.dart';
 
@@ -52,7 +53,8 @@ class _SocietyProfileScreenState extends State<SocietyProfileScreen> {
         StreamBuilder<DocumentSnapshot>(
           stream: SocietyAuthentication.instance.societyInfo!.ref.snapshots(),
           builder: (context, snapshot) {
-            if(!snapshot.hasData) return ErrorScreen();
+            if(snapshot.hasError) return ErrorScreen();
+            if(!snapshot.hasData) return SkeltonProfileScreen();
             SocietyInfo society = SocietyInfo.fromJson(snapshot.data!.data() as Map<String,dynamic>);
             SocietyAuthentication.instance.societyInfo = society;
             return Column(
