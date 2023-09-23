@@ -119,6 +119,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
                   children: [
                     Text('Start Time: ${formatDate(_startTime)}'),
                     ElevatedButton(
+                      
                       onPressed: () async {
                         final DateTime? selectedDate = await showDatePicker(
                           context: context,
@@ -139,7 +140,7 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
                               selectedTime.hour,
                               selectedTime.minute,
                             );
-
+                
                             setState(() {
                               _startTime = newStartTime;
                               _endTime = newStartTime.add(Duration(hours: 2));
@@ -152,8 +153,15 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
                         style: TextStyle(color: Colors.white, fontFamily: 'Inter'),
                       ),
                       style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                            )),
+                        elevation: MaterialStateProperty.all(0),
                         backgroundColor: MaterialStateProperty.all(Colors.black),
+
                       ),
+
                     ),
                   ],
                 ),
@@ -194,7 +202,13 @@ class _EventCreationScreenState extends State<EventCreationScreen> {
                         style: TextStyle(color: Colors.white, fontFamily: 'Inter'),
                       ),
                       style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                            )),
+                        elevation: MaterialStateProperty.all(0),
                         backgroundColor: MaterialStateProperty.all(Colors.black),
+
                       ),
                     ),
                   ],
