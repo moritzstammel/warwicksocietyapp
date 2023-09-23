@@ -15,8 +15,7 @@ class _SelectEmailScreenState extends State<SelectEmailScreen> {
   void _validateEmail() {
     String email = _emailController.text.trim().toLowerCase();
     if (
-    //email.endsWith("warwick.ac.uk")&&
-    email.contains("@")) {
+    email.endsWith("warwick.ac.uk")&& email.contains("@")) {
       setState(() {
         _isValid = true;
       });
@@ -63,72 +62,67 @@ class _SelectEmailScreenState extends State<SelectEmailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // White background
-      appBar: AppBar(
-        backgroundColor: Colors.transparent, // Transparent app bar
-        elevation: 0, // No shadow
-      ),
-      resizeToAvoidBottomInset: false, // Disable automatic keyboard handling
-      body: GestureDetector(
-        onTap: () {
-          // Dismiss the keyboard when tapping outside the text field
-          FocusScope.of(context).unfocus();
-        },
-        child: SingleChildScrollView(
-          reverse: true, // Reverse the SingleChildScrollView
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      body: Container(
+          width: double.infinity,
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Enter your Warwick Email Address",
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 18,
-                  fontFamily: 'Inter',
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Inter', // Use the "Inter" font
-                  fontSize: 16, // Set the desired font size
-                  color: Colors.black, // Set the desired font color
-                ),
-                textAlign: TextAlign.center,
-                autofocus: true, // Autofocus enabled
-                keyboardType: TextInputType.emailAddress,
-                controller: _emailController,
-                decoration: InputDecoration(
-                  errorStyle: TextStyle(
-
-                    color: Colors.red, // Set the error text color
-                    fontSize: 14, // Set the error text font size
-
+          child:
+             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 48,),
+                Text(
+                  "Enter your Warwick\nemail Address",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontFamily: 'Inter',
+                    color: Colors.black,
                   ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 48),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Inter', // Use the "Inter" font
+                      fontSize: 16, // Set the desired font size
+                      color: Colors.black, // Set the desired font color
+                    ),
 
-                  hintText: "",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
-                  errorText: _isValid ? null : "Please enter a valid Warwick email address",
+                    autofocus: true, // Autofocus enabled
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      errorStyle: TextStyle(
 
-                  ),
-                cursorColor: Colors.black,
+                        color: Colors.red, // Set the error text color
+                        fontSize: 14, // Set the error text font size
 
+                      ),
+
+                      hintText: "peter.griffin@warwick.ac.uk",
+                      hintStyle: TextStyle(color:Color(0xFF888888)),
+
+                      errorText: _isValid ? null : "Please enter a valid Warwick email address",
+
+                      ),
+                    cursorColor: Colors.black,
+
+                    ),
                 ),
 
 
 
-              SizedBox(height: 20),
-            ],
-          ),
+                SizedBox(height: 20),
+              ],
+            ),
+
         ),
-      ),
+
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom ),
         child: Padding(
