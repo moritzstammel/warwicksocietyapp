@@ -85,6 +85,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   }
 
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+    precacheImage(NetworkImage(user.imageUrl), context);
+    precacheImage(NetworkImage(user.bannerUrl), context);
+  }
+
   @override
   Widget build(BuildContext context) {
     FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;

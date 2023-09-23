@@ -257,7 +257,7 @@ class EventFeedCard extends StatelessWidget {
                 event.societyInfo.logoUrl, // Replace with the network image URL
                 width: 48,
                 height: 48,
-                fit: BoxFit.contain,
+                fit: BoxFit.cover,
               ),
             ),
 

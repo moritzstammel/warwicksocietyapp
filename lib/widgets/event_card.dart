@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
@@ -73,15 +74,15 @@ class EventCard extends StatelessWidget {
                   ),
 
               ),
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(event.societyInfo.logoUrl),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: 100,
+                height: 100,
+                child: CachedNetworkImage(
+                    imageUrl: event.societyInfo.logoUrl,fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(width: 100,height: 100,color: Color(0xFFF7F7F7),),
+                    errorWidget: (context, url, error) => const Center(child: Icon(Icons.error),))
               ),
             ),
             SizedBox(width: 16),

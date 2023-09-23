@@ -78,7 +78,7 @@ class _SpotlightCreationScreenState extends State<SpotlightCreationScreen> {
     return null;
   }
 
-  List<String> splitAndTrimLinks(String text) => text.split(';').map((link) => link.trim()).toList();
+  List<String> splitAndTrimLinks(String text) => (text.trim().isEmpty || text.trim() == "") ? [] : text.split(';').map((link) => link.trim()).toList();
 
   String? validateLinks(String? links) {
     if (links == null || links.isEmpty) {

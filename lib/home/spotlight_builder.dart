@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/error_screen.dart';
 import 'package:warwicksocietyapp/models/spotlight.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
@@ -71,7 +72,8 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
       stream: spotlightStream,
       builder: (context,snapshot) {
 
-          if (snapshot.hasError || !snapshot.hasData) return CircularProgressIndicator();
+         if (snapshot.connectionState == ConnectionState.waiting|| !snapshot.hasData) return SkeltonSpotlight();
+          
 
           final List<Spotlight> spotlights = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
 
@@ -83,3 +85,24 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
     );
   }
 }
+class SkeltonSpotlight extends StatelessWidget {
+  const SkeltonSpotlight({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: EdgeInsets.only(right: 8,top: 8,left: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Color(0xFFF7F7F7)
+          ),
+          height: 150,
+        ),
+
+    );
+  }
+}
+

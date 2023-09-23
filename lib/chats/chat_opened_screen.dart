@@ -5,6 +5,7 @@ import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
 import 'package:warwicksocietyapp/models/event.dart';
+import 'package:warwicksocietyapp/models/event_info.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
 import '../models/firestore_user.dart';
@@ -188,7 +189,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                           ),
                         ],
                       ),
-                      SizedBox(width: 4,),
+                      SizedBox(width: 16,),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -199,6 +200,15 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
                               color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            chat.isEventChat ? chat.societyInfo.name : "society chat",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
+                              color: Color(0xFF777777),
                             ),
                           ),
                         ],
@@ -213,13 +223,16 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
           body: Column(
             children: [
               SizedBox(height: 8,),
+
               Expanded(
                   child: ListView.builder(
+
                     physics: BouncingScrollPhysics(),
                     controller: _scrollController,
-                    itemCount: chat.messages.length,
+                    itemCount: chat.messages.length + (chat.isEventChat ? 1 : 0),
                     itemBuilder: (context, index) {
-                      Message message = chat.messages[index];
+                      if(chat.isEventChat && index == 0) return eventCoreDates(chat.eventInfo!);
+                      Message message = chat.messages[index - (chat.isEventChat ? 1 : 0)];
                       bool isUserMessage = (message.author == currentAuthor);
 
 
@@ -399,6 +412,11 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     });
 
     _messageController.clear();
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeOut,
+    );
 
   }
 
@@ -408,5 +426,68 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     } else {
       return content;
     }
+  }
+
+  Widget eventCoreDates(EventInfo event) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container( width: 1, height: 20, color: Color(0xFFD9D9D9),),
+        SizedBox(height: 8,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          ImageIcon(
+          AssetImage('assets/icons/events/location.png'),
+          size: 14,
+        ),
+          SizedBox(width: 4),
+          Text(
+            event.location,
+            style: TextStyle(
+              fontSize: 12,
+              fontFamily: 'Inter',
+              color: Color(0xFF333333),
+            ),
+          )],),
+        SizedBox(height: 8,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ImageIcon(
+              AssetImage('assets/icons/events/clock.png'),
+              size: 16,
+            ),
+            SizedBox(width: 4),
+            Text(
+              '${_weekdayShortMap[event.startTime.weekday]}, ${event.startTime.hour.toString().padLeft(2, '0')}:${event.startTime.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'Inter',
+                color: Color(0xFF333333),
+              ),
+            ),
+            SizedBox(width: 4),
+            ImageIcon(
+              AssetImage('assets/icons/events/calendar.png'),
+              size: 16,
+            ),
+
+            SizedBox(width: 4),
+            Text(
+              '${event.startTime.day.toString().padLeft(2, '0')}.${event.startTime.month.toString().padLeft(2, '0')}',
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'Inter',
+                color: Color(0xFF333333),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8,),
+        Container( width: 1, height: 20, color: Color(0xFFD9D9D9),),
+        SizedBox(height: 8,),
+      ],
+    );
   }
 }
