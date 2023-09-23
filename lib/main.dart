@@ -120,9 +120,7 @@ class MyApp extends StatelessWidget {
             return const CircularProgressIndicator();
           }
           else if(snapshot.hasData){
-
-
-            if (snapshot.data!.emailVerified){
+            if(snapshot.data!.emailVerified){
               return MainScreen();
             }
 

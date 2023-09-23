@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/tag_selection_screen.dart';
+import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
-import '../models/society.dart';
+
 
 class SocietySelectionScreen extends StatefulWidget {
   final DocumentReference userRef;
@@ -87,6 +88,7 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
                 SizedBox(height: 40,),
                 Wrap(
                     runSpacing: 16,
+                    spacing: 12,
                     children: allSocieties.map((soc) => ClickableSocietyCard(soc)).toList()
                 ),
 
@@ -128,13 +130,12 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
     );
   }
   Future<void> _followSocieties() async{
-
-    widget.userRef.update({
-      "followed_societies" : selectedSocieties.map((e) => e.toJson()).toList()
-    });
+    for (final society in selectedSocieties){
+      FirestoreHelper.instance.followSociety(society,initialUserRef: widget.userRef);
+    }
   }
   Widget ClickableSocietyCard(SocietyInfo societyInfo){
-    bool isTapped=  selectedSocieties.contains(societyInfo);
+    bool isTapped=  !selectedSocieties.contains(societyInfo);
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -142,7 +143,6 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
         });
       },
       child: Container(
-        margin: EdgeInsets.only(right: 14),
         width: 70,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -155,8 +155,8 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
                   child: Center(
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 100),
-                      width: (isTapped) ? 56 : 64,
-                      height: (isTapped) ? 56 : 64 ,
+                      width: (isTapped) ? 52 : 64,
+                      height: (isTapped) ? 52 : 64 ,
                       foregroundDecoration:(isTapped) ? BoxDecoration(
                         color: Colors.grey,
                         backgroundBlendMode: BlendMode.saturation,
@@ -172,26 +172,18 @@ class _SocietySelectionScreenState extends State<SocietySelectionScreen> {
                     ),
                   ),
                 ),
-                if (isTapped)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Icon(
-                      Icons.check_circle,
-                      color: Colors.white,
-                    ),
-                  ),
+
               ],
             ),
             SizedBox(height: 8), // Spacing
             Text(
               societyInfo.name,
               style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: isTapped ? Colors.grey : Colors.black, // Change color as needed
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
+                  color: isTapped ? Colors.grey : Colors.black,
+                  fontFamily: "Inter"
               ),
               textAlign: TextAlign.center,
             ),

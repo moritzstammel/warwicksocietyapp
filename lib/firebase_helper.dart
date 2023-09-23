@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
@@ -58,11 +59,13 @@ class FirestoreHelper {
     batch.update(chatRef, updatedChatUsers);
     await batch.commit();
   }
+  Future<FirestoreUser> getFirestoreUser(DocumentReference userRef) => userRef.get().then((value) => FirestoreUser.fromJson(value.data() as Map<String,dynamic>,value.id));
 
-  Future<void> followSociety(SocietyInfo society) async {
-    FirestoreUser firestoreUser = FirestoreAuthentication.instance.firestoreUser!;
+  Future<void> followSociety(SocietyInfo society,{DocumentReference? initialUserRef}) async {
 
-    final DocumentReference userRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/users/${firestoreUser.id}");
+    FirestoreUser firestoreUser = (initialUserRef== null) ? FirestoreAuthentication.instance.firestoreUser! : await getFirestoreUser(initialUserRef);
+    DocumentReference userRef = firestoreUser.ref;
+
     final batch = FirebaseFirestore.instance.batch();
 
     batch.update(userRef, {
@@ -189,5 +192,51 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("events").doc(event.id).delete();
     FirebaseFirestore.instance.collection("universities").doc("university-of-warwick").collection("chats").doc(event.id).delete();
   }
+  Future<DocumentReference> createFirestoreUser(String email) async{
+    final CollectionReference userCollection = FirebaseFirestore.instance.collection(
+        '/universities/university-of-warwick/users');
+
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+    return await userCollection.add({
+      "email": email,
+      "followed_societies": {},
+      "points": 0,
+      "tags":{},
+      "username" :_emailToUserName(email),
+      "image_url" : "https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/default_profile_image.png?alt=media",
+      "banner_url" : "https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/default_profile_banner.jpg?alt=media",
+      "fcm_token":fcmToken,
+      "created_at": Timestamp.now(),
+      "full_name" : _emailToFullName(email)
+    });
+  }
+  String _emailToFullName(String email) {
+    // Remove the @warwick.ac.uk from the end
+    email = email.replaceAll(RegExp(r'@warwick\.ac\.uk$'), '');
+
+    // Replace "." and "-" with a space
+    email = email.replaceAll(RegExp(r'[.-]'), ' ');
+
+    // Split the string by spaces, capitalize each word, and join them back
+    email = email.split(' ').map((word) {
+      if (word.isNotEmpty) {
+        return word[0].toUpperCase() + word.substring(1);
+      }
+      return word;
+    }).join(' ');
+
+    return email;
+  }
+  String _emailToUserName(String email) {
+    // Remove "@warwick.ac.uk" from the end of the email
+    if (email.endsWith("@warwick.ac.uk")) {
+      email = email.substring(0, email.length - "@warwick.ac.uk".length);
+    }
+
+    // Replace all non-alphabetic characters with an empty string
+    return email.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+  }
+
 }
 

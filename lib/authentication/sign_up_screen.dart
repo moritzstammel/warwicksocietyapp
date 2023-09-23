@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
+import 'package:warwicksocietyapp/firebase_helper.dart';
 
 class SignUpScreen extends StatefulWidget {
   final String email;
@@ -61,107 +62,162 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ));
   }
 
-  Future<DocumentReference> _createFirebaseUser(String email)async {
-    final CollectionReference userRef = FirebaseFirestore.instance.collection(
-        '/universities/university-of-warwick/users');
-
-    String username = email.split('@')[0];
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-
-    return await userRef.add({
-      "email": email,
-      "followed_societies": [],
-      "points": 0,
-      "username" :username,
-      "image_url" : "https://firebasestorage.googleapis.com/v0/b/warwick-society-app.appspot.com/o/default_profile_image.png?alt=media",
-      "fcm_token":fcmToken
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Sign Up"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16.0),
+        child:
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextFormField(
-              controller: _passwordController,
-              obscureText: !_passwordVisible,
-              decoration: InputDecoration(
-                labelText: "Password",
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
+            SizedBox(height: 48,),
+            Text(
+              "Enter your password",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                fontFamily: 'Inter',
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 48),
+            Container(
+                width: 300,
+                child: TextField(
+                  autofocus: true,
+                  keyboardType: TextInputType.visiblePassword,
+                  controller: _passwordController,
+                  obscureText: !_passwordVisible,//This will obscure text dynamically
+                  style: TextStyle(
+                      fontFamily: "Inter",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordVisible = !_passwordVisible;
-                    });
-                  },
-                ),
-              ),
-            ),
-            if (!_isPasswordValid)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  "Your password must be at least six characters",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                _validatePassword();
-                if (!_isPasswordValid) return;
-                final email = widget.email;
-                final password = _passwordController.text;
+                  decoration: InputDecoration(
 
-                  // Handle sign up logic here
-                try {
-                    await _auth.createUserWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
+                    errorStyle: TextStyle(
+                      color: Colors.red, // Set the error text color
+                      fontSize: 14, // Set the error text font size
 
-                    DocumentReference userRef = await _createFirebaseUser(email);
+                    ),
 
-                    final user = _auth.currentUser;
-                    await user!.sendEmailVerification();
 
-                    _navigateToSocietySelection(userRef);
-                }
-                catch (e) {
-                  print("Error signing up: $e");
-                }
-              },
-              child: Text("Sign Up"),
-            ),
-            SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                text: "By clicking Sign Up, you agree to our ",
-                style: TextStyle(color: Colors.black),
-                children: [
-                  TextSpan(
-                    text: "Privacy Policy",
-                    style: TextStyle(color: Colors.blue),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        // Handle privacy policy link logic here
+
+                    errorText: _isPasswordValid ? null : "Password should be at least 6 characters.",
+
+
+                    hintText: 'Enter your password',
+                    // Here is key idea
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        // Based on passwordVisible state choose the icon
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
                       },
+                    ),
                   ),
-                  TextSpan(text: ". Click to learn how your data is processed."),
-                ],
-              ),
+                )
             ),
+
+
+
+            SizedBox(height: 20),
           ],
+        ),
+
+      ),
+
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom ),
+        child: Padding(
+          // Add additional padding to create space between button and keyboard
+          padding: EdgeInsets.only(bottom: 10,left: 20,right: 20),
+          child: Container(
+            height: 80,
+            child: Column(
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: "By clicking Sign Up, you agree to our ",
+                    style: TextStyle(
+                      color: Color(0xFF888888),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: "Privacy Policy",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ".",
+                        style: TextStyle(
+                          color: Color(0xFF888888),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(fontSize: 14.0),
+                  textAlign: TextAlign.center,// Adjust the font size as needed
+                ),
+
+
+
+
+                SizedBox(height: 10,),
+                ElevatedButton(
+                  onPressed: () async {
+                    _validatePassword();
+                    if(!_isPasswordValid) return;
+                    try{
+                      await _auth.createUserWithEmailAndPassword(email: widget.email, password: _passwordController.text);
+                      DocumentReference userRef = await FirestoreHelper.instance.createFirestoreUser(widget.email);
+                      _navigateToSocietySelection(userRef);
+                    }
+                    catch(e){}
+
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    minimumSize: Size(350, 50),
+                    maximumSize: Size(350, 50),
+                  ),
+                  child: Text(
+                    "Sign up",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Inter',
+                      color: Colors.white, // White text color
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

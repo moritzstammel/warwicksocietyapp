@@ -76,6 +76,7 @@ class _SpotlightBuilderState extends State<SpotlightBuilder> {
           
 
           final List<Spotlight> spotlights = snapshot.data!.docs.map((json) => Spotlight.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
+          if(spotlights.isEmpty) return SkeltonSpotlight();
 
           return SpotlightCard(spotlights: spotlights, editable: false,);
 

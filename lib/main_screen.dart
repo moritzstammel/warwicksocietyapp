@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
+import 'package:warwicksocietyapp/authentication/verification_screen.dart';
 import 'package:warwicksocietyapp/feed/explore_screen.dart';
 import 'package:warwicksocietyapp/home/home_screen.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
@@ -90,6 +91,7 @@ class _MainScreenState extends State<MainScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: userStream,
       builder: (context, snapshot) {
+
 
         if (snapshot.hasError) {
           return Center(

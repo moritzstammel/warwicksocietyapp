@@ -96,7 +96,7 @@ class _TagSelectionScreenState extends State<TagSelectionScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   _addTags();
-                  Navigator.pop(context);
+                  Navigator.of(context).popUntil((route) => !Navigator.of(context).canPop());
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
