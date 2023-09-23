@@ -105,15 +105,33 @@ exports.updateCollectionsOnSocietyUpdate = functions.firestore
       return null;
     }
 
+    // Convert timestamps to Date objects and compare
+    const newStartTime = newValue.start_time.toDate();
+    const newEndTime = newValue.end_time.toDate();
+    const prevStartTime = previousValue.start_time.toDate();
+    const prevEndTime = previousValue.end_time.toDate();
 
+    // Check if neither title nor location, description, start_time, or end_time has been changed
+    if (
+      newValue.title === previousValue.title &&
+      newValue.description === previousValue.description &&
+      newStartTime.getTime() === prevStartTime.getTime() &&
+      newEndTime.getTime() === prevEndTime.getTime() &&
+      newValue.location === previousValue.location
+    ) {
+      return null; // None of the specified fields have changed, exit
+    }
 
     // Construct the notification payload
-    const notificationTitle = `${newValue.title} @ ${newValue.society.name} `;
+    const notificationTitle = `${newValue.title} @ ${newValue.society.name}`;
     const notificationText = 'Event details were changed';
 
-    // Iterate through users in the "users" map and send notifications
+    // Iterate through users in the "users" map and filter by "active" status
     const usersMap = newValue.registered_users || {};
-    const fcmTokens = Object.values(usersMap).map((user) => user.fcm_token);
+    const activeUsers = Object.values(usersMap).filter((user) => user.active === true);
+
+    // Extract FCM tokens from active users
+    const fcmTokens = activeUsers.map((user) => user.fcm_token);
 
     const messaging = admin.messaging();
     const sendNotifications = fcmTokens.map(async (token) => {
@@ -137,6 +155,7 @@ exports.updateCollectionsOnSocietyUpdate = functions.firestore
 
     return null;
   });
+
 
 
  

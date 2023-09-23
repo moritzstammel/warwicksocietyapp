@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 
+import '../firebase_helper.dart';
+
 class SignUpButton extends StatefulWidget {
   final Event event;
   final Function additionalBehaviour;
@@ -20,25 +22,12 @@ class _SignUpButtonState extends State<SignUpButton> {
 
 
   void changeSignUpState() async{
-      return;
-      DocumentReference eventRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/events/${widget.event.id}");
-      DocumentReference chatRef = FirebaseFirestore.instance.doc("universities/university-of-warwick/chats/${widget.event.id}");
-      String userId = FirestoreAuthentication.instance.firestoreUser!.id;
-
-      Map<String,dynamic> updatedEventUsers = {
-        'registered_users.$userId': !_isRegistered
-      };
-      Map<String,dynamic> updatedChatUsers = {
-        'user_ids.$userId': !_isRegistered
-      };
-
-      final batch = FirebaseFirestore.instance.batch();
-      batch.update(eventRef, updatedEventUsers);
-      batch.update(chatRef, updatedChatUsers);
-      await batch.commit();
-
-
-
+    if(_isRegistered){
+      FirestoreHelper.instance.signOutForEvent(widget.event);
+    }
+    else{
+      FirestoreHelper.instance.signUpForEvent(widget.event);
+    }
   }
 
 

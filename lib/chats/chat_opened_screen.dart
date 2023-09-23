@@ -56,8 +56,6 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
     super.initState();
     _setAuthor();
 
-    WidgetsBinding.instance.addObserver(this);
-
     chatStream = FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")
@@ -66,64 +64,51 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
         .snapshots();
 
   }
-  @override
-  void didChangeMetrics() {
-    final mediaQuery = MediaQuery.of(context);
-    final isKeyboardOpening = mediaQuery.viewInsets.bottom > 0 && mediaQuery.viewInsets.bottom != mediaQuery.padding.bottom;
-
-
-    if (isKeyboardOpening) {
-
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-      );
-    }
-  }
 
 
 
 
   int daysBetween(DateTime from, DateTime to) {
-    from = DateTime(from.year, from.month, from.day);
-    to = DateTime(to.year, to.month, to.day);
-    return (to
-        .difference(from)
-        .inHours / 24).round();
+    final difference = to.difference(from).inDays;
+    return difference;
   }
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+  bool isYesterday(DateTime dateToCheck, DateTime referenceDate) {
+    final yesterday = referenceDate.subtract(Duration(days: 1));
+    return dateToCheck.year == yesterday.year &&
+        dateToCheck.month == yesterday.month &&
+        dateToCheck.day == yesterday.day;
+  }
+
 
   String formatTime(DateTime dateTime) {
 
     DateTime now = DateTime.now();
     int difference = daysBetween(dateTime, now);
+    String date = '';
 
+    if(isSameDay(dateTime,now)){
+      date = '';
+    }
+    else if (isYesterday(dateTime,now)) {
+      date = 'yesterday, ';
+    } else if (difference <= 6) {
+      date = '$difference days ago, ';
+    } else if(difference > 6) {
+      date = '${dateTime.day}.${dateTime.month} ';
+    }
 
     // Same day but different times
     String hour = dateTime.hour.toString().padLeft(2, '0');
     String minute = dateTime.minute.toString().padLeft(2, '0');
     //String period = dateTime.hour < 12 ? 'AM' : 'PM';
-    String time = '$hour:$minute';
-    return time;
-    if (difference == 0) return time;
-    if (difference <= 1) return 'yesterday, $time';
-    if (difference <= 6) return '${difference} days ago, $time';
-    if (difference <= 28) {
-      int weeks = (difference / 7).ceil();
-      return '$weeks week${weeks > 1 ? 's' : ''} ago, $time';
-    }
-    if (difference <= 365) {
-      int differenceInMonths = (difference / 12).round();
-      return '$differenceInMonths month${differenceInMonths > 1
-          ? 's'
-          : ''} ago, $time';
-    }
+    String time = "sent ${date}at $hour:$minute";
+    return time;}
 
-    int differenceInYears = (difference / 365).round();
-    return '$differenceInYears year${differenceInYears > 1
-        ? 's'
-        : ''} ago, $time';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,11 +131,10 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
             snapshot.data!.data() as Map<String, dynamic>, widget.chatId);
 
         return Scaffold(
-
           backgroundColor: Colors.white,
           appBar: AppBar(
+            elevation: 0.8,
             backgroundColor: Colors.white,
-            elevation: 0,
             leading: null,
             automaticallyImplyLeading: false,
             title: Row(
@@ -203,7 +187,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                             ),
                           ),
                           Text(
-                            chat.isEventChat ? chat.societyInfo.name : "society chat",
+                            chat.isEventChat ? chat.societyInfo.name : "Society chat",
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.normal,
@@ -226,13 +210,15 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
 
               Expanded(
                   child: ListView.builder(
+                    reverse: true,
 
                     physics: BouncingScrollPhysics(),
+
                     controller: _scrollController,
                     itemCount: chat.messages.length + (chat.isEventChat ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if(chat.isEventChat && index == 0) return eventCoreDates(chat.eventInfo!);
-                      Message message = chat.messages[index - (chat.isEventChat ? 1 : 0)];
+                      if(chat.isEventChat && index == chat.messages.length) return eventCoreDates(chat.eventInfo!);
+                      Message message = chat.messages[chat.messages.length - 1 - index];
                       bool isUserMessage = (message.author == currentAuthor);
 
 
@@ -299,8 +285,8 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                                             color: Colors.black
                                         ),),
                                       if (!isUserMessage) SizedBox(width: 2,),
-                                      Text("sent at ${formatTime(
-                                          message.createdAt)}",
+                                      Text(formatTime(
+                                          message.createdAt),
                                         style: TextStyle(
                                             fontSize: 10,
                                             color: Color(0xFF888888)
@@ -385,6 +371,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
   }
 
 
+
   void sendMessage(Chat chat) async {
     final content = _messageController.text;
     if (content
@@ -413,7 +400,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
 
     _messageController.clear();
     _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
+      0,
       duration: const Duration(milliseconds: 100),
       curve: Curves.easeOut,
     );

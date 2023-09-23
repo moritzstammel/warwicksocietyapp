@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'package:warwicksocietyapp/home/search_screen.dart';
 import 'package:warwicksocietyapp/notification_helper.dart';
@@ -40,7 +41,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   void checkRegistrationStatus() {
     setState(() {
-      userIsRegistered = widget.event.registeredUsers.containsKey(user.id) && widget.event.registeredUsers[user.id] == true;
+      userIsRegistered = widget.event.registeredUsers.containsKey(user.id) && widget.event.registeredUsers[user.id]!.active == true;
     });
   }
 
@@ -162,6 +163,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       SizedBox(height: 16),
+                      if(!SocietyAuthentication.instance.isSociety && widget.event.endTime.isAfter(DateTime.now()))
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 16),
                         child: ElevatedButton(

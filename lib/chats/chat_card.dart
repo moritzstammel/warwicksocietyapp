@@ -33,8 +33,7 @@ class ChatCard extends StatelessWidget {
       // Same day but different times
       String hour = time.hour.toString().padLeft(2, '0');
       String minute = time.minute.toString().padLeft(2, '0');
-      String period = time.hour < 12 ? 'AM' : 'PM';
-      return '$hour:$minute $period';
+      return '$hour:$minute';
     } else if (difference.inDays <= 1) {
       // Yesterday
       return '1 day ago';
