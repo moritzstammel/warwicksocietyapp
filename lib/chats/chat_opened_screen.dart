@@ -204,166 +204,176 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
               ],
             ),
           ),
-          body: Column(
-            children: [
-              SizedBox(height: 8,),
+          body: Container(
+            padding: EdgeInsets.only(top: 8),
 
-              Expanded(
-                  child: ListView.builder(
-                    reverse: true,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
 
-                    physics: BouncingScrollPhysics(),
-
-                    controller: _scrollController,
-                    itemCount: chat.messages.length + (chat.isEventChat ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if(chat.isEventChat && index == chat.messages.length) return eventCoreDates(chat.eventInfo!);
-                      Message message = chat.messages[chat.messages.length - 1 - index];
-                      bool isUserMessage = (message.author == currentAuthor);
+                Flexible(
 
 
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        child: Row(
+                      child: ListView.builder(
+                        reverse: true,
+                        shrinkWrap: true,
 
-                            mainAxisAlignment: isUserMessage ? MainAxisAlignment
-                                .end : MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              if (!isUserMessage)
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                         message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              SizedBox(width: 8,),
-                              Column(
-                                crossAxisAlignment: isUserMessage
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
+
+                        physics: BouncingScrollPhysics(),
+
+                        controller: _scrollController,
+                        itemCount: chat.messages.length + (chat.isEventChat ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if(chat.isEventChat && index == chat.messages.length) return eventCoreDates(chat.eventInfo!);
+                          Message message = chat.messages[chat.messages.length - 1 - index];
+                          bool isUserMessage = (message.author == currentAuthor);
+
+
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+
+                            child: Row(
+
+                                mainAxisAlignment: isUserMessage ? MainAxisAlignment
+                                    .end : MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    decoration: BoxDecoration(
-                                      color: isUserMessage
-                                          ? Colors.black
-                                          : Color(0xFFF7F7F7),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    constraints: BoxConstraints(
-                                      maxWidth: 250,
-                                    ),
-                                    child: Text(
-                                      message.content,
-                                      style: TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        color: isUserMessage
-                                            ? Colors.white
-                                            : Colors.black,
+                                  if (!isUserMessage)
+                                    Container(
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(100),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                             message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-
                                     ),
-                                  ),
-                                  SizedBox(height: 4,),
-                                  Row(
+                                  SizedBox(width: 8,),
+                                  Column(
+                                    crossAxisAlignment: isUserMessage
+                                        ? CrossAxisAlignment.end
+                                        : CrossAxisAlignment.start,
                                     children: [
-                                      if (!isUserMessage)
-                                        Text(
-                                           message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black
-                                        ),),
-                                      if (!isUserMessage) SizedBox(width: 2,),
-                                      Text(formatTime(
-                                          message.createdAt),
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFF888888)
-                                        ),)
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 12),
+                                        decoration: BoxDecoration(
+                                          color: isUserMessage
+                                              ? Colors.black
+                                              : Color(0xFFF7F7F7),
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        constraints: BoxConstraints(
+                                          maxWidth: 250,
+                                        ),
+                                        child: Text(
+                                          message.content,
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 16,
+                                            color: isUserMessage
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
 
+                                        ),
+                                      ),
+                                      SizedBox(height: 4,),
+                                      Row(
+                                        children: [
+                                          if (!isUserMessage)
+                                            Text(
+                                               message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black
+                                            ),),
+                                          if (!isUserMessage) SizedBox(width: 2,),
+                                          Text(formatTime(
+                                              message.createdAt),
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color: Color(0xFF888888)
+                                            ),)
+
+                                        ],
+                                      )
                                     ],
-                                  )
-                                ],
-                              ),
-                            ]
-                        ),
-                      );
-                    },
-                  )
-
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                     Container(
-
-                        height: 56,
-                        width: 280,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF7F7F7),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  focusNode: _focusNode,
-                                  controller: _messageController,
-                                  decoration: InputDecoration(
-                                    hintText: "Type your message here...",
-                                    hintStyle: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      color: Color(0xFF777777),
-                                    ),
-                                    border: InputBorder.none,
                                   ),
-                                ),
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ),
-                    SizedBox(width: 16,),
-                    GestureDetector(
-                      onTap: () => sendMessage(chat),
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: ImageIcon(
-                            AssetImage('assets/icons/chats/send.png'),
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
+                                ]
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  ],
-                ),
-              )
 
-            ],
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                       Container(
+
+                          height: 56,
+                          width: 280,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF7F7F7),
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    focusNode: _focusNode,
+                                    controller: _messageController,
+                                    decoration: InputDecoration(
+                                      hintText: "Type your message here...",
+                                      hintStyle: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        color: Color(0xFF777777),
+                                      ),
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        ),
+                      SizedBox(width: 16,),
+                      GestureDetector(
+                        onTap: () => sendMessage(chat),
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: ImageIcon(
+                              AssetImage('assets/icons/chats/send.png'),
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+
+              ],
+            ),
           ),
         );
       },
