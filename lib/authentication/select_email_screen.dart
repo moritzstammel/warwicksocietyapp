@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/login_screen.dart';
-import 'sign_up_screen.dart'; // Import your SignUpScreen
+import 'sign_up_screen.dart';
 
 class SelectEmailScreen extends StatefulWidget {
   @override

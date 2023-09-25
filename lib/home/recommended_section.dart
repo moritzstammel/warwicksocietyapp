@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 import '../authentication/FirestoreAuthentication.dart';
+import '../error_screen.dart';
 import '../models/event.dart';
 import '../models/society_info.dart';
 import '../widgets/event_card.dart';
@@ -68,10 +69,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
       stream: eventStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          print(snapshot.error);
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
+          return ErrorScreen();
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {

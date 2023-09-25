@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
-import 'package:warwicksocietyapp/models/society_info.dart';
-import 'package:warwicksocietyapp/widgets/small_society_card.dart';
-
 import '../authentication/SocietyAuthentication.dart';
 
 class SocietyLogOutButton extends StatelessWidget {

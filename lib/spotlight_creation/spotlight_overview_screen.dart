@@ -4,7 +4,6 @@ import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/error_screen.dart';
 import 'package:warwicksocietyapp/spotlight_creation/spotlight_creation_screen.dart';
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
-
 import '../models/society_info.dart';
 import '../models/spotlight.dart';
 class SpotlightOverviewScreen extends StatefulWidget {

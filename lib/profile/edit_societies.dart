@@ -156,8 +156,6 @@ class _EditSocietiesState extends State<EditSocieties> {
     );
   }
   bool societiesWereChanged() {
-    print(selectedSocieties);
-    print(user.followedSocieties);
     var set1 = Set.from(selectedSocieties);
     var set2 = Set.from(user.followedSocieties.values);
     return set1.length != set2.length || !set1.containsAll(set2);
@@ -192,11 +190,9 @@ class _EditSocietiesState extends State<EditSocieties> {
     List<SocietyInfo> societiesToFollow = selectedSocieties.where((society) => !user.followedSocieties.values.contains(society)).toList();
 
     for(final society in societiesToUnfollow){
-      print("unfollowed ${society.name}");
       FirestoreHelper.instance.unfollowSociety(society);
     }
     for(final society in societiesToFollow){
-      print("followed ${society.name}");
       FirestoreHelper.instance.followSociety(society);
     }
   }

@@ -3,11 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/widgets/small_society_card.dart';
-
 import '../models/event.dart';
 import '../models/society_info.dart';
 import '../widgets/tag_card.dart';
-import 'custom_search_bar.dart';
 import '../widgets/event_card.dart';
 
 class SearchScreen extends StatefulWidget {

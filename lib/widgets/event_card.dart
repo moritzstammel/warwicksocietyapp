@@ -1,10 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:warwicksocietyapp/home/event_details_screen.dart';
-import 'package:warwicksocietyapp/models/firestore_user.dart';
-
 import '../event_creation/event_creation_screen.dart';
 import '../models/event.dart';
-
 import 'package:flutter/material.dart';
 
 

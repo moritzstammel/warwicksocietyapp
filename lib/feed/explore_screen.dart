@@ -1,12 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
-import 'package:warwicksocietyapp/error_screen.dart';
-import 'package:warwicksocietyapp/feed/all_societies_feed.dart';
-import 'package:warwicksocietyapp/feed/event_feed_card.dart';
 import 'package:warwicksocietyapp/feed/feed_container.dart';
-import 'package:warwicksocietyapp/feed/following_feed.dart';
-import 'package:warwicksocietyapp/feed/testholder.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 import '../models/event.dart';

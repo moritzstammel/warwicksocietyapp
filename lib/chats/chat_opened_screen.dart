@@ -1,14 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
-import 'package:warwicksocietyapp/home/event_details_screen.dart';
-import 'package:warwicksocietyapp/models/event.dart';
 import 'package:warwicksocietyapp/models/event_info.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
-import '../models/firestore_user.dart';
 import '../models/message.dart';
 
 class ChatOpenedScreen extends StatefulWidget {

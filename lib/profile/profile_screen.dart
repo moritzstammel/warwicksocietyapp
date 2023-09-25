@@ -1,20 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:warwicksocietyapp/profile/edit_societies.dart';
 import 'package:warwicksocietyapp/profile/edit_tags.dart';
 import 'package:warwicksocietyapp/profile/manage_account_screen.dart';
 import 'package:warwicksocietyapp/profile/profile_button.dart';
-import 'package:warwicksocietyapp/profile/settings_screen.dart';
 import 'package:warwicksocietyapp/profile/support_screen.dart';
-import 'package:warwicksocietyapp/widgets/small_society_card.dart';
 import 'package:warwicksocietyapp/widgets/society_card.dart';
 import 'package:warwicksocietyapp/profile/society_log_in_button.dart';
 import 'package:warwicksocietyapp/widgets/tag_card.dart';
 import '../authentication/FirestoreAuthentication.dart';
-import '../authentication/SocietyAuthentication.dart';
-import '../home/search_screen.dart';
 import '../models/society_info.dart';
 
 class ProfileScreen extends StatefulWidget {

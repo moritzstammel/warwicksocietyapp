@@ -5,7 +5,6 @@ import 'package:warwicksocietyapp/admin/society_log_out_button.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/error_screen.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
-
 import '../profile/profile_button.dart';
 import '../profile/skelton_profile_screen.dart';
 import '../profile/support_screen.dart';

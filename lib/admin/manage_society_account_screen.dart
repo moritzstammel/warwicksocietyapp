@@ -1,14 +1,9 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
-import 'package:warwicksocietyapp/models/firestore_user.dart';
-
 import '../models/society_info.dart';
 
 class ManageSocietyAccountScreen extends StatefulWidget {
@@ -252,7 +247,7 @@ class _ManageSocietyAccountScreenState extends State<ManageSocietyAccountScreen>
   }
   void saveChanges() async {
 
-    print(!_formKey.currentState!.validate());
+
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {

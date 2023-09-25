@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/feed/event_feed_card.dart';
-import 'package:warwicksocietyapp/feed/testholder.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 
-import '../models/firestore_user.dart';
 
 class AllSocietiesFeed extends StatefulWidget {
   const AllSocietiesFeed({Key? key}) : super(key: key);

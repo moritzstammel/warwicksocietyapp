@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/models/chat.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/models/message.dart';
-
 import '../authentication/FirestoreAuthentication.dart';
 import 'chat_opened_screen.dart';
 

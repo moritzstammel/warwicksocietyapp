@@ -171,7 +171,6 @@ class _EditTagsState extends State<EditTags> {
         selectedTags.add(tag);
       }
     });
-    print(selectedTags);
   }
 
   Future<void> saveTagSelection() async{

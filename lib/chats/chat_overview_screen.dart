@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:warwicksocietyapp/error_screen.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/firestore_user.dart';
 import 'chat_card.dart';
@@ -100,10 +101,7 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
               stream: eventChatStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return Center(
-                    child: Text("Error: ${snapshot.error}"),
-                  );
+                  ErrorScreen();
                 }
 
                 if (!snapshot.hasData) {
@@ -137,7 +135,6 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
 
                 List<Chat> societyChats = List.from(allChats.where((chat) => chat.type == "society_chat"));
                 List<Chat> eventChats = List.from(allChats.where((chat) => chat.type == "event_chat"));
-                print(eventChats);
 
               return PageView(
                   controller: _pageController,

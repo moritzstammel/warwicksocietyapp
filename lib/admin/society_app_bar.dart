@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/admin/society_chat_overview_screen.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
-import 'package:warwicksocietyapp/chats/chat_overview_screen.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 class SocietyAppBar extends StatelessWidget {

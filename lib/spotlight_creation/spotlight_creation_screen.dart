@@ -1,15 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'dart:io';
-
 import 'package:warwicksocietyapp/widgets/spotlight_card.dart';
-
-
-import '../authentication/FirestoreAuthentication.dart';
 import '../models/society_info.dart';
 import '../models/spotlight.dart';
 

@@ -1,27 +1,14 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
-import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
-import 'package:warwicksocietyapp/authentication/login_screen.dart';
 import 'package:warwicksocietyapp/authentication/select_email_screen.dart';
-import 'package:warwicksocietyapp/authentication/sign_up_screen.dart';
-import 'package:warwicksocietyapp/authentication/society_selection_screen.dart';
-import 'package:warwicksocietyapp/error_screen.dart';
-import 'package:warwicksocietyapp/models/society_info.dart';
 import 'package:warwicksocietyapp/authentication/verification_screen.dart';
 import 'firebase_options.dart';
-import 'home/home_screen.dart';
 import 'main_screen.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();

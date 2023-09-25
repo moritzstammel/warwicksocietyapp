@@ -40,7 +40,6 @@ class _TagSelectionScreenState extends State<TagSelectionScreen> {
         selectedTags.add(tag);
       }
     });
-    print(selectedTags);
   }
 
   @override

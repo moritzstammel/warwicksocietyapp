@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'package:warwicksocietyapp/home/search_screen.dart';
-import 'package:warwicksocietyapp/notification_helper.dart';
 import '../models/event.dart';
 import '../models/firestore_user.dart';
 
