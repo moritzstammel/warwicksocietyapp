@@ -156,7 +156,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             'Following',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
-                              fontSize: 16,
+                              fontSize: 15  ,
                               fontFamily: 'Inter',
                               color: onFirstFeed ? Colors.white : Colors.black,
                             ),
@@ -181,7 +181,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             'All Societies',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
-                              fontSize: 16,
+                              fontSize: 15,
                               fontFamily: 'Inter',
                               color: !onFirstFeed ? Colors.white : Colors.black,
                             ),

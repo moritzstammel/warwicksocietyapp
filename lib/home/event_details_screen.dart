@@ -52,18 +52,39 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       body:
            Column(
              crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Image.network(
-                widget.event.images[0],
-                fit: BoxFit.cover,
+
+            Stack(
+              children: [
+                Container(
+                  height: 300,
+                  width: double.infinity,
+                  child: Image.network(
+                    widget.event.images[0],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+
+              GestureDetector(
+                onTap: Navigator.of(context).pop,
+                child: Positioned(
+                  top: 30,
+                  left: 20,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(100)
+                    ),
+                    child: Center(child: ImageIcon(AssetImage('assets/icons/arrow-left-white.png'),color: Colors.white,),
+                  ),
+                )),
               ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -144,9 +165,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                 width: 40,
                                 height: 40,
                                 fit: BoxFit.cover,
-                                
+
                               ),
-                              
+
                             ),
                             SizedBox(width: 16),
                             Text(

@@ -22,12 +22,19 @@ Future main() async {
 
 
   const AndroidInitializationSettings androidInitializationSettings =
-  AndroidInitializationSettings('app_icon'); // Replace 'app_icon' with your app's icon name
+  AndroidInitializationSettings('app_icon');
+
+  DarwinInitializationSettings iosInitializationSettings =
+  DarwinInitializationSettings(
+    onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {
+        print(title ?? "received.");
+    },
+  );
 
   final InitializationSettings initializationSettings =
   InitializationSettings(
     android: androidInitializationSettings,
-    iOS: null,
+    iOS: iosInitializationSettings,
   );
 
 
@@ -50,13 +57,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     'New Chat Message', // Replace with your channel name
     importance: Importance.max,
     priority: Priority.high,
-    color: const Color(0xFF000000)
+    color: const Color(0xFF000000),
   );
 
+  const DarwinNotificationDetails iosPlatformChannelSpecifics =
+  DarwinNotificationDetails(
+    // Customize iOS notification settings here if needed
+    presentSound: true,
+    presentBadge: true,
+    presentAlert: true,
+  );
 
   const NotificationDetails platformChannelSpecifics = NotificationDetails(
     android: androidPlatformChannelSpecifics,
-    iOS: null,
+    iOS: iosPlatformChannelSpecifics, // Include iOS-specific settings
   );
 
   await flutterLocalNotificationsPlugin.show(
@@ -67,6 +81,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     payload: message.data['data'], // Optional, you can pass additional data
   );
 }
+
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
