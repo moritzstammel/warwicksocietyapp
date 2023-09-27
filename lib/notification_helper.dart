@@ -23,23 +23,32 @@ class NotificationScheduler {
   Future<void> addReminderForEvent(Event event) async {
     final DateTime reminderTime = event.startTime.subtract(reminderBeforeEvent);
 
-    if(DateTime.now().isBefore(reminderTime) ){
+    if (DateTime.now().isBefore(reminderTime)) {
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+      // Android Notification Details
       const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-          'SocsChatMessageReceived',
-          'Event Notification',
-          importance: Importance.max,
-          priority: Priority.high,
-          color:Colors.black
+        'SocsChatMessageReceived',
+        'Event Notification',
+        importance: Importance.max,
+        priority: Priority.high,
+        color: Colors.black,
+      );
+
+      // iOS Notification Details
+      const DarwinNotificationDetails iosPlatformChannelSpecifics =
+      DarwinNotificationDetails(
+        presentSound: true,
+        presentBadge: true,
+        presentAlert: true,
       );
 
       var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
-        iOS: null,
+        iOS: iosPlatformChannelSpecifics, // Include iOS-specific settings
       );
-
 
       final location = tz.getLocation("Europe/London");
 
@@ -54,6 +63,7 @@ class NotificationScheduler {
       );
     }
   }
+
   void removeReminderForEvent(Event event) => flutterLocalNotificationsPlugin.cancel(event.id.hashCode);
 
 
