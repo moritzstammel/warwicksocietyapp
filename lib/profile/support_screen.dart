@@ -79,7 +79,7 @@ class _SupportScreenState extends State<SupportScreen> {
                     Container(
                       margin: EdgeInsets.only(right: 28,bottom: 28),
                       width: 300,
-                      height: 450,
+                      height: 400,
                       decoration: BoxDecoration(
                         color: Color(0xFFF7F7F7), // Use the specified background color
                         borderRadius: BorderRadius.circular(16.0), // Rounded corners

@@ -44,19 +44,29 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void displayNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
       'SocsChatMessageReceived', // Replace with your channel ID
       'New Chat Message', // Replace with your channel name
       importance: Importance.max,
       priority: Priority.high,
-        color: const Color(0xFF000000)
+      color: const Color(0xFF000000),
     );
 
+    DarwinNotificationDetails iosPlatformChannelSpecifics = DarwinNotificationDetails();
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    if (Platform.isIOS) {
+      iosPlatformChannelSpecifics = DarwinNotificationDetails(
+        // Customize iOS notification settings here if needed
+        presentSound: true,
+        presentBadge: true,
+        presentAlert: true,
+      );
+    }
+
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: null,
+      iOS: iosPlatformChannelSpecifics,
     );
 
     await flutterLocalNotificationsPlugin.show(
@@ -67,6 +77,7 @@ class _MainScreenState extends State<MainScreen> {
       payload: message.data['data'], // Optional, you can pass additional data
     );
   }
+
 
 
   @override
