@@ -68,12 +68,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
 
-              GestureDetector(
-                onTap: Navigator.of(context).pop,
-                child: Positioned(
-                  top: 30,
-                  left: 20,
-                  child: Container(
+
+              Positioned(
+                  top: 0,
+                  left: 0,
+                  child:  GestureDetector(
+                      onTap: Navigator.of(context).pop,
+                      child: Container(
+                    margin: EdgeInsets.all(20.0),
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(

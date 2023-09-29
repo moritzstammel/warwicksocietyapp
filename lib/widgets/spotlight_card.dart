@@ -66,14 +66,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
   @override
   Widget build(BuildContext context) {
     if(_currentIndex >= widget.spotlights.length) _currentIndex = 0;
-    if (widget.spotlights.isEmpty){
-      widget.spotlights.add(Spotlight(id:"",title: "Freshers\nEvents", text: "cool Text",  society: SocietyInfo(
-          name: "Warwick Piano Society",
-          logoUrl: "https://www.warwicksu.com/asset/Organisation/7883/Newest%20Piano%20Soc%20Logo.png?thumbnail_width=300&thumbnail_height=300&resize_type=ResizeFitAllFill",
-          ref:FirebaseFirestore.instance.doc("/universities/university-of-warwick/societies/S3lJHuxEAzhBlIx1EVED")
-      ), imageUrl: "https://warwick.ac.uk/about/campus/oculus-3-2.jpg",links: [],startTime: DateTime.now(),endTime: DateTime.now()),);
-    }
-    
+
     
     
       return Container(
