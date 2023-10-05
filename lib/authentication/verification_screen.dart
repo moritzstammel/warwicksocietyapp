@@ -22,6 +22,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void initState() {
     super.initState();
     // Start a periodic timer to reload user data every 1 second
+    _auth.currentUser!.sendEmailVerification();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       FirebaseAuth.instance.currentUser!.reload();
     });
