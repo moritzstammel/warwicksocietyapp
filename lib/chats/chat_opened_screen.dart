@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
 import 'package:warwicksocietyapp/chats/user_details_screen.dart';
+import 'package:warwicksocietyapp/firebase_helper.dart';
 import 'package:warwicksocietyapp/models/event_info.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
+import 'package:flutter/services.dart';
 
 class ChatOpenedScreen extends StatefulWidget {
   final String chatId;
@@ -23,6 +25,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
   final FocusNode _focusNode = FocusNode();
   late Stream<DocumentSnapshot> chatStream;
   late DocumentReference currentAuthor;
+  final List<Message> selectedMessages = [];
 
   static const Map<int, String> _weekdayShortMap = {
     1: 'Mon',
@@ -129,78 +132,7 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            elevation: 0.8,
-            backgroundColor: Colors.white,
-            leading: null,
-            automaticallyImplyLeading: false,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(width: 16,),
-
-
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatDetailsScreen(chat: chat),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              image: DecorationImage(
-                                image: NetworkImage(chat.societyInfo.logoUrl),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 16,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            chat.isEventChat ? chat.eventInfo!.title : chat.societyInfo.name,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            chat.isEventChat ? chat.societyInfo.name : "Society chat",
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14,
-                              color: Color(0xFF777777),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-              ],
-            ),
-          ),
+          appBar: selectedMessages.isEmpty ? defaultAppBar(chat) : inSelectingMessagesAppBar(chat),
           body: Container(
             padding: EdgeInsets.only(top: 8),
 
@@ -226,98 +158,126 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                           bool isUserMessage = (message.author == currentAuthor);
 
 
-                          return Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
+                          return GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: (selectedMessages.isNotEmpty) ? (){
+                             
+                                setState(() {
+                                  if(selectedMessages.contains(message)){
+                                    selectedMessages.remove(message);
+                                  }
+                                  else{
+                                    selectedMessages.add(message);
+                                  }
+                                  
+                                });
+                            } : null,
+                            onLongPress:  () {
+                              setState(() {
+                                selectedMessages.add(message);
+                              });
 
-                            child: Row(
 
-                                mainAxisAlignment: isUserMessage ? MainAxisAlignment
-                                    .end : MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  if (!isUserMessage)
-                                    GestureDetector(
-                                      onTap: message.authorIsUser? () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UserDetailsScreen(userRef: message.author),
-                                        ),
-                                      ) : null,
-                                      child: Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(100),
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                               message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
-                                            fit: BoxFit.cover,
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
+                              margin: EdgeInsets.symmetric(vertical: 3),
+                              color: selectedMessages.contains(message) ? Color(0xFFEEEEEE) : null,
+
+                              child: Row(
+
+                                  mainAxisAlignment: isUserMessage ? MainAxisAlignment
+                                      .end : MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    if (!isUserMessage)
+                                      GestureDetector(
+                                        onTap: (message.authorIsUser &&  selectedMessages.isEmpty) ? () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => UserDetailsScreen(userRef: message.author),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  SizedBox(width: 8,),
-                                  Column(
-                                    crossAxisAlignment: isUserMessage
-                                        ? CrossAxisAlignment.end
-                                        : CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 12),
-                                        decoration: BoxDecoration(
-                                          color: isUserMessage
-                                              ? Colors.black
-                                              : Color(0xFFF7F7F7),
-                                          borderRadius: BorderRadius.circular(16),
-                                        ),
-                                        constraints: BoxConstraints(
-                                          maxWidth: 250,
-                                        ),
-                                        child: Text(
-                                          message.content,
-                                          style: TextStyle(
-                                            fontFamily: 'Inter',
-                                            fontSize: 16,
-                                            color: isUserMessage
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-
-                                        ),
-                                      ),
-                                      SizedBox(height: 4,),
-                                      Row(
-                                        children: [
-                                          if (!isUserMessage)
-                                            GestureDetector(
-                                              onTap: () => Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => UserDetailsScreen(userRef: message.author),
-                                                ),
-                                              ),
-                                              child: Text(
-                                                 message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.black
-                                              ),),
+                                        ) : null,
+                                        child: Container(
+                                          width: 36,
+                                          height: 36,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(100),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                 message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
+                                              fit: BoxFit.cover,
                                             ),
-                                          if (!isUserMessage) SizedBox(width: 2,),
-                                          Text(formatTime(
-                                              message.createdAt),
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: Color(0xFF888888)
-                                            ),)
+                                          ),
+                                        ),
+                                      ),
+                                    SizedBox(width: 8,),
+                                    Column(
+                                      crossAxisAlignment: isUserMessage
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                      children: [
+                                        GestureDetector(
+                                          behavior: HitTestBehavior.translucent,
 
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ]
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                            decoration: BoxDecoration(
+                                              color: isUserMessage
+                                                  ? Colors.black
+                                                  : Color(0xFFF7F7F7),
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            constraints: BoxConstraints(
+                                              maxWidth: 250,
+                                            ),
+                                            child: Text(
+                                              message.isDeleted ? "This message was deleted" : message.content,
+                                              style: TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 16,
+                                                color: isUserMessage
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontStyle: message.isDeleted?FontStyle.italic : FontStyle.normal
+                                              ),
+
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 4,),
+                                        Row(
+                                          children: [
+                                            if (!isUserMessage)
+                                              GestureDetector(
+                                                onTap: (selectedMessages.isEmpty) ? () => Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => UserDetailsScreen(userRef: message.author),
+                                                  ),
+                                                ) : null,
+                                                child: Text(
+                                                   message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black
+                                                ),),
+                                              ),
+                                            if (!isUserMessage) SizedBox(width: 2,),
+                                            Text(formatTime(
+                                                message.createdAt),
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Color(0xFF888888)
+                                              ),)
+
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ]
+                              ),
                             ),
                           );
                         },
@@ -430,14 +390,6 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
 
   }
 
-  String formatContent(String content) {
-    if (content.length > 60) {
-      return '${content.substring(0, 60)}...';
-    } else {
-      return content;
-    }
-  }
-
   Widget eventCoreDates(EventInfo event) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -500,4 +452,143 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
       ],
     );
   }
+
+  AppBar defaultAppBar(Chat chat) {
+    return AppBar(
+      elevation: 0.2,
+      backgroundColor: Colors.white,
+      leading:  IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      automaticallyImplyLeading: false,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatDetailsScreen(chat: chat),
+              ),
+            ),
+            child: Row(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: NetworkImage(chat.societyInfo.logoUrl),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 16,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chat.isEventChat ? chat.eventInfo!.title : chat.societyInfo.name,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      chat.isEventChat ? chat.societyInfo.name : "Society chat",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                        color: Color(0xFF777777),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+        ],
+      ),
+      actions: <Widget>[
+      IconButton(
+      icon: Icon(Icons.more_vert_rounded,color: Colors.black,),
+      onPressed: () {
+      // Handle delete action here
+      },
+      )],
+    );
+  }
+
+  AppBar inSelectingMessagesAppBar(Chat chat) {
+    return AppBar(
+      elevation: 0.2,
+      backgroundColor: Colors.white,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back,color: Colors.black,),
+        onPressed: () {
+          setState(() {
+            selectedMessages.clear();
+          });
+        },
+      ),
+      title: Text("${selectedMessages.length} selected",style: TextStyle(color: Colors.black),),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.content_copy,color: Colors.black,),
+          onPressed: () async {
+            String text = "";
+            if(selectedMessages.length == 1){
+              Message message = selectedMessages.first;
+              text =  message.isDeleted ? "This message was deleted" : message.content;}
+            else{
+              List<String> formattedMessages = [];
+              for(final message in selectedMessages){
+               String name = message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName;
+               String date = formatDateTime(message.createdAt);
+               String content =  message.isDeleted ? "This message was deleted" : message.content;
+               formattedMessages.add("($date) $name: $content");
+              }
+              text = formattedMessages.join("\n");
+
+            }
+
+            await Clipboard.setData(ClipboardData(text: text));
+            setState(() {
+              selectedMessages.clear();
+            });
+
+            // copied successfully
+          },
+        ),
+        if(currentAuthor.path.contains("societies") || selectedMessages.every((message) => message.author == currentAuthor))
+        IconButton(
+          icon: Icon(Icons.delete,color: Colors.black,),
+          onPressed: () async {
+            await FirestoreHelper.instance.deleteMessages(chat,selectedMessages);
+            setState(() {
+              selectedMessages.clear();
+            });
+          },
+        ),
+
+      ],
+
+    );
+
+
+  }
+  String formatDateTime(DateTime dateTime) => '${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
 }

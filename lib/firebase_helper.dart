@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
+import 'package:warwicksocietyapp/models/chat.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
+import 'package:warwicksocietyapp/models/message.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 import 'package:warwicksocietyapp/models/spotlight.dart';
 import 'package:warwicksocietyapp/notification_helper.dart';
@@ -224,6 +226,35 @@ class FirestoreHelper {
       "full_name" : _emailToFullName(email)
     });
   }
+  Future<void> deleteMessages(Chat chat, List<Message> selectedMessages) async {
+    final DocumentReference chatReference =  FirebaseFirestore.instance.doc('universities/university-of-warwick/chats/${chat.id}');
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot chatSnapshot = await transaction.get(chatReference);
+
+      if (chatSnapshot.exists) {
+
+        Chat chat = Chat.fromJson(chatSnapshot.data() as Map<String, dynamic>,chatSnapshot.id);
+
+        // Update the selected messages.
+        for (var message in chat.messages) {
+          if (selectedMessages.contains(message)) {
+            message.delete();
+          }
+        }
+        print(chat.messages);
+
+        // Serialize the updated Chat object back to JSON.
+        List<Map<String, dynamic>> updatedMessages = chat.messages.map((e) => e.toJson()).toList();
+
+        // Update the chat document with the modified data.
+        transaction.update(chatReference, {'messages':updatedMessages});
+      }
+    });
+    print("fired");
+
+  }
+
   String _emailToFullName(String email) {
     // Remove the @warwick.ac.uk from the end
     email = email.replaceAll(RegExp(r'@warwick\.ac\.uk$'), '');
@@ -250,6 +281,8 @@ class FirestoreHelper {
     // Replace all non-alphabetic characters with an empty string
     return email.replaceAll(RegExp(r'[^a-zA-Z]'), '');
   }
+
+
 
 }
 
