@@ -94,8 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
 
-    print("Profile Societies:");
-    print(user.followedSocieties);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

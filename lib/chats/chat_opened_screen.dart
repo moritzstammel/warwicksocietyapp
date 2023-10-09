@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
+import 'package:warwicksocietyapp/chats/user_details_screen.dart';
 import 'package:warwicksocietyapp/models/event_info.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
@@ -236,15 +237,23 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   if (!isUserMessage)
-                                    Container(
-                                      width: 36,
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(100),
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                             message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
-                                          fit: BoxFit.cover,
+                                    GestureDetector(
+                                      onTap: message.authorIsUser? () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => UserDetailsScreen(userRef: message.author),
+                                        ),
+                                      ) : null,
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(100),
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                               message.authorIsSociety? chat.societyInfo.logoUrl : chat.users[message.author.id]!.imageUrl),
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -282,12 +291,20 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
                                       Row(
                                         children: [
                                           if (!isUserMessage)
-                                            Text(
-                                               message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black
-                                            ),),
+                                            GestureDetector(
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => UserDetailsScreen(userRef: message.author),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                 message.authorIsSociety? chat.societyInfo.name : chat.users[message.author.id]!.fullName, style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black
+                                              ),),
+                                            ),
                                           if (!isUserMessage) SizedBox(width: 2,),
                                           Text(formatTime(
                                               message.createdAt),
