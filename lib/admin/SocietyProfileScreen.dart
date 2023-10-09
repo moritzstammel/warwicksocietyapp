@@ -97,7 +97,9 @@ class _SocietyProfileScreenState extends State<SocietyProfileScreen> {
                                         color: Colors.white, // Set the border color to white
                                         width: 4, // Set the border width
                                       ),
+                                      color: Colors.white,
                                       image: DecorationImage(
+
                                         image: NetworkImage(society.logoUrl),
                                         fit: BoxFit.cover,
                                       ),

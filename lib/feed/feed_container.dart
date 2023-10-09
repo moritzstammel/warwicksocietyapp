@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
+import 'package:warwicksocietyapp/models/firestore_user.dart';
 
 import '../models/event.dart';
 import 'event_feed_card.dart';
@@ -14,10 +16,12 @@ class FeedContainer extends StatefulWidget {
 
 class _FeedContainerState extends State<FeedContainer> {
   final _pageController = PageController();
+  List<Event> eventsSignedUp = [];
+
 
   void scrollToNextPage(){
 
-    if(_pageController.page == null || _pageController.page!.round() >= widget.events.length) return;
+    if(_pageController.page == null) return;
     final int currentPage = _pageController.page!.round();
     _pageController.animateToPage(currentPage +1, duration: Duration(milliseconds: 350), curve: Curves.easeOut);
   }
@@ -44,13 +48,14 @@ class _FeedContainerState extends State<FeedContainer> {
     return PageView.builder(
       controller: _pageController,
       scrollDirection: Axis.vertical,
-      itemCount: widget.events.length,
       itemBuilder: (context, index) {
-
-        final event = widget.events[index];
-        return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,);
+        final num = index % widget.events.length;
+        final event = widget.events[num];
+        return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,hasSignedUp: true);
       },
     );
 
   }
+
+
 }

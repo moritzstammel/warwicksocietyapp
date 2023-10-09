@@ -92,7 +92,7 @@ class _FollowingFeedState extends State<FollowingFeed> with AutomaticKeepAliveCl
           print("reloading");
           fetchNewEvents();
         }
-        return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,);
+        return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage, hasSignedUp: true,);
       },
     );
 

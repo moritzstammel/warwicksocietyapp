@@ -32,13 +32,14 @@ class SocietyAuthentication {
       "name": name,
       "ref": socRef,
       "logo_url":  logoUrl,
-      "admins" : []
+      "admins" : {},
+      "chat_ref" : chatRef
     };
 
     Map<String, dynamic> newChat = {
       "type": "society_chat",
       "event": null,
-      "last_time_message_sent" : null,
+      "time_of_last_message" : null,
       "messages" : [],
       "society" : {
         "name": name,

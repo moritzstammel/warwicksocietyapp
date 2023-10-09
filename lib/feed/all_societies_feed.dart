@@ -89,7 +89,7 @@ class _AllSocietiesFeedState extends State<AllSocietiesFeed> with AutomaticKeepA
               print("reloading");
               fetchNewEvents();
             }
-            return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,);
+            return EventFeedCard(event: event,scrollToNextPage: scrollToNextPage,hasSignedUp: true,);
           },
         );
 

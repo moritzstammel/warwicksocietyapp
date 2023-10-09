@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/models/firestore_user.dart';
 import 'package:warwicksocietyapp/profile/edit_societies.dart';
 import 'package:warwicksocietyapp/profile/edit_tags.dart';
@@ -252,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   _customPageRouteBuilder(SupportScreen()),
                 )),
-              ],
+                ],
             ),
 
            StreamBuilder(

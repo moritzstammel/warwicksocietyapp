@@ -53,7 +53,7 @@ class EventCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.only(right: 8),
+        margin: EdgeInsets.only(right: 8,top: 4,bottom: 4),
         padding: EdgeInsets.all(0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
