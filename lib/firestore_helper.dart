@@ -282,6 +282,13 @@ class FirestoreHelper {
     return email.replaceAll(RegExp(r'[^a-zA-Z]'), '');
   }
 
+  void readChat(Chat chat) async {
+    final FirestoreUser user =  FirestoreAuthentication.instance.firestoreUser!;
+    if(!user.unreadChats.containsKey(chat.id)) return;
+    await user.ref.update({"unread_chats.${chat.id}" : FieldValue.delete()});
+    FirestoreAuthentication.instance.firestoreUser!.unreadChats.remove(chat.id);
+  }
+
 
 
 }

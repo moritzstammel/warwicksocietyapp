@@ -14,18 +14,18 @@ class FirestoreUser {
   final String fullName;
   final DateTime createdAt;
   final String? fcmToken;
+  final Map<String,bool> unreadChats;
 
   FirestoreUser({required this.id, required this.email, required this.username, required this.followedSocieties,required this.points,required this.imageUrl,
-    required this.bannerUrl, required this.tags,required this.fullName, required this.createdAt,required this.fcmToken});
+    required this.bannerUrl, required this.tags,required this.fullName, required this.createdAt,required this.fcmToken,required this.unreadChats});
 
   factory FirestoreUser.fromJson(Map<String, dynamic> json,String id) {
     return FirestoreUser(
       id: id,email: json["email"],
       username: json["username"], followedSocieties: Map<String, dynamic>.from(json["followed_societies"]).map((key, value) => MapEntry(key, SocietyInfo.fromJson(value))),points: json["points"],
       imageUrl: json["image_url"], bannerUrl: json["banner_url"], tags: Map<String, bool>.from(json["tags"]),fullName: json["full_name"],
-      createdAt: json["created_at"].toDate(),fcmToken: json["fcm_token"]
+      createdAt: json["created_at"].toDate(),fcmToken: json["fcm_token"],unreadChats: Map<String, bool>.from(json["unread_chats"] ?? {}));
 
-    );
   }
   DocumentReference get ref {
     return FirebaseFirestore.instance.doc("universities/university-of-warwick/users/$id");

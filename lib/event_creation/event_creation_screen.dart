@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 import 'dart:io';
-import '../firebase_helper.dart';
+import '../firestore_helper.dart';
 import '../models/society_info.dart';
 
 class EventCreationScreen extends StatefulWidget {

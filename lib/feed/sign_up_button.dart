@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/models/event.dart';
 
-import '../firebase_helper.dart';
+import '../firestore_helper.dart';
 
 class SignUpButton extends StatefulWidget {
   final Event event;

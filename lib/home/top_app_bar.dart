@@ -30,32 +30,62 @@ class TopAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
 
-      margin: EdgeInsets.only(top: 24),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                  children:[
-                      IconButton(
-                              icon:  ImageIcon(
-                                AssetImage('assets/icons/chats/chat.png'),
-                                size: 30,
+
+      actions: <Widget>[
+        GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                _customPageRouteBuilder(ChatOverviewScreen()),
+              );
+            },
+            child:  Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(4),
+                      child: ImageIcon(
+                        AssetImage('assets/icons/chats/chat.png'),
+                        color: Colors.black,
+                        size: 32,
+                      ),
+                    ),
+                    if(user.unreadChats.isNotEmpty)
+                    Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(height: 16,width: 16,
+                          child: Center(
+                            child: Container(
+                              child: user.unreadChats.length <= 9 ? Align(alignment: Alignment.center,child: Text(user.unreadChats.length.toString(), textAlign: TextAlign.center,style: TextStyle(fontSize: 9,color: Colors.white,fontFamily: "Inter",fontWeight: FontWeight.w500),),):null,
+                              height: 14,
+                              width: 14,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.red
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  _customPageRouteBuilder(ChatOverviewScreen()),
-                                );
-                              },
                             ),
-                ],
-              ),
+                          ),
+                          decoration: BoxDecoration(
 
-        ],
-      ),
+                              borderRadius: BorderRadius.circular(100),
+
+                              color: Colors.white
+                          ),))
+                  ],
+                ),
+              ),
+            )
+
+        ),
+      ],
+
 
     );
   }

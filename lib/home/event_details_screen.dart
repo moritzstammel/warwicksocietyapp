@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:warwicksocietyapp/authentication/FirestoreAuthentication.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
-import 'package:warwicksocietyapp/firebase_helper.dart';
+import 'package:warwicksocietyapp/firestore_helper.dart';
 import 'package:warwicksocietyapp/home/search_screen.dart';
 import '../models/event.dart';
 import '../models/firestore_user.dart';

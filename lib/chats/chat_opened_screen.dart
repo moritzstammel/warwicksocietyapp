@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/SocietyAuthentication.dart';
 import 'package:warwicksocietyapp/chats/chat_details_screen.dart';
 import 'package:warwicksocietyapp/chats/user_details_screen.dart';
-import 'package:warwicksocietyapp/firebase_helper.dart';
+import 'package:warwicksocietyapp/firestore_helper.dart';
 import 'package:warwicksocietyapp/models/event_info.dart';
 import '../authentication/FirestoreAuthentication.dart';
 import '../models/chat.dart';
@@ -20,6 +20,7 @@ class ChatOpenedScreen extends StatefulWidget {
 }
 
 class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBindingObserver {
+
   final ScrollController _scrollController = new ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -129,6 +130,10 @@ class _ChatOpenedScreenState extends State<ChatOpenedScreen> with WidgetsBinding
         }
         final chat = Chat.fromJson(
             snapshot.data!.data() as Map<String, dynamic>, widget.chatId);
+
+       if(currentAuthor.path.contains("users") && FirestoreAuthentication.instance.firestoreUser!.unreadChats.containsKey(chat.id)){
+         FirestoreHelper.instance.readChat(chat);
+       }
 
         return Scaffold(
           backgroundColor: Colors.white,

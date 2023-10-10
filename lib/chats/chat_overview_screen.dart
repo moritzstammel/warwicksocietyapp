@@ -7,7 +7,7 @@ import 'chat_card.dart';
 import '../models/chat.dart';
 
 class ChatOverviewScreen extends StatefulWidget {
-  final FirestoreUser user = FirestoreAuthentication.instance.firestoreUser!;
+
 
   ChatOverviewScreen();
 
@@ -16,6 +16,7 @@ class ChatOverviewScreen extends StatefulWidget {
 }
 
 class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
+  late FirestoreUser user;
   late Stream<QuerySnapshot> eventChatStream;
   final PageController _pageController = PageController();
   bool showingSocietyChats = true;
@@ -26,11 +27,13 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
   void initState() {
     super.initState();
 
+    user = FirestoreAuthentication.instance.firestoreUser!;
+
     eventChatStream = FirebaseFirestore.instance
         .collection("universities")
         .doc("university-of-warwick")
         .collection("chats")
-        .where("users.${widget.user.id}.active", isEqualTo: true)
+        .where("users.${user.id}.active", isEqualTo: true)
         .snapshots();
 
 

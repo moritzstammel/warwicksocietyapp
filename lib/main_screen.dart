@@ -114,6 +114,7 @@ class _MainScreenState extends State<MainScreen> {
         FirestoreAuthentication.instance.firestoreUser = FirestoreUser.fromJson(snapshot.data!.docs[0].data() as Map<String, dynamic>,snapshot.data!.docs[0].id);
 
 
+
         return Scaffold(
           body: IndexedStack(
             index: _currentIndex,
@@ -177,19 +178,35 @@ class _MainScreenState extends State<MainScreen> {
             icon: const ImageIcon(AssetImage('assets/icons/bottom-navigation-bar/create-spotlights.png'),),
             label: "Spotlights",
           );
+        case 2:
+          return BottomNavigationBarItem(
+            icon: const ImageIcon(AssetImage('assets/icons/bottom-navigation-bar/profile.png'),),
+            label: "Profile",
+          );
       }
     }
-
+    else{
+      switch (index){
+        case 0:
+          return BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage('assets/icons/bottom-navigation-bar/home${(index==_currentIndex) ? "-selected" : ""}.png'),),
+            label: "Home",
+          );
+        case 1:
+          return BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage('assets/icons/bottom-navigation-bar/explore${(index==_currentIndex) ? "-selected" : ""}.png'),),
+            label: "Explore",
+          );
+        case 2:
+          return BottomNavigationBarItem(
+            icon: const ImageIcon(AssetImage('assets/icons/bottom-navigation-bar/profile.png'),),
+            label: "Profile",
+          );
+      }
+    }
     return BottomNavigationBarItem(
-      icon: (_currentIndex == index) ? ImageIcon(
-        AssetImage('assets/icons/bottom-navigation-bar/${label.toLowerCase()}-selected.png'),
-      )
-          :
-      ImageIcon(
-        AssetImage('assets/icons/bottom-navigation-bar/${label.toLowerCase()}.png'),
-      )
-      ,
-      label: label,
+      icon: const ImageIcon(AssetImage('assets/icons/bottom-navigation-bar/home.png'),),
+      label: "Home",
     );
   }
 

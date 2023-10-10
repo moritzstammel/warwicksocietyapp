@@ -61,11 +61,19 @@ class ChatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(user.unreadChats);
     String nameOfLastAuthor = "";
     if(chat.messages.isNotEmpty){
       Message lastMessage = chat.messages.last;
-      nameOfLastAuthor = lastMessage.authorIsSociety? chat.societyInfo.name : chat.users[lastMessage.author.id]!.fullName;
+      if(lastMessage.author == user.ref){
+        nameOfLastAuthor = "You";
+      }
+      else{
+        nameOfLastAuthor = lastMessage.authorIsSociety? chat.societyInfo.name : chat.users[lastMessage.author.id]!.fullName;
+      }
+
     }
+    bool chatIsUnread = user.unreadChats.containsKey(chat.id);
 
 
     return InkWell(
@@ -105,6 +113,7 @@ class ChatCard extends StatelessWidget {
                       fontFamily: 'Inter',
                       fontSize: 18,
                       color: Colors.black,
+                      fontWeight: chatIsUnread? FontWeight.bold : FontWeight.normal
                     ),
                   ),
                   SizedBox(height: 4),
@@ -113,20 +122,25 @@ class ChatCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 14,
-                      color: Color(0xFF777777),
+                      color: chatIsUnread? Colors.black : Color(0xFF777777),
+                      fontWeight: chatIsUnread? FontWeight.bold : FontWeight.normal
                     ),
                   ),
                 ],
               ),
             ),
             SizedBox(width: 8),
-            Text(
-              chat.timeOfLastMessage == null ? "" : formatTime(chat.timeOfLastMessage!),
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 12,
-                color: Colors.black,
-              ),
+            Column(
+              children: [
+                Text(
+                  chat.timeOfLastMessage == null ? "" : formatTime(chat.timeOfLastMessage!),
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 12,
+                    color: Color(0xFF777777),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

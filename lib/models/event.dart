@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 import 'package:warwicksocietyapp/models/user_info.dart';
 
-class Event {
+class Event implements Comparable{
   final String id;
   final String title;
   final String description;
@@ -56,4 +56,7 @@ class Event {
   String toString() {
     return title;
   }
+
+  @override
+  int compareTo(other) => startTime.compareTo(other.startTime);
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:warwicksocietyapp/authentication/tag_selection_screen.dart';
-import 'package:warwicksocietyapp/firebase_helper.dart';
+import 'package:warwicksocietyapp/firestore_helper.dart';
 import 'package:warwicksocietyapp/models/society_info.dart';
 
 

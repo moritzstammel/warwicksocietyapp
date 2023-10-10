@@ -32,7 +32,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
         .doc("university-of-warwick")
         .collection("events")
         .where('end_time', isGreaterThan: Timestamp.fromDate(DateTime.now().add(Duration(hours: 2))))
-        .limit(5)
+        .limit(10)
         .snapshots()
         :
     FirebaseFirestore.instance
@@ -41,7 +41,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
         .collection("events")
         .where('society.ref', whereIn: societyRefs)
         .where('end_time', isGreaterThan: Timestamp.fromDate(DateTime.now().add(Duration(hours: 2))))
-        .limit(5)
+        .limit(10)
         .snapshots();
 
 
@@ -81,7 +81,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
 
         List<Event> events = snapshot.data!.docs.map((json) => Event.fromJson(json.data() as Map<String,dynamic>,json.id)).toList();
         List<Event> eventsNotSignedUp = events.where((event) => !((event.registeredUsers.containsKey(userRef.id))&&(event.registeredUsers[userRef.id]!.active))).toList();
-
+        eventsNotSignedUp.sort();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
